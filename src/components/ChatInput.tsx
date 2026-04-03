@@ -8,6 +8,8 @@ import MicOffIcon from '@mui/icons-material/MicOff';
 import ClearIcon from '@mui/icons-material/Clear';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import PersonIcon from '@mui/icons-material/Person';
+import ChatIcon from '@mui/icons-material/Chat';
 import { colors } from '@/theme/tokens';
 
 interface ChatInputProps {
@@ -17,9 +19,11 @@ interface ChatInputProps {
   onToggleVoice: () => void;
   digitalTwinMode?: boolean;
   onListeningChange?: (listening: boolean) => void;
+  onToggleDigitalTwin?: () => void;
+  onMicActivated?: () => void;
 }
 
-export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice, digitalTwinMode, onListeningChange }: ChatInputProps) {
+export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice, digitalTwinMode, onListeningChange, onToggleDigitalTwin, onMicActivated }: ChatInputProps) {
   const [text, setText] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
@@ -94,7 +98,8 @@ export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice,
     recognition.start();
     setIsListening(true);
     onListeningChange?.(true);
-  }, [isListening, digitalTwinMode, disabled, onSend, onListeningChange]);
+    onMicActivated?.();
+  }, [isListening, digitalTwinMode, disabled, onSend, onListeningChange, onMicActivated]);
 
   // Auto-start mic in digital twin mode
   useEffect(() => {
@@ -106,11 +111,28 @@ export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice,
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderTop: 1, borderColor: 'divider', bgcolor: 'background.paper', px: 2, pt: 2, pb: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1, maxWidth: 600, width: '100%' }}>
-      <Tooltip title={voiceMuted ? 'Unmute voice' : 'Mute voice'}>
-        <IconButton size="small" onClick={onToggleVoice} sx={{ color: 'text.secondary', mb: 0.5 }}>
-          {voiceMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
-        </IconButton>
-      </Tooltip>
+      {/* Speaker + Digital Twin grouped */}
+      <Box sx={{ display: 'flex', gap: 0.25, mb: 0.5 }}>
+        <Tooltip title={voiceMuted ? 'Unmute voice' : 'Mute voice'}>
+          <IconButton size="small" onClick={onToggleVoice} sx={{ color: 'text.secondary' }}>
+            {voiceMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
+          </IconButton>
+        </Tooltip>
+        {onToggleDigitalTwin && (
+          <Tooltip title={digitalTwinMode ? 'Switch to chat' : 'Digital Twin'}>
+            <IconButton
+              size="small"
+              onClick={onToggleDigitalTwin}
+              sx={{
+                color: digitalTwinMode ? '#117680' : 'text.secondary',
+                bgcolor: digitalTwinMode ? 'rgba(17,118,128,0.08)' : 'transparent',
+              }}
+            >
+              {digitalTwinMode ? <ChatIcon sx={{ fontSize: 20 }} /> : <PersonIcon sx={{ fontSize: 20 }} />}
+            </IconButton>
+          </Tooltip>
+        )}
+      </Box>
       <Box sx={{ flex: 1, display: 'flex', alignItems: 'flex-end', border: 1, borderColor: 'divider', borderRadius: '12px', px: 1.5, py: 0.5, bgcolor: 'background.default', '&:focus-within': { borderColor: colors.primary.main } }}>
         <Box
           component="textarea" ref={textareaRef} value={text} onChange={handleInput} onKeyDown={handleKeyDown}

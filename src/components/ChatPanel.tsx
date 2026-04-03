@@ -22,6 +22,8 @@ interface ChatPanelProps {
   digitalTwinMode?: boolean;
   onSpeakingChange?: (speaking: boolean) => void;
   onListeningChange?: (listening: boolean) => void;
+  onToggleDigitalTwin?: () => void;
+  onMicActivated?: () => void;
 }
 
 const STORAGE_KEY = 'raybot_history';
@@ -52,7 +54,7 @@ function stripMermaidBlock(text: string): string {
   return text.replace(/```mermaid\n[\s\S]*?```/g, '').trim();
 }
 
-export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeakingChange, onListeningChange }: ChatPanelProps) {
+export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeakingChange, onListeningChange, onToggleDigitalTwin, onMicActivated }: ChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
@@ -232,6 +234,8 @@ export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeaki
         onToggleVoice={() => { setVoiceMuted(!voiceMuted); if (audioRef.current && !voiceMuted) audioRef.current.pause(); }}
         digitalTwinMode={digitalTwinMode}
         onListeningChange={onListeningChange}
+        onToggleDigitalTwin={onToggleDigitalTwin}
+        onMicActivated={onMicActivated}
       />
     </Box>
   );

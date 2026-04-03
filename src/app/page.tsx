@@ -4,8 +4,6 @@ import { useState, useCallback, useEffect } from 'react';
 import { Box, Typography, Button, IconButton, Tooltip, Snackbar, Alert } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import DownloadIcon from '@mui/icons-material/Download';
-import PersonIcon from '@mui/icons-material/Person';
-import ChatIcon from '@mui/icons-material/Chat';
 import IconSidebar from '@/components/IconSidebar';
 import ChatPanel from '@/components/ChatPanel';
 import DigitalTwinAvatar from '@/components/DigitalTwinAvatar';
@@ -37,16 +35,17 @@ export default function Home() {
 
   const toggleDigitalTwin = useCallback(() => {
     if (!digitalTwinMode) {
-      // Entering digital twin mode
       setSidebarOpen(false);
       setDigitalTwinMode(true);
-      setShowMicToast(true);
     } else {
-      // Exiting digital twin mode
       setSidebarOpen(true);
       setDigitalTwinMode(false);
     }
   }, [digitalTwinMode]);
+
+  const handleMicActivated = useCallback(() => {
+    setShowMicToast(true);
+  }, []);
 
   const downloadTranscript = useCallback(() => {
     try {
@@ -83,20 +82,6 @@ export default function Home() {
             <Box component="span" sx={{ color: '#117680' }}>ray</Box>bot
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            {/* Digital Twin toggle */}
-            <Tooltip title={digitalTwinMode ? 'Switch to chat' : 'Digital Twin'}>
-              <IconButton
-                size="small"
-                onClick={toggleDigitalTwin}
-                sx={{
-                  color: digitalTwinMode ? '#117680' : 'text.secondary',
-                  bgcolor: digitalTwinMode ? 'rgba(17,118,128,0.08)' : 'transparent',
-                  '&:hover': { bgcolor: digitalTwinMode ? 'rgba(17,118,128,0.12)' : 'action.hover' },
-                }}
-              >
-                {digitalTwinMode ? <ChatIcon sx={{ fontSize: 20 }} /> : <PersonIcon sx={{ fontSize: 20 }} />}
-              </IconButton>
-            </Tooltip>
             <Tooltip title="Download transcript">
               <IconButton size="small" onClick={downloadTranscript} sx={{ color: 'text.secondary' }}>
                 <DownloadIcon sx={{ fontSize: 18 }} />
@@ -127,6 +112,8 @@ export default function Home() {
             digitalTwinMode={digitalTwinMode}
             onSpeakingChange={setIsSpeaking}
             onListeningChange={setIsListening}
+            onToggleDigitalTwin={toggleDigitalTwin}
+            onMicActivated={handleMicActivated}
           />
         </Box>
       </Box>
