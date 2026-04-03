@@ -183,11 +183,6 @@ export default function AvatarStage({ isSpeaking, isListening, voiceMuted, onTog
             {micActive ? <MicIcon sx={{ fontSize: 22 }} /> : <MicOffIcon sx={{ fontSize: 22 }} />}
           </IconButton>
         </Tooltip>
-        <Tooltip title="Switch to chat">
-          <IconButton size="small" onClick={onToggleDigitalTwin} sx={{ color: 'rgba(255,255,255,0.7)', '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' } }}>
-            <ChatIcon sx={{ fontSize: 22 }} />
-          </IconButton>
-        </Tooltip>
       </Box>
     </Box>
   );
