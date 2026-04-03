@@ -1,15 +1,32 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Box, Typography, Button, IconButton, Tooltip } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import DownloadIcon from '@mui/icons-material/Download';
 import IconSidebar from '@/components/IconSidebar';
 import ChatPanel from '@/components/ChatPanel';
+import EmailGate from '@/components/EmailGate';
 import { colors } from '@/theme/tokens';
 
 export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [verified, setVerified] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+
+  // Check if already verified this session
+  useEffect(() => {
+    const email = sessionStorage.getItem('raybot_user_email');
+    if (email) {
+      setVerified(true);
+      setUserEmail(email);
+    }
+  }, []);
+
+  const handleVerified = useCallback((email: string, name: string) => {
+    setVerified(true);
+    setUserEmail(email);
+  }, []);
 
   const downloadTranscript = useCallback(() => {
     try {
@@ -31,12 +48,15 @@ export default function Home() {
 
   return (
     <Box sx={{ display: 'flex', height: '100vh' }}>
+      {/* Email gate overlay */}
+      {!verified && <EmailGate onVerified={handleVerified} />}
+
       {/* Left icon sidebar */}
       <IconSidebar open={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
 
       {/* Main area */}
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-        {/* Top bar with raybot title */}
+        {/* Top bar */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, height: 49, borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}>
           <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1rem' }}>
             <Box component="span" sx={{ color: colors.primary.main }}>ray</Box>bot
@@ -61,7 +81,7 @@ export default function Home() {
           </Box>
         </Box>
 
-        {/* Chat — full width */}
+        {/* Chat */}
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflow: 'hidden' }}>
           <ChatPanel />
         </Box>
