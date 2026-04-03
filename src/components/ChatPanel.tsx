@@ -15,7 +15,7 @@ export interface Message {
 }
 
 interface ChatPanelProps {
-  onDiagramDetected: (code: string) => void;
+  onDiagramDetected?: (code: string) => void;
 }
 
 const STORAGE_KEY = 'raybot_history';
@@ -109,8 +109,9 @@ export default function ChatPanel({ onDiagramDetected }: ChatPanelProps) {
       }
       const { response, handoff } = await res.json();
       const mermaidCode = extractMermaid(response);
-      if (mermaidCode) onDiagramDetected(mermaidCode);
-      const displayText = stripMermaidBlock(response);
+      if (mermaidCode && onDiagramDetected) onDiagramDetected(mermaidCode);
+      // Keep mermaid blocks in display text — ChatMessage renders them inline
+      const displayText = response;
 
       setMessages((prev) => {
         const updated = prev.filter((m) => !m.isThinking);

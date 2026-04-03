@@ -1,23 +1,28 @@
 'use client';
 
-import { useState } from 'react';
-import { Box } from '@mui/material';
-import Header from '@/components/Header';
+import { Box, Typography } from '@mui/material';
+import IconSidebar from '@/components/IconSidebar';
 import ChatPanel from '@/components/ChatPanel';
-import DiagramSidebar from '@/components/DiagramSidebar';
+import { colors } from '@/theme/tokens';
 
 export default function Home() {
-  const [mermaidCode, setMermaidCode] = useState<string | null>(null);
-
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <Header />
-      <Box sx={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-          <ChatPanel onDiagramDetected={setMermaidCode} />
+    <Box sx={{ display: 'flex', height: '100vh' }}>
+      {/* Left icon sidebar */}
+      <IconSidebar />
+
+      {/* Main area */}
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+        {/* Top bar with raybot title */}
+        <Box sx={{ display: 'flex', alignItems: 'center', px: 2, py: 1.5, borderBottom: 1, borderColor: 'divider' }}>
+          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1rem' }}>
+            <Box component="span" sx={{ color: colors.primary.main }}>ray</Box>bot
+          </Typography>
         </Box>
-        <Box sx={{ display: { xs: 'none', md: 'flex' }, width: 420, flexShrink: 0 }}>
-          <DiagramSidebar mermaidCode={mermaidCode} />
+
+        {/* Chat — full width */}
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflow: 'hidden' }}>
+          <ChatPanel />
         </Box>
       </Box>
     </Box>

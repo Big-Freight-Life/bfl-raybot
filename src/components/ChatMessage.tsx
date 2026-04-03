@@ -7,7 +7,35 @@ import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import ReplayIcon from '@mui/icons-material/Replay';
 import { colors } from '@/theme/tokens';
 import ThinkingDots from './ThinkingDots';
+import InlineDiagram from './InlineDiagram';
 import { useState } from 'react';
+
+function renderContent(text: string, isUser: boolean) {
+  const parts = text.split(/(```mermaid\n[\s\S]*?```)/g);
+  return parts.map((part, i) => {
+    const mermaidMatch = part.match(/```mermaid\n([\s\S]*?)```/);
+    if (mermaidMatch) {
+      return <InlineDiagram key={i} code={mermaidMatch[1].trim()} />;
+    }
+    if (!part.trim()) return null;
+    return (
+      <Typography
+        key={i}
+        variant="body2"
+        sx={{
+          lineHeight: 1.7, whiteSpace: 'pre-wrap',
+          '& code': {
+            fontFamily: "'SF Mono', monospace", fontSize: '0.8125rem',
+            bgcolor: isUser ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.06)',
+            px: 0.75, py: 0.25, borderRadius: '4px',
+          },
+        }}
+      >
+        {part}
+      </Typography>
+    );
+  });
+}
 
 interface ChatMessageProps {
   role: 'user' | 'bot';
@@ -52,28 +80,18 @@ export default function ChatMessage({ role, content, isThinking, isTyping, index
           {isThinking ? (
             <ThinkingDots />
           ) : (
-            <Typography
-              variant="body2"
-              sx={{
-                lineHeight: 1.7, whiteSpace: 'pre-wrap',
-                '& code': {
-                  fontFamily: "'SF Mono', monospace", fontSize: '0.8125rem',
-                  bgcolor: isUser ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.06)',
-                  px: 0.75, py: 0.25, borderRadius: '4px',
-                },
-              }}
-            >
-              {content}
-              {isTyping && (
-                <Box component="span" sx={{
-                  display: 'inline-block', width: 2, height: '1em',
-                  bgcolor: isUser ? '#fff' : colors.gray[900],
-                  ml: '2px', verticalAlign: 'text-bottom',
-                  animation: 'cursorBlink 1s step-end infinite',
-                  '@keyframes cursorBlink': { '0%, 100%': { opacity: 1 }, '50%': { opacity: 0 } },
-                }} />
-              )}
-            </Typography>
+            <>
+            {renderContent(content, isUser)}
+            {isTyping && (
+              <Box component="span" sx={{
+                display: 'inline-block', width: 2, height: '1em',
+                bgcolor: isUser ? '#fff' : colors.gray[900],
+                ml: '2px', verticalAlign: 'text-bottom',
+                animation: 'cursorBlink 1s step-end infinite',
+                '@keyframes cursorBlink': { '0%, 100%': { opacity: 1 }, '50%': { opacity: 0 } },
+              }} />
+            )}
+            </>
           )}
         </Box>
         {!isUser && !isThinking && !isTyping && content && (
