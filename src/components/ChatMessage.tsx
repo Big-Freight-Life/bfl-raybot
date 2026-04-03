@@ -4,7 +4,6 @@ import { Box, Typography, IconButton, Tooltip } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
-import ReplayIcon from '@mui/icons-material/Replay';
 import DownloadIcon from '@mui/icons-material/Download';
 import { colors } from '@/theme/tokens';
 import ThinkingDots from './ThinkingDots';
@@ -44,10 +43,9 @@ interface ChatMessageProps {
   isThinking?: boolean;
   isTyping?: boolean;
   index: number;
-  onRegenerate?: () => void;
 }
 
-export default function ChatMessage({ role, content, isThinking, isTyping, index, onRegenerate }: ChatMessageProps) {
+export default function ChatMessage({ role, content, isThinking, isTyping, index }: ChatMessageProps) {
   const [copied, setCopied] = useState(false);
   const isUser = role === 'user';
 
@@ -117,13 +115,6 @@ export default function ChatMessage({ role, content, isThinking, isTyping, index
                 <DownloadIcon sx={{ fontSize: 16 }} />
               </IconButton>
             </Tooltip>
-            {onRegenerate && (
-              <Tooltip title="Regenerate">
-                <IconButton size="small" onClick={onRegenerate} sx={{ color: 'text.secondary' }}>
-                  <ReplayIcon sx={{ fontSize: 16 }} />
-                </IconButton>
-              </Tooltip>
-            )}
             <Tooltip title="Helpful">
               <IconButton size="small" onClick={() => handleFeedback('helpful')} sx={{ color: 'text.secondary' }}>
                 <ThumbUpOffAltIcon sx={{ fontSize: 16 }} />

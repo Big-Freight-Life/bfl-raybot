@@ -149,13 +149,6 @@ export default function ChatPanel({ onDiagramDetected }: ChatPanelProps) {
     }
   }, [messages, onDiagramDetected, playTTS]);
 
-  const handleRegenerate = useCallback(() => {
-    const lastUserMsg = [...messages].reverse().find((m) => m.role === 'user');
-    if (!lastUserMsg) return;
-    setMessages((prev) => prev.slice(0, -1));
-    sendMessage(lastUserMsg.content);
-  }, [messages, sendMessage]);
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <Box sx={{ flex: 1, overflowY: 'auto', py: 2, px: { xs: 2, md: '100px' }, scrollbarWidth: 'thin' }}>
@@ -169,7 +162,6 @@ export default function ChatPanel({ onDiagramDetected }: ChatPanelProps) {
           <ChatMessage
             key={i} role={msg.role} content={msg.content}
             isThinking={msg.isThinking} isTyping={msg.isTyping} index={i}
-            onRegenerate={msg.role === 'bot' && i === messages.length - 1 && !msg.isThinking && !msg.isTyping ? handleRegenerate : undefined}
           />
         ))}
         {showLeadForm && (
