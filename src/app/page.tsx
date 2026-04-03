@@ -64,7 +64,7 @@ export default function Home() {
           <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1rem' }}>
             <Box component="span" sx={{ color: colors.primary.main }}>ray</Box>bot
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Tooltip title="Download transcript">
               <IconButton size="small" onClick={downloadTranscript} sx={{ color: 'text.secondary' }}>
                 <DownloadIcon sx={{ fontSize: 18 }} />
