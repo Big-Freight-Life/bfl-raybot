@@ -11,15 +11,17 @@ import { colors } from '@/theme/tokens';
 
 export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [verified, setVerified] = useState(false);
+  const [verified, setVerified] = useState<boolean | null>(null);
   const [userEmail, setUserEmail] = useState('');
 
-  // Check if already verified this session
+  // Check if already verified this session (runs once on mount)
   useEffect(() => {
     const email = sessionStorage.getItem('raybot_user_email');
     if (email) {
       setVerified(true);
       setUserEmail(email);
+    } else {
+      setVerified(false);
     }
   }, []);
 
@@ -48,8 +50,8 @@ export default function Home() {
 
   return (
     <Box sx={{ display: 'flex', height: '100vh' }}>
-      {/* Email gate overlay */}
-      {!verified && <EmailGate onVerified={handleVerified} />}
+      {/* Email gate overlay — null means still checking sessionStorage */}
+      {verified === false && <EmailGate onVerified={handleVerified} />}
 
       {/* Left icon sidebar */}
       <IconSidebar open={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
