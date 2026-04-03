@@ -8,7 +8,7 @@ import MicOffIcon from '@mui/icons-material/MicOff';
 import ClearIcon from '@mui/icons-material/Clear';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
-import PersonIcon from '@mui/icons-material/Person';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ChatIcon from '@mui/icons-material/Chat';
 import { colors } from '@/theme/tokens';
 
@@ -128,7 +128,7 @@ export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice,
                 bgcolor: digitalTwinMode ? 'rgba(17,118,128,0.08)' : 'transparent',
               }}
             >
-              {digitalTwinMode ? <ChatIcon sx={{ fontSize: 20 }} /> : <PersonIcon sx={{ fontSize: 20 }} />}
+              {digitalTwinMode ? <ChatIcon sx={{ fontSize: 20 }} /> : <AccountCircleIcon sx={{ fontSize: 20 }} />}
             </IconButton>
           </Tooltip>
         )}
