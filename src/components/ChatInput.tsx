@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Box, IconButton, Tooltip } from '@mui/material';
+import { Box, IconButton, Tooltip, Typography } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
@@ -99,6 +99,9 @@ export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice 
         <SendIcon sx={{ fontSize: 18 }} />
       </IconButton>
       </Box>
+      <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', color: 'text.secondary', mt: 0.5, fontSize: '0.7rem' }}>
+        Raybot can make mistakes. <Box component="a" href="https://bfl.design/contact" target="_blank" rel="noopener noreferrer" sx={{ color: 'text.secondary', textDecoration: 'underline' }}>Contact us</Box> for important stuff.
+      </Typography>
     </Box>
   );
 }
