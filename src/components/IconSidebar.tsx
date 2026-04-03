@@ -3,94 +3,119 @@
 import { Box, IconButton, Tooltip } from '@mui/material';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import SearchIcon from '@mui/icons-material/Search';
+import MenuIcon from '@mui/icons-material/Menu';
 import Image from 'next/image';
 import { colors } from '@/theme/tokens';
 
-export default function IconSidebar() {
+interface IconSidebarProps {
+  open: boolean;
+  onToggle: () => void;
+}
+
+export default function IconSidebar({ open, onToggle }: IconSidebarProps) {
   return (
     <Box
       sx={{
-        width: 60,
+        width: open ? 260 : 52,
         flexShrink: 0,
         display: { xs: 'none', md: 'flex' },
         flexDirection: 'column',
-        alignItems: 'center',
-        py: 2,
-        gap: 1,
         borderRight: 1,
         borderColor: 'divider',
         bgcolor: 'background.paper',
+        transition: 'width 0.2s ease',
+        overflow: 'hidden',
       }}
     >
-      {/* BFL Logo */}
-      <Tooltip title="Big Freight Life" placement="right">
-        <Box
-          component="a"
-          href="https://bfl.design"
-          target="_blank"
-          rel="noopener noreferrer"
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 40,
-            height: 40,
-            mb: 1,
-          }}
-        >
-          <Image
-            src="/images/logo-teal.png"
-            alt="Big Freight Life"
-            width={28}
-            height={28}
-            style={{ display: 'block' }}
-          />
-        </Box>
-      </Tooltip>
+      {/* Top row — logo + toggle, aligned with title bar height */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          height: 49,
+          px: open ? 1.5 : 0,
+          justifyContent: open ? 'space-between' : 'center',
+          borderBottom: 1,
+          borderColor: 'divider',
+          flexShrink: 0,
+        }}
+      >
+        {open ? (
+          <>
+            <Box
+              component="a"
+              href="https://bfl.design"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{ display: 'flex', alignItems: 'center' }}
+            >
+              <Image
+                src="/images/logo-teal.png"
+                alt="Big Freight Life"
+                width={20}
+                height={20}
+                style={{ display: 'block' }}
+              />
+            </Box>
+            <IconButton size="small" onClick={onToggle} sx={{ color: 'text.secondary' }}>
+              <MenuIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+          </>
+        ) : (
+          <IconButton size="small" onClick={onToggle} sx={{ color: 'text.secondary' }}>
+            <MenuIcon sx={{ fontSize: 20 }} />
+          </IconButton>
+        )}
+      </Box>
 
-      {/* New chat */}
-      <Tooltip title="New chat" placement="right">
-        <IconButton
-          size="small"
-          onClick={() => {
-            sessionStorage.removeItem('raybot_history');
-            window.location.reload();
-          }}
-          sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' } }}
-        >
-          <EditNoteIcon sx={{ fontSize: 22 }} />
-        </IconButton>
-      </Tooltip>
+      {/* Icons */}
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: open ? 'flex-start' : 'center', py: 1, gap: 0.5, px: open ? 1 : 0 }}>
+        <Tooltip title="New chat" placement="right" disableHoverListener={open}>
+          <IconButton
+            size="small"
+            onClick={() => {
+              sessionStorage.removeItem('raybot_history');
+              window.location.reload();
+            }}
+            sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' }, borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1 }}
+          >
+            <EditNoteIcon sx={{ fontSize: 20 }} />
+            {open && <Box component="span" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>New chat</Box>}
+          </IconButton>
+        </Tooltip>
 
-      {/* Search */}
-      <Tooltip title="Search chats" placement="right">
-        <IconButton size="small" sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' } }}>
-          <SearchIcon sx={{ fontSize: 22 }} />
-        </IconButton>
-      </Tooltip>
+        <Tooltip title="Search chats" placement="right" disableHoverListener={open}>
+          <IconButton size="small" sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' }, borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1 }}>
+            <SearchIcon sx={{ fontSize: 20 }} />
+            {open && <Box component="span" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>Search</Box>}
+          </IconButton>
+        </Tooltip>
+      </Box>
 
       {/* Spacer */}
       <Box sx={{ flex: 1 }} />
 
       {/* User avatar at bottom */}
-      <Tooltip title="Ray Butler" placement="right">
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 1.5, justifyContent: open ? 'flex-start' : 'center' }}>
         <Box
           sx={{
-            width: 32,
-            height: 32,
+            width: 28,
+            height: 28,
             borderRadius: '50%',
             bgcolor: colors.primary.main,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             color: '#fff',
-            fontSize: '0.75rem',
+            fontSize: '0.65rem',
             fontWeight: 700,
+            flexShrink: 0,
           }}
         >
           RB
         </Box>
-      </Tooltip>
+        {open && <Box sx={{ fontSize: '0.8125rem', color: 'text.primary', fontWeight: 500, whiteSpace: 'nowrap' }}>Ray Butler</Box>}
+      </Box>
     </Box>
   );
 }
