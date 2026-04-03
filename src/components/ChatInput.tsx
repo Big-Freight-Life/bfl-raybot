@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Box, IconButton, Tooltip, Typography } from '@mui/material';
+import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
@@ -109,11 +109,26 @@ export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice,
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderTop: 1, borderColor: 'divider', bgcolor: 'background.paper', px: 2, pt: 2, pb: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1, maxWidth: 600, width: '100%' }}>
-      <Tooltip title={voiceMuted ? 'Unmute voice' : 'Mute voice'}>
-        <IconButton size="small" onClick={onToggleVoice} sx={{ color: voiceMuted ? 'text.secondary' : colors.primary.main, mb: 0.5 }}>
-          {voiceMuted ? <VolumeOffIcon /> : <GraphicEqIcon />}
-        </IconButton>
-      </Tooltip>
+      <Button
+        variant="outlined"
+        size="small"
+        onClick={onToggleVoice}
+        startIcon={voiceMuted ? <VolumeOffIcon sx={{ fontSize: 18 }} /> : <GraphicEqIcon sx={{ fontSize: 18 }} />}
+        sx={{
+          mb: 0.5,
+          textTransform: 'none',
+          fontSize: '0.8rem',
+          borderRadius: '20px',
+          px: 1.5,
+          py: 0.5,
+          minWidth: 'auto',
+          borderColor: voiceMuted ? 'divider' : colors.primary.main,
+          color: voiceMuted ? 'text.secondary' : colors.primary.main,
+          '&:hover': { borderColor: colors.primary.main, bgcolor: 'transparent' },
+        }}
+      >
+        Voice
+      </Button>
       <Box sx={{ flex: 1, display: 'flex', alignItems: 'flex-end', border: 1, borderColor: 'divider', borderRadius: '12px', px: 1.5, py: 0.5, bgcolor: 'background.default', '&:focus-within': { borderColor: colors.primary.main } }}>
         {speechSupported && (
           <Tooltip title={isListening ? 'Stop listening' : 'Dictate'}>
