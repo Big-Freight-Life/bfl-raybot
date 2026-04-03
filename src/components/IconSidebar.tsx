@@ -40,28 +40,23 @@ export default function IconSidebar({ open, onToggle }: IconSidebarProps) {
           flexShrink: 0,
         }}
       >
-        {open ? (
-          <>
-            <Box
-              component="a"
-              href="https://bfl.design"
-              target="_blank"
-              rel="noopener noreferrer"
-              sx={{ display: 'flex', alignItems: 'center' }}
-            >
-              <Image
-                src="/images/logo-teal.png"
-                alt="Big Freight Life"
-                width={20}
-                height={20}
-                style={{ display: 'block' }}
-              />
-            </Box>
-            <IconButton size="small" onClick={onToggle} sx={{ color: 'text.secondary' }}>
-              <MenuIcon sx={{ fontSize: 20 }} />
-            </IconButton>
-          </>
-        ) : (
+        {/* Logo — always visible, centered */}
+        <Box
+          component="a"
+          href="https://bfl.design"
+          target="_blank"
+          rel="noopener noreferrer"
+          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: open ? 'auto' : '100%' }}
+        >
+          <Image
+            src="/images/logo-teal.png"
+            alt="Big Freight Life"
+            width={20}
+            height={20}
+            style={{ display: 'block' }}
+          />
+        </Box>
+        {open && (
           <IconButton size="small" onClick={onToggle} sx={{ color: 'text.secondary' }}>
             <MenuIcon sx={{ fontSize: 20 }} />
           </IconButton>
@@ -70,6 +65,13 @@ export default function IconSidebar({ open, onToggle }: IconSidebarProps) {
 
       {/* Icons */}
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: open ? 'flex-start' : 'center', py: 1, gap: 0.5, px: open ? 1 : 0 }}>
+        {!open && (
+          <Tooltip title="Open sidebar" placement="right">
+            <IconButton size="small" onClick={onToggle} sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' } }}>
+              <MenuIcon sx={{ fontSize: 20 }} />
+            </IconButton>
+          </Tooltip>
+        )}
         <Tooltip title="New chat" placement="right" disableHoverListener={open}>
           <IconButton
             size="small"
