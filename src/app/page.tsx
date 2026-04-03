@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { Box, Typography, Button, IconButton, Tooltip } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import DownloadIcon from '@mui/icons-material/Download';
+import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined';
 import IconSidebar from '@/components/IconSidebar';
 import ChatPanel from '@/components/ChatPanel';
 import EmailGate from '@/components/EmailGate';
@@ -60,9 +61,18 @@ export default function Home() {
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         {/* Top bar */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, height: 49, borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}>
-          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1rem' }}>
-            <Box component="span" sx={{ color: colors.primary.main }}>ray</Box>bot
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {!sidebarOpen && (
+              <Tooltip title="Open sidebar">
+                <IconButton size="small" onClick={() => setSidebarOpen(true)} sx={{ color: 'text.secondary', display: { xs: 'none', md: 'flex' } }}>
+                  <ViewSidebarOutlinedIcon sx={{ fontSize: 20 }} />
+                </IconButton>
+              </Tooltip>
+            )}
+            <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1rem' }}>
+              <Box component="span" sx={{ color: colors.primary.main }}>ray</Box>bot
+            </Typography>
+          </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <Tooltip title="Download transcript">
               <IconButton size="small" onClick={downloadTranscript} sx={{ color: 'text.secondary' }}>

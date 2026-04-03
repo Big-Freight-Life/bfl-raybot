@@ -12,40 +12,39 @@ interface IconSidebarProps {
 }
 
 export default function IconSidebar({ open, onToggle }: IconSidebarProps) {
+  if (!open) return null;
+
   return (
     <Box
       sx={{
-        width: open ? 260 : 52,
+        width: 260,
         flexShrink: 0,
         display: { xs: 'none', md: 'flex' },
         flexDirection: 'column',
         borderRight: 1,
         borderColor: 'divider',
         bgcolor: 'background.paper',
-        transition: 'width 0.2s ease',
-        overflow: 'hidden',
       }}
     >
-      {/* Top row — logo + toggle, aligned with title bar height */}
+      {/* Top row — logo + close toggle */}
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
           height: 49,
-          px: open ? 1.5 : 0,
-          justifyContent: open ? 'space-between' : 'center',
+          px: 1.5,
+          justifyContent: 'space-between',
           borderBottom: 1,
           borderColor: 'divider',
           flexShrink: 0,
         }}
       >
-        {/* Logo — always visible, centered */}
         <Box
           component="a"
           href="https://bfl.design"
           target="_blank"
           rel="noopener noreferrer"
-          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: open ? 'auto' : '100%' }}
+          sx={{ display: 'flex', alignItems: 'center' }}
         >
           <Image
             src="/images/logo-teal.png"
@@ -55,44 +54,32 @@ export default function IconSidebar({ open, onToggle }: IconSidebarProps) {
             style={{ display: 'block' }}
           />
         </Box>
-        {open && (
+        <Tooltip title="Close sidebar">
           <IconButton size="small" onClick={onToggle} sx={{ color: 'text.secondary' }}>
             <ViewSidebarOutlinedIcon sx={{ fontSize: 20 }} />
           </IconButton>
-        )}
-      </Box>
-
-      {/* Icons */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: open ? 'flex-start' : 'center', py: 1, gap: 0.5, px: open ? 1 : 0 }}>
-        {!open && (
-          <Tooltip title="Open sidebar" placement="right">
-            <IconButton size="small" onClick={onToggle} sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' } }}>
-              <ViewSidebarOutlinedIcon sx={{ fontSize: 20 }} />
-            </IconButton>
-          </Tooltip>
-        )}
-        <Tooltip title="New chat" placement="right" disableHoverListener={open}>
-          <IconButton
-            size="small"
-            onClick={() => {
-              sessionStorage.removeItem('raybot_history');
-              window.location.reload();
-            }}
-            sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' }, borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1 }}
-          >
-            <EditNoteIcon sx={{ fontSize: 20 }} />
-            {open && <Box component="span" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>New chat</Box>}
-          </IconButton>
-        </Tooltip>
-
-        <Tooltip title="Search chats" placement="right" disableHoverListener={open}>
-          <IconButton size="small" sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' }, borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1 }}>
-            <SearchIcon sx={{ fontSize: 20 }} />
-            {open && <Box component="span" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>Search</Box>}
-          </IconButton>
         </Tooltip>
       </Box>
 
+      {/* Nav items */}
+      <Box sx={{ display: 'flex', flexDirection: 'column', py: 1, gap: 0.5, px: 1 }}>
+        <IconButton
+          size="small"
+          onClick={() => {
+            sessionStorage.removeItem('raybot_history');
+            window.location.reload();
+          }}
+          sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' }, borderRadius: '8px', width: '100%', justifyContent: 'flex-start', gap: 1.5, px: 1.5 }}
+        >
+          <EditNoteIcon sx={{ fontSize: 20 }} />
+          <Box component="span" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>New chat</Box>
+        </IconButton>
+
+        <IconButton size="small" sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' }, borderRadius: '8px', width: '100%', justifyContent: 'flex-start', gap: 1.5, px: 1.5 }}>
+          <SearchIcon sx={{ fontSize: 20 }} />
+          <Box component="span" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>Search</Box>
+        </IconButton>
+      </Box>
     </Box>
   );
 }
