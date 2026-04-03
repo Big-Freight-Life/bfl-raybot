@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Raybot
 
-## Getting Started
+AI chat assistant for [Big Freight Life](https://bfl.design) at [raybot.bfl.design](https://bfl-raybot.vercel.app).
 
-First, run the development server:
+## Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+nvm use           # Uses Node version from .nvmrc
+npm install
+cp .env.example .env.local   # Fill in your values
+npm run dev       # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Next.js 16 (App Router)
+- MUI 6
+- Google Gemini Flash (chat)
+- ElevenLabs (text-to-speech)
+- Mermaid.js (diagrams)
+- Vercel KV (conversation logging)
+- Resend (email)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Features
 
-## Learn More
+- AI chat with typewriter effect
+- Voice input (Web Speech API) and output (ElevenLabs TTS)
+- Inline Mermaid diagram rendering
+- Digital twin mode with avatar stage
+- Lead capture (email + Google Calendar)
+- Email gate with MX validation
+- Conversation logging (30-day auto-delete)
 
-To learn more about Next.js, take a look at the following resources:
+## Deploy
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Push to `main` — Vercel auto-deploys.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+# Force deploy from local
+vercel deploy --prod
+```
 
-## Deploy on Vercel
+## Environment Variables
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See `.env.example` for required variables. Set them in Vercel project settings for production.
