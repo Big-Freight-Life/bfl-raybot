@@ -24,6 +24,7 @@ interface ChatPanelProps {
   onListeningChange?: (listening: boolean) => void;
   onToggleDigitalTwin?: () => void;
   onMicActivated?: () => void;
+  onVoiceMutedChange?: (muted: boolean) => void;
 }
 
 const STORAGE_KEY = 'raybot_history';
@@ -54,7 +55,7 @@ function stripMermaidBlock(text: string): string {
   return text.replace(/```mermaid\n[\s\S]*?```/g, '').trim();
 }
 
-export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeakingChange, onListeningChange, onToggleDigitalTwin, onMicActivated }: ChatPanelProps) {
+export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeakingChange, onListeningChange, onToggleDigitalTwin, onMicActivated, onVoiceMutedChange }: ChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
@@ -197,7 +198,7 @@ export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeaki
         <div ref={messagesEndRef} />
       </Box>
       {/* Disclaimer banner */}
-      {showDisclaimer && (
+      {showDisclaimer && !digitalTwinMode && (
         <Box sx={{ maxWidth: 768, mx: 'auto', width: '100%', px: { xs: 2, md: 3 } }}>
           <Box
             sx={{
@@ -229,14 +230,16 @@ export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeaki
           </Box>
         </Box>
       )}
-      <ChatInput
-        onSend={sendMessage} disabled={isProcessing} voiceMuted={voiceMuted}
-        onToggleVoice={() => { setVoiceMuted(!voiceMuted); if (audioRef.current && !voiceMuted) audioRef.current.pause(); }}
-        digitalTwinMode={digitalTwinMode}
-        onListeningChange={onListeningChange}
-        onToggleDigitalTwin={onToggleDigitalTwin}
-        onMicActivated={onMicActivated}
-      />
+      {!digitalTwinMode && (
+        <ChatInput
+          onSend={sendMessage} disabled={isProcessing} voiceMuted={voiceMuted}
+          onToggleVoice={() => { setVoiceMuted(!voiceMuted); if (audioRef.current && !voiceMuted) audioRef.current.pause(); }}
+          digitalTwinMode={digitalTwinMode}
+          onListeningChange={onListeningChange}
+          onToggleDigitalTwin={onToggleDigitalTwin}
+          onMicActivated={onMicActivated}
+        />
+      )}
     </Box>
   );
 }

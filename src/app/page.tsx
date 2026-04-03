@@ -17,6 +17,8 @@ export default function Home() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [showMicToast, setShowMicToast] = useState(false);
+  const [voiceMuted, setVoiceMuted] = useState(true);
+  const [micActive, setMicActive] = useState(false);
 
   useEffect(() => {
     const email = sessionStorage.getItem('raybot_user_email');
@@ -40,11 +42,17 @@ export default function Home() {
     } else {
       setSidebarOpen(true);
       setDigitalTwinMode(false);
+      setMicActive(false);
     }
   }, [digitalTwinMode]);
 
   const handleMicActivated = useCallback(() => {
     setShowMicToast(true);
+    setMicActive(true);
+  }, []);
+
+  const toggleMicFromToolbar = useCallback(() => {
+    setMicActive((prev) => !prev);
   }, []);
 
   const downloadTranscript = useCallback(() => {
@@ -103,7 +111,7 @@ export default function Home() {
 
         {/* Main content area */}
         <Box sx={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-          {/* Avatar stage — expands to fill when digital twin mode is active */}
+          {/* Avatar stage */}
           <Box
             sx={{
               flex: digitalTwinMode ? 1 : 0,
@@ -114,10 +122,18 @@ export default function Home() {
               display: 'flex',
             }}
           >
-            <AvatarStage isSpeaking={isSpeaking} isListening={isListening} />
+            <AvatarStage
+              isSpeaking={isSpeaking}
+              isListening={isListening}
+              voiceMuted={voiceMuted}
+              onToggleVoice={() => setVoiceMuted(!voiceMuted)}
+              onToggleMic={toggleMicFromToolbar}
+              onToggleDigitalTwin={toggleDigitalTwin}
+              micActive={micActive}
+            />
           </Box>
 
-          {/* Chat panel — full width normally, narrow transcript strip in digital twin mode */}
+          {/* Chat panel */}
           <Box
             sx={{
               width: digitalTwinMode ? 320 : '100%',

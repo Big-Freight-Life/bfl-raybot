@@ -1,14 +1,25 @@
 'use client';
 
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, IconButton, Tooltip } from '@mui/material';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import MicIcon from '@mui/icons-material/Mic';
+import MicOffIcon from '@mui/icons-material/MicOff';
+import PsychologyIcon from '@mui/icons-material/Psychology';
+import ChatIcon from '@mui/icons-material/Chat';
 import { colors } from '@/theme/tokens';
 
 interface AvatarStageProps {
   isSpeaking: boolean;
   isListening: boolean;
+  voiceMuted: boolean;
+  onToggleVoice: () => void;
+  onToggleMic: () => void;
+  onToggleDigitalTwin: () => void;
+  micActive: boolean;
 }
 
-export default function AvatarStage({ isSpeaking, isListening }: AvatarStageProps) {
+export default function AvatarStage({ isSpeaking, isListening, voiceMuted, onToggleVoice, onToggleMic, onToggleDigitalTwin, micActive }: AvatarStageProps) {
   return (
     <Box
       sx={{
@@ -133,6 +144,51 @@ export default function AvatarStage({ isSpeaking, isListening }: AvatarStageProp
       >
         {isSpeaking ? 'Raybot is speaking...' : isListening ? 'Listening...' : 'HeyGen Avatar — Coming Soon'}
       </Typography>
+
+      {/* Toolbar */}
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: 24,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          display: 'flex',
+          gap: 1,
+          p: 1,
+          borderRadius: '16px',
+          bgcolor: 'rgba(255,255,255,0.08)',
+          backdropFilter: 'blur(8px)',
+          border: '1px solid rgba(255,255,255,0.1)',
+        }}
+      >
+        <Tooltip title={voiceMuted ? 'Unmute voice' : 'Mute voice'}>
+          <IconButton size="small" onClick={onToggleVoice} sx={{ color: 'rgba(255,255,255,0.7)', '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' } }}>
+            {voiceMuted ? <VolumeOffIcon sx={{ fontSize: 22 }} /> : <VolumeUpIcon sx={{ fontSize: 22 }} />}
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={micActive ? 'Mute mic' : 'Unmute mic'}>
+          <IconButton
+            size="small"
+            onClick={onToggleMic}
+            sx={{
+              color: micActive ? colors.primary.main : 'rgba(255,255,255,0.7)',
+              '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' },
+              animation: micActive ? 'micGlow 2s ease-in-out infinite' : 'none',
+              '@keyframes micGlow': {
+                '0%, 100%': { boxShadow: 'none' },
+                '50%': { boxShadow: '0 0 12px rgba(20,184,166,0.3)' },
+              },
+            }}
+          >
+            {micActive ? <MicIcon sx={{ fontSize: 22 }} /> : <MicOffIcon sx={{ fontSize: 22 }} />}
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Switch to chat">
+          <IconButton size="small" onClick={onToggleDigitalTwin} sx={{ color: 'rgba(255,255,255,0.7)', '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' } }}>
+            <ChatIcon sx={{ fontSize: 22 }} />
+          </IconButton>
+        </Tooltip>
+      </Box>
     </Box>
   );
 }
