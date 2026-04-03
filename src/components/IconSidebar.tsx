@@ -1,10 +1,16 @@
 'use client';
 
-import { Box, IconButton, Tooltip } from '@mui/material';
+import { Box, IconButton, Tooltip, Typography } from '@mui/material';
 import EditNoteIcon from '@mui/icons-material/EditNote';
-import SearchIcon from '@mui/icons-material/Search';
+import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
 import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined';
 import Image from 'next/image';
+
+const caseStudies = [
+  { title: 'Hyland OnBase Integration', href: 'https://bfl.design/hyland-onbase-salesforce-integration/' },
+  { title: 'Hyland for Workday', href: 'https://bfl.design/works/case-studies/hyland-for-workday-integration/' },
+  { title: 'Salesforce Migration', href: 'https://bfl.design/works/case-studies/' },
+];
 
 interface IconSidebarProps {
   open: boolean;
@@ -26,7 +32,7 @@ export default function IconSidebar({ open, onToggle }: IconSidebarProps) {
         overflow: 'hidden',
       }}
     >
-      {/* Top row — aligned with title bar height */}
+      {/* Top row */}
       <Box
         sx={{
           display: 'flex',
@@ -87,13 +93,55 @@ export default function IconSidebar({ open, onToggle }: IconSidebarProps) {
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="Search chats" placement="right" disableHoverListener={open}>
-          <IconButton size="small" sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' }, borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1 }}>
-            <SearchIcon sx={{ fontSize: 20 }} />
-            {open && <Box component="span" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>Search</Box>}
+        <Tooltip title="Process" placement="right" disableHoverListener={open}>
+          <IconButton
+            size="small"
+            component="a"
+            href="https://bfl.design/process"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' }, borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1 }}
+          >
+            <AccountTreeOutlinedIcon sx={{ fontSize: 20 }} />
+            {open && <Box component="span" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>Process</Box>}
           </IconButton>
         </Tooltip>
       </Box>
+
+      {/* Case Studies section — only when expanded */}
+      {open && (
+        <Box sx={{ px: 1.5, mt: 2 }}>
+          <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 1, px: 0.5 }}>
+            Case Studies
+          </Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+            {caseStudies.map((study) => (
+              <Box
+                key={study.title}
+                component="a"
+                href={study.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  display: 'block',
+                  px: 1.5,
+                  py: 1,
+                  borderRadius: '8px',
+                  fontSize: '0.8125rem',
+                  color: 'text.secondary',
+                  textDecoration: 'none',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  '&:hover': { bgcolor: 'action.hover', color: 'text.primary' },
+                }}
+              >
+                {study.title}
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 }
