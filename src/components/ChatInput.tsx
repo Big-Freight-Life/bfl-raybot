@@ -128,7 +128,7 @@ export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice,
                 bgcolor: digitalTwinMode ? 'rgba(17,118,128,0.08)' : 'transparent',
               }}
             >
-              {digitalTwinMode ? <ChatIcon sx={{ fontSize: 20 }} /> : <PsychologyIcon sx={{ fontSize: 20 }} />}
+              {digitalTwinMode ? <ChatIcon sx={{ fontSize: 20 }} /> : <PsychologyIcon sx={{ fontSize: 26 }} />}
             </IconButton>
           </Tooltip>
         )}
