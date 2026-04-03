@@ -6,7 +6,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import DownloadIcon from '@mui/icons-material/Download';
 import IconSidebar from '@/components/IconSidebar';
 import ChatPanel from '@/components/ChatPanel';
-import DigitalTwinAvatar from '@/components/DigitalTwinAvatar';
+import AvatarStage from '@/components/AvatarStage';
 import EmailGate from '@/components/EmailGate';
 
 export default function Home() {
@@ -101,20 +101,42 @@ export default function Home() {
           </Box>
         </Box>
 
-        {/* Avatar (digital twin mode) */}
-        {digitalTwinMode && (
-          <DigitalTwinAvatar isSpeaking={isSpeaking} isListening={isListening} />
-        )}
+        {/* Main content area */}
+        <Box sx={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+          {/* Avatar stage — slides in from left when digital twin mode is active */}
+          <Box
+            sx={{
+              width: digitalTwinMode ? '60%' : '0%',
+              opacity: digitalTwinMode ? 1 : 0,
+              transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease',
+              overflow: 'hidden',
+              flexShrink: 0,
+              display: 'flex',
+            }}
+          >
+            <AvatarStage isSpeaking={isSpeaking} isListening={isListening} />
+          </Box>
 
-        {/* Chat */}
-        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflow: 'hidden' }}>
-          <ChatPanel
-            digitalTwinMode={digitalTwinMode}
-            onSpeakingChange={setIsSpeaking}
-            onListeningChange={setIsListening}
-            onToggleDigitalTwin={toggleDigitalTwin}
-            onMicActivated={handleMicActivated}
-          />
+          {/* Chat panel — full width normally, slides to right panel in digital twin mode */}
+          <Box
+            sx={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              minWidth: 0,
+              borderLeft: digitalTwinMode ? 1 : 0,
+              borderColor: 'divider',
+              transition: 'border-left 0.4s ease',
+            }}
+          >
+            <ChatPanel
+              digitalTwinMode={digitalTwinMode}
+              onSpeakingChange={setIsSpeaking}
+              onListeningChange={setIsListening}
+              onToggleDigitalTwin={toggleDigitalTwin}
+              onMicActivated={handleMicActivated}
+            />
+          </Box>
         </Box>
       </Box>
 
