@@ -3,7 +3,8 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Box, Typography, Button, IconButton, Tooltip, Snackbar, Alert } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import DownloadIcon from '@mui/icons-material/Download';
+import ShareIcon from '@mui/icons-material/Share';
+import PsychologyIcon from '@mui/icons-material/Psychology';
 import IconSidebar from '@/components/IconSidebar';
 import ChatPanel from '@/components/ChatPanel';
 import AvatarStage from '@/components/AvatarStage';
@@ -55,7 +56,7 @@ export default function Home() {
     setMicActive((prev) => !prev);
   }, []);
 
-  const downloadTranscript = useCallback(() => {
+  const shareTranscript = useCallback(() => {
     try {
       const raw = sessionStorage.getItem('raybot_history');
       if (!raw) return;
@@ -67,13 +68,9 @@ export default function Home() {
           return `${label}${via}: ${m.content}`;
         })
         .join('\n\n');
-      const blob = new Blob([text], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `raybot-transcript-${new Date().toISOString().slice(0, 10)}.txt`;
-      a.click();
-      URL.revokeObjectURL(url);
+      const subject = `Raybot Transcript — ${new Date().toLocaleDateString()}`;
+      const email = sessionStorage.getItem('raybot_user_email') || '';
+      window.open(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`);
     } catch { /* ignore */ }
   }, []);
 
@@ -90,9 +87,21 @@ export default function Home() {
             <Box component="span" sx={{ color: '#117680' }}>ray</Box>bot
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Tooltip title="Download transcript">
-              <IconButton size="small" onClick={downloadTranscript} sx={{ color: 'text.secondary' }}>
-                <DownloadIcon sx={{ fontSize: 18 }} />
+            <Tooltip title={digitalTwinMode ? 'Switch to chat' : 'Digital Twin'}>
+              <IconButton
+                size="small"
+                onClick={toggleDigitalTwin}
+                sx={{
+                  color: digitalTwinMode ? '#117680' : 'text.secondary',
+                  bgcolor: digitalTwinMode ? 'rgba(17,118,128,0.08)' : 'transparent',
+                }}
+              >
+                <PsychologyIcon sx={{ fontSize: 22 }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Email transcript">
+              <IconButton size="small" onClick={shareTranscript} sx={{ color: 'text.secondary' }}>
+                <ShareIcon sx={{ fontSize: 18 }} />
               </IconButton>
             </Tooltip>
             <Button
