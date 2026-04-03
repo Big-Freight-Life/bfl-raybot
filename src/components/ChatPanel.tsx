@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Box, Typography, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 import LeadCaptureForm from './LeadCaptureForm';
@@ -167,8 +168,10 @@ export default function ChatPanel({ onDiagramDetected }: ChatPanelProps) {
       <Box sx={{ flex: 1, overflowY: 'auto', py: 2, px: { xs: 2, md: 3 }, scrollbarWidth: 'thin', maxWidth: 768, mx: 'auto', width: '100%' }}>
         {messages.length === 0 && (
           <Box sx={{ textAlign: 'center', pt: 8, px: 3, color: 'text.secondary' }}>
-            <Box sx={{ fontSize: '2rem', mb: 2 }}>&#x1F44B;</Box>
-            Hey! I&#39;m Ray. Ask me about system design, AI architecture, or how we work.
+            <ChatBubbleOutlineIcon sx={{ fontSize: 40, mb: 2, color: 'text.disabled' }} />
+            <Typography variant="body1">
+              Hey! I&#39;m Raybot. Ask me about system design, AI architecture, or how we work.
+            </Typography>
           </Box>
         )}
         {messages.map((msg, i) => (
