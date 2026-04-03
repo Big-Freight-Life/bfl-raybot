@@ -6,7 +6,7 @@ import SendIcon from '@mui/icons-material/Send';
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import ClearIcon from '@mui/icons-material/Clear';
-import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import GraphicEqIcon from '@mui/icons-material/GraphicEq';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import { colors } from '@/theme/tokens';
 
@@ -110,11 +110,18 @@ export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice,
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderTop: 1, borderColor: 'divider', bgcolor: 'background.paper', px: 2, pt: 2, pb: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1, maxWidth: 600, width: '100%' }}>
       <Tooltip title={voiceMuted ? 'Unmute voice' : 'Mute voice'}>
-        <IconButton size="small" onClick={onToggleVoice} sx={{ color: 'text.secondary', mb: 0.5 }}>
-          {voiceMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
+        <IconButton size="small" onClick={onToggleVoice} sx={{ color: voiceMuted ? 'text.secondary' : colors.primary.main, mb: 0.5 }}>
+          {voiceMuted ? <VolumeOffIcon /> : <GraphicEqIcon />}
         </IconButton>
       </Tooltip>
       <Box sx={{ flex: 1, display: 'flex', alignItems: 'flex-end', border: 1, borderColor: 'divider', borderRadius: '12px', px: 1.5, py: 0.5, bgcolor: 'background.default', '&:focus-within': { borderColor: colors.primary.main } }}>
+        {speechSupported && (
+          <Tooltip title={isListening ? 'Stop listening' : 'Dictate'}>
+            <IconButton size="small" onClick={toggleMic} sx={{ color: isListening ? colors.primary.main : 'text.secondary', mr: 0.5, animation: isListening ? 'micPulse 1.5s ease-in-out infinite' : 'none', '@keyframes micPulse': { '0%, 100%': { transform: 'scale(1)' }, '50%': { transform: 'scale(1.15)' } } }}>
+              {isListening ? <MicOffIcon sx={{ fontSize: 20 }} /> : <MicIcon sx={{ fontSize: 20 }} />}
+            </IconButton>
+          </Tooltip>
+        )}
         <Box
           component="textarea" ref={textareaRef} value={text} onChange={handleInput} onKeyDown={handleKeyDown}
           placeholder='Try "design an agent workflow"' rows={1} disabled={disabled}
@@ -126,13 +133,6 @@ export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice,
           </IconButton>
         )}
       </Box>
-      {speechSupported && (
-        <Tooltip title={isListening ? 'Stop listening' : 'Voice input'}>
-          <IconButton size="small" onClick={toggleMic} sx={{ color: isListening ? colors.primary.main : 'text.secondary', mb: 0.5, animation: isListening ? 'micPulse 1.5s ease-in-out infinite' : 'none', '@keyframes micPulse': { '0%, 100%': { transform: 'scale(1)' }, '50%': { transform: 'scale(1.15)' } } }}>
-            {isListening ? <MicOffIcon /> : <MicIcon />}
-          </IconButton>
-        </Tooltip>
-      )}
       <IconButton size="small" onClick={handleSubmit} disabled={!text.trim() || disabled}
         sx={{ bgcolor: colors.primary.main, color: '#fff', mb: 0.5, '&:hover': { bgcolor: colors.primary.dark }, '&.Mui-disabled': { bgcolor: 'action.disabledBackground', color: 'action.disabled' } }}>
         <SendIcon sx={{ fontSize: 18 }} />
