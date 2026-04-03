@@ -5,7 +5,6 @@ import EditNoteIcon from '@mui/icons-material/EditNote';
 import SearchIcon from '@mui/icons-material/Search';
 import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined';
 import Image from 'next/image';
-import { colors } from '@/theme/tokens';
 
 interface IconSidebarProps {
   open: boolean;
@@ -94,30 +93,6 @@ export default function IconSidebar({ open, onToggle }: IconSidebarProps) {
         </Tooltip>
       </Box>
 
-      {/* Spacer */}
-      <Box sx={{ flex: 1 }} />
-
-      {/* User avatar at bottom */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 1.5, justifyContent: open ? 'flex-start' : 'center' }}>
-        <Box
-          sx={{
-            width: 28,
-            height: 28,
-            borderRadius: '50%',
-            bgcolor: colors.primary.main,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-            fontSize: '0.65rem',
-            fontWeight: 700,
-            flexShrink: 0,
-          }}
-        >
-          RB
-        </Box>
-        {open && <Box sx={{ fontSize: '0.8125rem', color: 'text.primary', fontWeight: 500, whiteSpace: 'nowrap' }}>Ray Butler</Box>}
-      </Box>
     </Box>
   );
 }
