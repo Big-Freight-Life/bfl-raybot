@@ -68,7 +68,8 @@ export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice 
   };
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1, p: 2, borderTop: 1, borderColor: 'divider', bgcolor: 'background.paper', maxWidth: 600, mx: 'auto', width: '100%' }}>
+    <Box sx={{ display: 'flex', justifyContent: 'center', borderTop: 1, borderColor: 'divider', bgcolor: 'background.paper', p: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1, maxWidth: 600, width: '100%' }}>
       <Tooltip title={voiceMuted ? 'Unmute voice' : 'Mute voice'}>
         <IconButton size="small" onClick={onToggleVoice} sx={{ color: 'text.secondary', mb: 0.5 }}>
           {voiceMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
@@ -97,6 +98,7 @@ export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice 
         sx={{ bgcolor: colors.primary.main, color: '#fff', mb: 0.5, '&:hover': { bgcolor: colors.primary.dark }, '&.Mui-disabled': { bgcolor: 'action.disabledBackground', color: 'action.disabled' } }}>
         <SendIcon sx={{ fontSize: 18 }} />
       </IconButton>
+      </Box>
     </Box>
   );
 }
