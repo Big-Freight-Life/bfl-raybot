@@ -103,30 +103,32 @@ export default function Home() {
 
         {/* Main content area */}
         <Box sx={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-          {/* Avatar stage — slides in from left when digital twin mode is active */}
+          {/* Avatar stage — expands to fill when digital twin mode is active */}
           <Box
             sx={{
-              width: digitalTwinMode ? '60%' : '0%',
+              flex: digitalTwinMode ? 1 : 0,
+              width: digitalTwinMode ? 'auto' : 0,
               opacity: digitalTwinMode ? 1 : 0,
-              transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease',
+              transition: 'flex 0.4s cubic-bezier(0.4, 0, 0.2, 1), width 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease',
               overflow: 'hidden',
-              flexShrink: 0,
               display: 'flex',
             }}
           >
             <AvatarStage isSpeaking={isSpeaking} isListening={isListening} />
           </Box>
 
-          {/* Chat panel — full width normally, slides to right panel in digital twin mode */}
+          {/* Chat panel — full width normally, narrow transcript strip in digital twin mode */}
           <Box
             sx={{
-              flex: 1,
+              width: digitalTwinMode ? 320 : '100%',
+              flexShrink: 0,
               display: 'flex',
               flexDirection: 'column',
               minWidth: 0,
               borderLeft: digitalTwinMode ? 1 : 0,
               borderColor: 'divider',
-              transition: 'border-left 0.4s ease',
+              transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-left 0.4s ease',
+              overflow: 'hidden',
             }}
           >
             <ChatPanel
