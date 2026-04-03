@@ -157,7 +157,7 @@ export default function ChatPanel({ onDiagramDetected }: ChatPanelProps) {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Box sx={{ flex: 1, overflowY: 'auto', py: 2, scrollbarWidth: 'thin' }}>
+      <Box sx={{ flex: 1, overflowY: 'auto', py: 2, px: { xs: 2, md: '100px' }, scrollbarWidth: 'thin' }}>
         {messages.length === 0 && (
           <Box sx={{ textAlign: 'center', pt: 8, px: 3, color: 'text.secondary' }}>
             <Box sx={{ fontSize: '2rem', mb: 2 }}>&#x1F44B;</Box>
