@@ -11,7 +11,7 @@ import EmailGate from '@/components/EmailGate';
 import { colors } from '@/theme/tokens';
 
 export default function Home() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [verified, setVerified] = useState<boolean | null>(null);
   const [userEmail, setUserEmail] = useState('');
 
@@ -61,8 +61,8 @@ export default function Home() {
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         {/* Top bar */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, height: 49, borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}>
-          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1rem' }}>
-            <Box component="span" sx={{ color: colors.primary.main }}>ray</Box>bot
+          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.25rem' }}>
+            <Box component="span" sx={{ color: '#117680' }}>ray</Box>bot
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Tooltip title="Download transcript">
