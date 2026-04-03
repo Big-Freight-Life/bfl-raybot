@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateChatResponse } from '@/lib/gemini';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { ChatMessage } from '@/lib/knowledge';
+import { logMessage } from '@/lib/chat-logger';
 
 function sanitize(text: string): string {
   return text.replace(/<[^>]*>/g, '').trim().slice(0, 2000);
@@ -21,6 +22,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const messages: ChatMessage[] = body.messages ?? [];
+    const sessionId: string = body.sessionId ?? 'unknown';
 
     if (!messages.length || !messages[messages.length - 1]?.content) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
@@ -28,10 +30,14 @@ export async function POST(request: NextRequest) {
 
     const sanitized = [...messages];
     const last = sanitized[sanitized.length - 1];
-    sanitized[sanitized.length - 1] = { ...last, content: sanitize(last.content) };
+    const userMessage = sanitize(last.content);
+    sanitized[sanitized.length - 1] = { ...last, content: userMessage };
 
     const trimmed = sanitized.slice(-50);
     const response = await generateChatResponse(trimmed);
+
+    // Log conversation to Vercel KV (non-blocking)
+    logMessage(sessionId, ip, userMessage, response).catch(() => {});
 
     return NextResponse.json(
       { response, handoff: /send me an email|book a call/i.test(response) },

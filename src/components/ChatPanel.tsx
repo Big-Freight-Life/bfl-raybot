@@ -56,6 +56,17 @@ export default function ChatPanel({ onDiagramDetected }: ChatPanelProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const loadedRef = useRef(false);
+  const sessionIdRef = useRef<string>('');
+
+  // Generate session ID on mount
+  useEffect(() => {
+    let id = sessionStorage.getItem('raybot_session_id');
+    if (!id) {
+      id = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+      sessionStorage.setItem('raybot_session_id', id);
+    }
+    sessionIdRef.current = id;
+  }, []);
 
   useEffect(() => {
     if (loadedRef.current) return;
@@ -103,7 +114,7 @@ export default function ChatPanel({ onDiagramDetected }: ChatPanelProps) {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages }),
+        body: JSON.stringify({ messages: apiMessages, sessionId: sessionIdRef.current }),
       });
       if (!res.ok) {
         const err = await res.json();
