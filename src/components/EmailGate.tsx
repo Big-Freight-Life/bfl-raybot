@@ -101,11 +101,12 @@ export default function EmailGate({ onVerified }: EmailGateProps) {
           {checking ? 'Checking...' : 'Start Chatting'}
         </Button>
 
-        <Typography variant="caption" sx={{ display: 'block', mt: 3, color: 'text.secondary' }}>
+        <Typography variant="caption" sx={{ display: 'block', mt: 3, color: 'text.secondary', lineHeight: 1.5 }}>
           By continuing, you agree to our{' '}
           <Box component="a" href="https://bfl.design/legal" target="_blank" rel="noopener noreferrer" sx={{ color: 'text.secondary', textDecoration: 'underline' }}>Terms</Box>
           {' '}and{' '}
           <Box component="a" href="https://bfl.design/legal" target="_blank" rel="noopener noreferrer" sx={{ color: 'text.secondary', textDecoration: 'underline' }}>Privacy Policy</Box>.
+          {' '}Conversations are logged and automatically deleted after 30 days.
         </Typography>
       </Paper>
     </Box>

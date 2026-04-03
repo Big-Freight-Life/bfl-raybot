@@ -208,7 +208,7 @@ export default function ChatPanel({ onDiagramDetected }: ChatPanelProps) {
                 <Box component="a" href="https://bfl.design/legal" target="_blank" rel="noopener noreferrer" sx={{ color: 'text.primary', textDecoration: 'underline' }}>Privacy Policy</Box>.
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6 }}>
-                Don&#39;t share sensitive info. Chats are not stored on our servers.
+                Don&#39;t share sensitive info. Conversations are logged and automatically deleted after 30 days.
               </Typography>
             </Box>
             <IconButton size="small" onClick={() => setShowDisclaimer(false)} sx={{ color: 'text.secondary', mt: -0.5 }}>
