@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Box } from '@mui/material';
+import { Box, Typography, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 import LeadCaptureForm from './LeadCaptureForm';
@@ -51,6 +52,7 @@ export default function ChatPanel({ onDiagramDetected }: ChatPanelProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
   const [voiceMuted, setVoiceMuted] = useState(true);
+  const [showDisclaimer, setShowDisclaimer] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const loadedRef = useRef(false);
@@ -171,6 +173,39 @@ export default function ChatPanel({ onDiagramDetected }: ChatPanelProps) {
         )}
         <div ref={messagesEndRef} />
       </Box>
+      {/* Disclaimer banner */}
+      {showDisclaimer && (
+        <Box sx={{ maxWidth: 768, mx: 'auto', width: '100%', px: { xs: 2, md: 3 } }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 1.5,
+              p: 2,
+              border: 1,
+              borderColor: 'divider',
+              borderRadius: '12px',
+              bgcolor: 'background.paper',
+              mb: 1,
+            }}
+          >
+            <Box sx={{ flex: 1 }}>
+              <Typography variant="body2" sx={{ color: 'text.primary', lineHeight: 1.6 }}>
+                By messaging Raybot, an AI chatbot, you agree to our{' '}
+                <Box component="a" href="https://bfl.design/legal" target="_blank" rel="noopener noreferrer" sx={{ color: 'text.primary', textDecoration: 'underline' }}>Terms</Box>
+                {' '}and have read our{' '}
+                <Box component="a" href="https://bfl.design/legal" target="_blank" rel="noopener noreferrer" sx={{ color: 'text.primary', textDecoration: 'underline' }}>Privacy Policy</Box>.
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6 }}>
+                Don&#39;t share sensitive info. Chats are not stored on our servers.
+              </Typography>
+            </Box>
+            <IconButton size="small" onClick={() => setShowDisclaimer(false)} sx={{ color: 'text.secondary', mt: -0.5 }}>
+              <CloseIcon sx={{ fontSize: 18 }} />
+            </IconButton>
+          </Box>
+        </Box>
+      )}
       <ChatInput
         onSend={sendMessage} disabled={isProcessing} voiceMuted={voiceMuted}
         onToggleVoice={() => { setVoiceMuted(!voiceMuted); if (audioRef.current && !voiceMuted) audioRef.current.pause(); }}
