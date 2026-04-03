@@ -3,7 +3,7 @@
 import { Box, IconButton, Tooltip } from '@mui/material';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import SearchIcon from '@mui/icons-material/Search';
-import MenuIcon from '@mui/icons-material/Menu';
+import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined';
 import Image from 'next/image';
 import { colors } from '@/theme/tokens';
 
@@ -58,7 +58,7 @@ export default function IconSidebar({ open, onToggle }: IconSidebarProps) {
         </Box>
         {open && (
           <IconButton size="small" onClick={onToggle} sx={{ color: 'text.secondary' }}>
-            <MenuIcon sx={{ fontSize: 20 }} />
+            <ViewSidebarOutlinedIcon sx={{ fontSize: 20 }} />
           </IconButton>
         )}
       </Box>
@@ -68,7 +68,7 @@ export default function IconSidebar({ open, onToggle }: IconSidebarProps) {
         {!open && (
           <Tooltip title="Open sidebar" placement="right">
             <IconButton size="small" onClick={onToggle} sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' } }}>
-              <MenuIcon sx={{ fontSize: 20 }} />
+              <ViewSidebarOutlinedIcon sx={{ fontSize: 20 }} />
             </IconButton>
           </Tooltip>
         )}
