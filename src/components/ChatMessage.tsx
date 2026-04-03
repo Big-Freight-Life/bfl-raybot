@@ -5,6 +5,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import ReplayIcon from '@mui/icons-material/Replay';
+import DownloadIcon from '@mui/icons-material/Download';
 import { colors } from '@/theme/tokens';
 import ThinkingDots from './ThinkingDots';
 import InlineDiagram from './InlineDiagram';
@@ -56,6 +57,16 @@ export default function ChatMessage({ role, content, isThinking, isTyping, index
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleDownload = () => {
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `raybot-message-${index}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const handleFeedback = async (type: 'helpful' | 'not_helpful') => {
     try {
       await fetch('/api/feedback', {
@@ -99,6 +110,11 @@ export default function ChatMessage({ role, content, isThinking, isTyping, index
             <Tooltip title={copied ? 'Copied!' : 'Copy'}>
               <IconButton size="small" onClick={handleCopy} sx={{ color: 'text.secondary' }}>
                 <ContentCopyIcon sx={{ fontSize: 16 }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Download">
+              <IconButton size="small" onClick={handleDownload} sx={{ color: 'text.secondary' }}>
+                <DownloadIcon sx={{ fontSize: 16 }} />
               </IconButton>
             </Tooltip>
             {onRegenerate && (
