@@ -14,10 +14,14 @@ export interface Message {
   content: string;
   isThinking?: boolean;
   isTyping?: boolean;
+  source?: 'voice' | 'text';
 }
 
 interface ChatPanelProps {
   onDiagramDetected?: (code: string) => void;
+  digitalTwinMode?: boolean;
+  onSpeakingChange?: (speaking: boolean) => void;
+  onListeningChange?: (listening: boolean) => void;
 }
 
 const STORAGE_KEY = 'raybot_history';
@@ -48,7 +52,7 @@ function stripMermaidBlock(text: string): string {
   return text.replace(/```mermaid\n[\s\S]*?```/g, '').trim();
 }
 
-export default function ChatPanel({ onDiagramDetected }: ChatPanelProps) {
+export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeakingChange, onListeningChange }: ChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
@@ -81,14 +85,15 @@ export default function ChatPanel({ onDiagramDetected }: ChatPanelProps) {
   }, [messages]);
 
   const playTTS = useCallback(async (text: string) => {
-    if (voiceMuted) return;
+    if (voiceMuted && !digitalTwinMode) return;
     try {
+      onSpeakingChange?.(true);
       const res = await fetch('/api/tts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: stripMermaidBlock(text) }),
       });
-      if (!res.ok) return;
+      if (!res.ok) { onSpeakingChange?.(false); return; }
       const { audio } = await res.json();
       const audioBlob = Uint8Array.from(atob(audio), (c) => c.charCodeAt(0));
       const blob = new Blob([audioBlob], { type: 'audio/mpeg' });
@@ -96,12 +101,13 @@ export default function ChatPanel({ onDiagramDetected }: ChatPanelProps) {
       if (audioRef.current) audioRef.current.pause();
       const player = new Audio(url);
       audioRef.current = player;
+      player.onended = () => onSpeakingChange?.(false);
       player.play();
-    } catch { /* TTS failure non-critical */ }
-  }, [voiceMuted]);
+    } catch { onSpeakingChange?.(false); }
+  }, [voiceMuted, digitalTwinMode, onSpeakingChange]);
 
-  const sendMessage = useCallback(async (text: string) => {
-    const userMsg: Message = { role: 'user', content: text };
+  const sendMessage = useCallback(async (text: string, source: 'voice' | 'text' = 'text') => {
+    const userMsg: Message = { role: 'user', content: text, source };
     const thinkingMsg: Message = { role: 'bot', content: '', isThinking: true };
     setMessages((prev) => [...prev, userMsg, thinkingMsg]);
     setIsProcessing(true);
@@ -178,6 +184,7 @@ export default function ChatPanel({ onDiagramDetected }: ChatPanelProps) {
           <ChatMessage
             key={i} role={msg.role} content={msg.content}
             isThinking={msg.isThinking} isTyping={msg.isTyping} index={i}
+            source={msg.source}
           />
         ))}
         {showLeadForm && (
@@ -223,6 +230,8 @@ export default function ChatPanel({ onDiagramDetected }: ChatPanelProps) {
       <ChatInput
         onSend={sendMessage} disabled={isProcessing} voiceMuted={voiceMuted}
         onToggleVoice={() => { setVoiceMuted(!voiceMuted); if (audioRef.current && !voiceMuted) audioRef.current.pause(); }}
+        digitalTwinMode={digitalTwinMode}
+        onListeningChange={onListeningChange}
       />
     </Box>
   );

@@ -11,13 +11,15 @@ import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import { colors } from '@/theme/tokens';
 
 interface ChatInputProps {
-  onSend: (message: string) => void;
+  onSend: (message: string, source?: 'voice' | 'text') => void;
   disabled?: boolean;
   voiceMuted: boolean;
   onToggleVoice: () => void;
+  digitalTwinMode?: boolean;
+  onListeningChange?: (listening: boolean) => void;
 }
 
-export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice }: ChatInputProps) {
+export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice, digitalTwinMode, onListeningChange }: ChatInputProps) {
   const [text, setText] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
@@ -32,7 +34,7 @@ export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice 
   const handleSubmit = useCallback(() => {
     const trimmed = text.trim();
     if (!trimmed || disabled) return;
-    onSend(trimmed);
+    onSend(trimmed, 'text');
     setText('');
     if (textareaRef.current) textareaRef.current.style.height = 'auto';
   }, [text, disabled, onSend]);
@@ -48,24 +50,58 @@ export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice 
     el.style.height = Math.min(el.scrollHeight, 120) + 'px';
   };
 
-  const toggleMic = () => {
-    if (isListening) { recognitionRef.current?.stop(); setIsListening(false); return; }
+  const toggleMic = useCallback(() => {
+    if (isListening) { recognitionRef.current?.stop(); setIsListening(false); onListeningChange?.(false); return; }
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) return;
     const recognition = new SR();
-    recognition.continuous = false;
+    recognition.continuous = digitalTwinMode || false;
     recognition.interimResults = true;
     recognition.lang = 'en-US';
+    let finalTranscript = '';
     recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const transcript = Array.from(event.results).map((r) => r[0].transcript).join('');
-      setText(transcript);
+      let interim = '';
+      for (let i = 0; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        } else {
+          interim += event.results[i][0].transcript;
+        }
+      }
+      setText(finalTranscript + interim);
+      // In digital twin mode, auto-send when we get a final result
+      if (digitalTwinMode && finalTranscript.trim() && event.results[event.results.length - 1].isFinal) {
+        const toSend = finalTranscript.trim();
+        finalTranscript = '';
+        setText('');
+        onSend(toSend, 'voice');
+      }
     };
-    recognition.onend = () => setIsListening(false);
-    recognition.onerror = () => setIsListening(false);
+    recognition.onend = () => {
+      setIsListening(false);
+      onListeningChange?.(false);
+      // In digital twin mode, restart listening after a pause
+      if (digitalTwinMode && !disabled) {
+        setTimeout(() => {
+          if (recognitionRef.current) {
+            try { recognition.start(); setIsListening(true); onListeningChange?.(true); } catch {}
+          }
+        }, 500);
+      }
+    };
+    recognition.onerror = () => { setIsListening(false); onListeningChange?.(false); };
     recognitionRef.current = recognition;
     recognition.start();
     setIsListening(true);
-  };
+    onListeningChange?.(true);
+  }, [isListening, digitalTwinMode, disabled, onSend, onListeningChange]);
+
+  // Auto-start mic in digital twin mode
+  useEffect(() => {
+    if (digitalTwinMode && speechSupported && !isListening) {
+      toggleMic();
+    }
+  }, [digitalTwinMode]); // intentionally limited deps — only trigger on mode change
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderTop: 1, borderColor: 'divider', bgcolor: 'background.paper', px: 2, pt: 2, pb: 1 }}>

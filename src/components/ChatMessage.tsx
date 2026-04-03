@@ -43,9 +43,10 @@ interface ChatMessageProps {
   isThinking?: boolean;
   isTyping?: boolean;
   index: number;
+  source?: 'voice' | 'text';
 }
 
-export default function ChatMessage({ role, content, isThinking, isTyping, index }: ChatMessageProps) {
+export default function ChatMessage({ role, content, isThinking, isTyping, index, source }: ChatMessageProps) {
   const [copied, setCopied] = useState(false);
   const isUser = role === 'user';
 
@@ -78,6 +79,11 @@ export default function ChatMessage({ role, content, isThinking, isTyping, index
   return (
     <Box sx={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start', mb: 2, px: 1 }}>
       <Box sx={{ maxWidth: '85%' }}>
+        {source && (
+          <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5, px: 1, color: 'text.disabled', fontSize: '0.65rem', justifyContent: isUser ? 'flex-end' : 'flex-start' }}>
+            {source === 'voice' ? '🎙 Voice' : '⌨ Text'}
+          </Typography>
+        )}
         <Box
           sx={{
             px: 2.5, py: 1.5,
