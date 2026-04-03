@@ -9,7 +9,6 @@ interface EmailGateProps {
 }
 
 export default function EmailGate({ onVerified }: EmailGateProps) {
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [checking, setChecking] = useState(false);
@@ -25,14 +24,13 @@ export default function EmailGate({ onVerified }: EmailGateProps) {
       const res = await fetch('/api/verify-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name }),
+        body: JSON.stringify({ email }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Validation failed');
 
       sessionStorage.setItem('raybot_user_email', email);
-      sessionStorage.setItem('raybot_user_name', name);
-      onVerified(email, name);
+      onVerified(email, '');
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -72,18 +70,9 @@ export default function EmailGate({ onVerified }: EmailGateProps) {
           <Box component="span" sx={{ color: colors.primary.main }}>ray</Box>bot
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          Enter your email to start chatting with Ray.
+          Enter your email to start chatting with Raybot.
         </Typography>
 
-        <TextField
-          fullWidth
-          size="small"
-          label="Name (optional)"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          onKeyDown={handleKeyDown}
-          sx={{ mb: 1.5 }}
-        />
         <TextField
           fullWidth
           size="small"
