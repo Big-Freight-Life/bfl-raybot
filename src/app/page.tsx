@@ -24,6 +24,7 @@ export default function Home() {
   const [micActive, setMicActive] = useState(false);
   const [triggerMessage, setTriggerMessage] = useState<string | null>(null);
   const [activeCaseStudy, setActiveCaseStudy] = useState<string | null>(null);
+  const [activeNavItem, setActiveNavItem] = useState<string | null>(null);
   const [visitedHighlights, setVisitedHighlights] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -67,6 +68,7 @@ export default function Home() {
       const key = action.replace('case-study:', '');
       if (key === activeCaseStudy) return;
       setActiveCaseStudy(key);
+      setActiveNavItem(action);
       setVisitedHighlights(new Set());
       const study = caseStudies.find((s) => s.key === key);
       if (study) {
@@ -74,6 +76,9 @@ export default function Home() {
       }
       return;
     }
+
+    setActiveCaseStudy(null);
+    setActiveNavItem(action);
 
     const prompts: Record<string, string> = {
       'process': 'Tell me about the Big Freight Life process — how do you work with clients?',
@@ -114,7 +119,7 @@ export default function Home() {
     <Box sx={{ display: 'flex', height: '100vh' }}>
       {verified === false && <EmailGate onVerified={handleVerified} />}
 
-      <IconSidebar open={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} onNavigate={handleNavigate} />
+      <IconSidebar open={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} onNavigate={handleNavigate} activeItem={activeNavItem} />
 
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         {/* Top bar */}

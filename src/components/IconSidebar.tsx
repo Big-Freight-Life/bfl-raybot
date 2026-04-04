@@ -13,9 +13,12 @@ interface IconSidebarProps {
   open: boolean;
   onToggle: () => void;
   onNavigate?: (action: string) => void;
+  activeItem?: string | null;
 }
 
-export default function IconSidebar({ open, onToggle, onNavigate }: IconSidebarProps) {
+const teal = '#117680';
+
+export default function IconSidebar({ open, onToggle, onNavigate, activeItem }: IconSidebarProps) {
   return (
     <Box
       sx={{
@@ -89,7 +92,12 @@ export default function IconSidebar({ open, onToggle, onNavigate }: IconSidebarP
           <IconButton
             size="small"
             onClick={() => onNavigate?.('process')}
-            sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' }, borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1 }}
+            sx={{
+              color: activeItem === 'process' ? teal : 'text.secondary',
+              bgcolor: activeItem === 'process' ? `${teal}0F` : 'transparent',
+              '&:hover': { color: 'text.primary', bgcolor: 'action.hover' },
+              borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1,
+            }}
           >
             <AccountTreeOutlinedIcon sx={{ fontSize: 20 }} />
             {open && <Box component="span" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>Process</Box>}
@@ -100,7 +108,12 @@ export default function IconSidebar({ open, onToggle, onNavigate }: IconSidebarP
           <IconButton
             size="small"
             onClick={() => onNavigate?.('about-ray')}
-            sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' }, borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1 }}
+            sx={{
+              color: activeItem === 'about-ray' ? teal : 'text.secondary',
+              bgcolor: activeItem === 'about-ray' ? `${teal}0F` : 'transparent',
+              '&:hover': { color: 'text.primary', bgcolor: 'action.hover' },
+              borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1,
+            }}
           >
             <PersonOutlineIcon sx={{ fontSize: 20 }} />
             {open && <Box component="span" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>About Ray</Box>}
@@ -111,7 +124,12 @@ export default function IconSidebar({ open, onToggle, onNavigate }: IconSidebarP
           <IconButton
             size="small"
             onClick={() => onNavigate?.('contact')}
-            sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' }, borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1 }}
+            sx={{
+              color: activeItem === 'contact' ? teal : 'text.secondary',
+              bgcolor: activeItem === 'contact' ? `${teal}0F` : 'transparent',
+              '&:hover': { color: 'text.primary', bgcolor: 'action.hover' },
+              borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1,
+            }}
           >
             <MailOutlineIcon sx={{ fontSize: 20 }} />
             {open && <Box component="span" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>Contact Us</Box>}
@@ -126,34 +144,38 @@ export default function IconSidebar({ open, onToggle, onNavigate }: IconSidebarP
             Case Studies
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
-            {caseStudies.map((study) => (
-              <Box
-                key={study.key}
-                component="button"
-                onClick={() => onNavigate?.(`case-study:${study.key}`)}
-                sx={{
-                  display: 'block',
-                  px: 1.5,
-                  py: 1,
-                  borderRadius: '8px',
-                  fontSize: '0.8125rem',
-                  color: 'text.secondary',
-                  textDecoration: 'none',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  textAlign: 'left',
-                  border: 'none',
-                  bgcolor: 'transparent',
-                  cursor: 'pointer',
-                  width: '100%',
-                  fontFamily: 'inherit',
-                  '&:hover': { bgcolor: 'action.hover', color: 'text.primary' },
-                }}
-              >
-                {study.title}
-              </Box>
-            ))}
+            {caseStudies.map((study) => {
+              const isActive = activeItem === `case-study:${study.key}`;
+              return (
+                <Box
+                  key={study.key}
+                  component="button"
+                  onClick={() => onNavigate?.(`case-study:${study.key}`)}
+                  sx={{
+                    display: 'block',
+                    px: 1.5,
+                    py: 1,
+                    borderRadius: '8px',
+                    fontSize: '0.8125rem',
+                    color: isActive ? teal : 'text.secondary',
+                    fontWeight: isActive ? 600 : 400,
+                    textDecoration: 'none',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    textAlign: 'left',
+                    border: 'none',
+                    bgcolor: isActive ? `${teal}0F` : 'transparent',
+                    cursor: 'pointer',
+                    width: '100%',
+                    fontFamily: 'inherit',
+                    '&:hover': { bgcolor: 'action.hover', color: 'text.primary' },
+                  }}
+                >
+                  {study.title}
+                </Box>
+              );
+            })}
           </Box>
         </Box>
       )}
