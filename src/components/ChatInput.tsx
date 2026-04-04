@@ -38,7 +38,7 @@ export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice,
     if (!trimmed || disabled) return;
     onSend(trimmed, 'text');
     setText('');
-    if (textareaRef.current) textareaRef.current.style.height = 'auto';
+    if (textareaRef.current) { textareaRef.current.style.height = 'auto'; textareaRef.current.focus(); }
   }, [text, disabled, onSend]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
