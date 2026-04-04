@@ -7,13 +7,11 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 import LeadCaptureForm from './LeadCaptureForm';
-import { typewriterEffect } from '@/lib/typewriter';
 
 export interface Message {
   role: 'user' | 'bot';
   content: string;
   isThinking?: boolean;
-  isTyping?: boolean;
   source?: 'voice' | 'text';
 }
 
@@ -43,7 +41,7 @@ function loadHistory(): Message[] {
 
 function saveHistory(messages: Message[]) {
   try {
-    const saveable = messages.filter((m) => !m.isThinking && !m.isTyping).slice(-MAX_MESSAGES);
+    const saveable = messages.filter((m) => !m.isThinking).slice(-MAX_MESSAGES);
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(saveable));
   } catch { /* ignore */ }
 }
@@ -67,6 +65,7 @@ export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeaki
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const loadedRef = useRef(false);
   const sessionIdRef = useRef<string>('');
+  const abortRef = useRef<AbortController | null>(null);
 
   // Generate session ID on mount
   useEffect(() => {
@@ -120,66 +119,102 @@ export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeaki
     } catch { onSpeakingChange?.(false); }
   }, [voiceMuted, digitalTwinMode, onSpeakingChange]);
 
+  const stopResponse = useCallback(() => {
+    if (abortRef.current) {
+      abortRef.current.abort();
+      abortRef.current = null;
+    }
+  }, []);
+
   const sendMessage = useCallback(async (text: string, source: 'voice' | 'text' = 'text') => {
     const userMsg: Message = { role: 'user', content: text, source };
     const thinkingMsg: Message = { role: 'bot', content: '', isThinking: true };
     setMessages((prev) => [...prev, userMsg, thinkingMsg]);
     setIsProcessing(true);
 
-    const apiMessages = [...messages.filter((m) => !m.isThinking && !m.isTyping), userMsg].map((m) => ({
+    const apiMessages = [...messages.filter((m) => !m.isThinking), userMsg].map((m) => ({
       role: m.role === 'user' ? 'user' as const : 'model' as const,
       content: m.content,
     }));
+
+    const controller = new AbortController();
+    abortRef.current = controller;
 
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: apiMessages, sessionId: sessionIdRef.current }),
+        signal: controller.signal,
       });
+
       if (!res.ok) {
         const err = await res.json();
         throw new Error(err.error || 'Request failed');
       }
-      const { response, handoff } = await res.json();
-      const mermaidCode = extractMermaid(response);
+
+      const reader = res.body?.getReader();
+      if (!reader) throw new Error('No response stream');
+
+      const decoder = new TextDecoder();
+      let accumulated = '';
+
+      // Replace thinking msg with streaming bot msg
+      setMessages((prev) => {
+        const updated = prev.filter((m) => !m.isThinking);
+        return [...updated, { role: 'bot' as const, content: '' }];
+      });
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        accumulated += decoder.decode(value, { stream: true });
+        const current = accumulated;
+        setMessages((prev) => {
+          const updated = [...prev];
+          const last = updated[updated.length - 1];
+          if (last?.role === 'bot') {
+            updated[updated.length - 1] = { ...last, content: current };
+          }
+          return updated;
+        });
+      }
+
+      // Finalize
+      const finalText = accumulated;
+      setMessages((prev) => {
+        const updated = [...prev];
+        const last = updated[updated.length - 1];
+        if (last?.role === 'bot') {
+          updated[updated.length - 1] = { role: 'bot', content: finalText };
+        }
+        saveHistory(updated);
+        return updated;
+      });
+
+      const mermaidCode = extractMermaid(finalText);
       if (mermaidCode && onDiagramDetected) onDiagramDetected(mermaidCode);
-      // Keep mermaid blocks in display text — ChatMessage renders them inline
-      const displayText = response;
 
-      setMessages((prev) => {
-        const updated = prev.filter((m) => !m.isThinking);
-        return [...updated, { role: 'bot' as const, content: '', isTyping: true }];
-      });
-
-      typewriterEffect(displayText, {
-        onChunk: (accumulated) => {
-          setMessages((prev) => {
-            const updated = [...prev];
-            const last = updated[updated.length - 1];
-            if (last?.isTyping) updated[updated.length - 1] = { ...last, content: accumulated };
-            return updated;
-          });
-        },
-        onComplete: () => {
-          setMessages((prev) => {
-            const updated = [...prev];
-            const last = updated[updated.length - 1];
-            if (last?.isTyping) updated[updated.length - 1] = { role: 'bot', content: displayText };
-            saveHistory(updated);
-            return updated;
-          });
-          setIsProcessing(false);
-          if (handoff) setShowLeadForm(true);
-          playTTS(displayText);
-        },
-      });
+      if (/send me an email|book a call/i.test(finalText)) setShowLeadForm(true);
+      playTTS(finalText);
     } catch (error) {
-      setMessages((prev) => {
-        const updated = prev.filter((m) => !m.isThinking);
-        return [...updated, { role: 'bot', content: (error as Error).message || 'Something went wrong.' }];
-      });
+      if ((error as Error).name === 'AbortError') {
+        // User stopped — keep whatever was streamed
+        setMessages((prev) => {
+          const updated = [...prev].filter((m) => !m.isThinking);
+          saveHistory(updated);
+          return updated;
+        });
+      } else {
+        setMessages((prev) => {
+          const updated = prev.filter((m) => !m.isThinking);
+          return [...updated, { role: 'bot', content: (error as Error).message || 'Something went wrong.' }];
+        });
+      }
+    } finally {
       setIsProcessing(false);
+      abortRef.current = null;
     }
   }, [messages, onDiagramDetected, playTTS]);
 
@@ -205,7 +240,7 @@ export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeaki
         {messages.map((msg, i) => (
           <ChatMessage
             key={i} role={msg.role} content={msg.content}
-            isThinking={msg.isThinking} isTyping={msg.isTyping} index={i}
+            isThinking={msg.isThinking} index={i}
             source={msg.source}
           />
         ))}
@@ -251,7 +286,8 @@ export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeaki
       )}
       {!digitalTwinMode && (
         <ChatInput
-          onSend={sendMessage} disabled={isProcessing} voiceMuted={voiceMuted}
+          onSend={sendMessage} disabled={isProcessing} isProcessing={isProcessing} onStop={stopResponse}
+          voiceMuted={voiceMuted}
           onToggleVoice={() => { setVoiceMuted(!voiceMuted); if (audioRef.current && !voiceMuted) audioRef.current.pause(); }}
           digitalTwinMode={digitalTwinMode}
           onListeningChange={onListeningChange}

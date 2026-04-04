@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateChatResponse } from '@/lib/gemini';
+import { streamChatResponse } from '@/lib/gemini';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { requireOrigin, requireJSON } from '@/lib/security';
 import { ChatMessage } from '@/lib/knowledge';
@@ -47,15 +47,35 @@ export async function POST(request: NextRequest) {
     sanitized[sanitized.length - 1] = { ...last, content: userMessage };
 
     const trimmed = sanitized.slice(-50);
-    const response = await generateChatResponse(trimmed);
 
-    // Log conversation to Vercel KV (non-blocking)
-    logMessage(sessionId, ip, userMessage, response).catch(() => {});
+    const encoder = new TextEncoder();
+    let fullResponse = '';
 
-    return NextResponse.json(
-      { response, handoff: /send me an email|book a call/i.test(response) },
-      { headers: { 'X-RateLimit-Remaining': String(remaining) } }
-    );
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const chunk of streamChatResponse(trimmed)) {
+            fullResponse += chunk;
+            controller.enqueue(encoder.encode(chunk));
+          }
+          controller.close();
+
+          // Log conversation to Vercel KV (non-blocking)
+          logMessage(sessionId, ip, userMessage, fullResponse).catch(() => {});
+        } catch (error) {
+          console.error('Stream error:', error);
+          controller.error(error);
+        }
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Transfer-Encoding': 'chunked',
+        'X-RateLimit-Remaining': String(remaining),
+      },
+    });
   } catch (error) {
     console.error('Chat error:', error);
     return NextResponse.json(

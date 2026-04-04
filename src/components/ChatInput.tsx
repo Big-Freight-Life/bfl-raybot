@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
+import StopIcon from '@mui/icons-material/Stop';
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -13,6 +14,8 @@ import { colors } from '@/theme/tokens';
 interface ChatInputProps {
   onSend: (message: string, source?: 'voice' | 'text') => void;
   disabled?: boolean;
+  isProcessing?: boolean;
+  onStop?: () => void;
   voiceMuted: boolean;
   onToggleVoice: () => void;
   digitalTwinMode?: boolean;
@@ -21,7 +24,7 @@ interface ChatInputProps {
   onMicActivated?: () => void;
 }
 
-export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice, digitalTwinMode, onListeningChange, onToggleDigitalTwin, onMicActivated }: ChatInputProps) {
+export default function ChatInput({ onSend, disabled, isProcessing, onStop, voiceMuted, onToggleVoice, digitalTwinMode, onListeningChange, onToggleDigitalTwin, onMicActivated }: ChatInputProps) {
   const [text, setText] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
@@ -128,7 +131,14 @@ export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice,
           </IconButton>
         )}
       </Box>
-      {text.trim() ? (
+      {isProcessing ? (
+        <Tooltip title="Stop generating">
+          <IconButton size="small" onClick={onStop}
+            sx={{ bgcolor: 'text.secondary', color: '#fff', mb: 0.5, '&:hover': { bgcolor: 'text.primary' } }}>
+            <StopIcon sx={{ fontSize: 18 }} />
+          </IconButton>
+        </Tooltip>
+      ) : text.trim() ? (
         <IconButton size="small" onClick={handleSubmit} disabled={disabled}
           sx={{ bgcolor: colors.primary.main, color: '#fff', mb: 0.5, '&:hover': { bgcolor: colors.primary.dark }, '&.Mui-disabled': { bgcolor: 'action.disabledBackground', color: 'action.disabled' } }}>
           <SendIcon sx={{ fontSize: 18 }} />
