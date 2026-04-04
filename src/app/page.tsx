@@ -10,7 +10,7 @@ import ChatPanel from '@/components/ChatPanel';
 import AvatarStage from '@/components/AvatarStage';
 import EmailGate from '@/components/EmailGate';
 import CaseStudyPanel from '@/components/CaseStudyPanel';
-import { caseStudies } from '@/lib/case-studies';
+import { caseStudies, aboutRay } from '@/lib/case-studies';
 import { getChatList, saveChat, loadChat, generateTitle, type ChatSummary } from '@/lib/chat-history';
 
 export default function Home() {
@@ -85,12 +85,20 @@ export default function Home() {
       return;
     }
 
+    if (action === 'about-ray') {
+      if (activeCaseStudy === 'about-ray') return;
+      setActiveCaseStudy('about-ray');
+      setActiveNavItem(action);
+      setVisitedHighlights(new Set());
+      setTriggerMessage('Tell me about Ray Butler — his background, expertise, and what he does at Big Freight Life.');
+      return;
+    }
+
     setActiveCaseStudy(null);
     setActiveNavItem(action);
 
     const prompts: Record<string, string> = {
       'process': 'Tell me about the Big Freight Life process — how do you work with clients?',
-      'about-ray': 'Tell me about Ray Butler — his background, expertise, and what he does at Big Freight Life.',
       'contact': 'I would like to get in touch — how can I contact Big Freight Life or schedule a call?',
     };
     const msg = prompts[action];
@@ -222,48 +230,6 @@ export default function Home() {
           </Box>
         </Box>
 
-        {/* About Ray segment bar */}
-        {activeNavItem === 'about-ray' && !digitalTwinMode && (
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0, borderBottom: 1, borderColor: 'divider', flexShrink: 0, bgcolor: 'background.paper' }}>
-            {[
-              { key: 'experience', label: 'Experience' },
-              { key: 'toolbox', label: 'Toolbox' },
-              { key: 'methodologies', label: 'Methodologies' },
-            ].map((seg) => (
-              <Box
-                key={seg.key}
-                component="button"
-                onClick={() => {
-                  const prompts: Record<string, string> = {
-                    experience: 'Tell me about Ray Butler\'s experience — his background, career path, and the domains he has worked in.',
-                    toolbox: 'What is Ray Butler\'s toolbox — the technologies, platforms, and frameworks he works with?',
-                    methodologies: 'What are Ray Butler\'s methodologies — how does he approach system design, product strategy, and AI architecture?',
-                  };
-                  setTriggerMessage(prompts[seg.key]);
-                }}
-                sx={{
-                  flex: 1,
-                  py: 1.25,
-                  px: 2,
-                  fontSize: '0.8125rem',
-                  fontWeight: 500,
-                  color: 'text.secondary',
-                  bgcolor: 'transparent',
-                  border: 'none',
-                  borderBottom: '2px solid transparent',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  transition: 'all 0.15s ease',
-                  '&:hover': { color: '#117680', borderBottomColor: '#11768040' },
-                  '&:active': { color: '#117680', borderBottomColor: '#117680' },
-                }}
-              >
-                {seg.label}
-              </Box>
-            ))}
-          </Box>
-        )}
-
         {/* Main content area */}
         <Box sx={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
           {/* Avatar stage */}
@@ -316,9 +282,11 @@ export default function Home() {
           </Box>
 
           {(() => {
-            const activeStudy = activeCaseStudy
-              ? caseStudies.find((s) => s.key === activeCaseStudy)
-              : null;
+            const activeStudy = activeCaseStudy === 'about-ray'
+              ? aboutRay
+              : activeCaseStudy
+                ? caseStudies.find((s) => s.key === activeCaseStudy)
+                : null;
             return activeStudy ? (
               <CaseStudyPanel
                 study={activeStudy}

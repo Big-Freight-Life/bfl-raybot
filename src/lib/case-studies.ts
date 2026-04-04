@@ -10,6 +10,17 @@ export interface CaseStudy {
   highlights: CaseStudyHighlight[];
 }
 
+export const aboutRay: CaseStudy = {
+  title: 'About Ray',
+  key: 'about-ray',
+  summary: 'Design Technologist building systems that encode good decisions.',
+  highlights: [
+    { title: 'Experience', key: 'experience' },
+    { title: 'Toolbox', key: 'toolbox' },
+    { title: 'Methodologies', key: 'methodologies' },
+  ],
+};
+
 export const caseStudies: CaseStudy[] = [
   {
     title: 'Hyland OnBase Integration',
