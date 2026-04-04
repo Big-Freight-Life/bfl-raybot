@@ -20,6 +20,7 @@ export default function Home() {
   const [showMicToast, setShowMicToast] = useState(false);
   const [voiceMuted, setVoiceMuted] = useState(true);
   const [micActive, setMicActive] = useState(false);
+  const [triggerMessage, setTriggerMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const email = sessionStorage.getItem('raybot_user_email');
@@ -56,6 +57,17 @@ export default function Home() {
     setMicActive((prev) => !prev);
   }, []);
 
+  const handleNavigate = useCallback((action: string) => {
+    const prompts: Record<string, string> = {
+      'process': 'Tell me about the Big Freight Life process — how do you work with clients?',
+      'case-study:hyland-onbase': 'Tell me the story of the Hyland OnBase Integration case study.',
+      'case-study:hyland-workday': 'Tell me the story of the Hyland for Workday Integration case study.',
+      'case-study:salesforce-migration': 'Tell me the story of the Salesforce Migration case study.',
+    };
+    const msg = prompts[action];
+    if (msg) setTriggerMessage(msg);
+  }, []);
+
   const shareTranscript = useCallback(() => {
     try {
       const raw = sessionStorage.getItem('raybot_history');
@@ -78,7 +90,7 @@ export default function Home() {
     <Box sx={{ display: 'flex', height: '100vh' }}>
       {verified === false && <EmailGate onVerified={handleVerified} />}
 
-      <IconSidebar open={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+      <IconSidebar open={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} onNavigate={handleNavigate} />
 
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         {/* Top bar */}
@@ -162,6 +174,8 @@ export default function Home() {
               onListeningChange={setIsListening}
               onToggleDigitalTwin={toggleDigitalTwin}
               onMicActivated={handleMicActivated}
+              triggerMessage={triggerMessage}
+              onTriggerHandled={() => setTriggerMessage(null)}
             />
           </Box>
         </Box>

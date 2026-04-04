@@ -25,6 +25,8 @@ interface ChatPanelProps {
   onToggleDigitalTwin?: () => void;
   onMicActivated?: () => void;
   onVoiceMutedChange?: (muted: boolean) => void;
+  triggerMessage?: string | null;
+  onTriggerHandled?: () => void;
 }
 
 const STORAGE_KEY = 'raybot_history';
@@ -55,7 +57,7 @@ function stripMermaidBlock(text: string): string {
   return text.replace(/```mermaid\n[\s\S]*?```/g, '').trim();
 }
 
-export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeakingChange, onListeningChange, onToggleDigitalTwin, onMicActivated, onVoiceMutedChange }: ChatPanelProps) {
+export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeakingChange, onListeningChange, onToggleDigitalTwin, onMicActivated, onVoiceMutedChange, triggerMessage, onTriggerHandled }: ChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
@@ -86,6 +88,15 @@ export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeaki
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Handle triggered messages from sidebar navigation
+  const [pendingTrigger, setPendingTrigger] = useState<string | null>(null);
+  useEffect(() => {
+    if (triggerMessage) {
+      setPendingTrigger(triggerMessage);
+      onTriggerHandled?.();
+    }
+  }, [triggerMessage, onTriggerHandled]);
 
   const playTTS = useCallback(async (text: string) => {
     if (voiceMuted && !digitalTwinMode) return;
@@ -171,6 +182,14 @@ export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeaki
       setIsProcessing(false);
     }
   }, [messages, onDiagramDetected, playTTS]);
+
+  // Fire pending trigger now that sendMessage is available
+  useEffect(() => {
+    if (pendingTrigger && !isProcessing) {
+      sendMessage(pendingTrigger, 'text');
+      setPendingTrigger(null);
+    }
+  }, [pendingTrigger, isProcessing, sendMessage]);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>

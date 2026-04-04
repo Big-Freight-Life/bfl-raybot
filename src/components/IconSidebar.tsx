@@ -7,17 +7,18 @@ import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined';
 import Image from 'next/image';
 
 const caseStudies = [
-  { title: 'Hyland OnBase Integration', href: 'https://bfl.design/hyland-onbase-salesforce-integration/' },
-  { title: 'Hyland for Workday', href: 'https://bfl.design/works/case-studies/hyland-for-workday-integration/' },
-  { title: 'Salesforce Migration', href: 'https://bfl.design/works/case-studies/' },
+  { title: 'Hyland OnBase Integration', key: 'hyland-onbase' },
+  { title: 'Hyland for Workday', key: 'hyland-workday' },
+  { title: 'Salesforce Migration', key: 'salesforce-migration' },
 ];
 
 interface IconSidebarProps {
   open: boolean;
   onToggle: () => void;
+  onNavigate?: (action: string) => void;
 }
 
-export default function IconSidebar({ open, onToggle }: IconSidebarProps) {
+export default function IconSidebar({ open, onToggle, onNavigate }: IconSidebarProps) {
   return (
     <Box
       sx={{
@@ -47,13 +48,7 @@ export default function IconSidebar({ open, onToggle }: IconSidebarProps) {
       >
         {open ? (
           <>
-            <Box
-              component="a"
-              href="https://bfl.design"
-              target="_blank"
-              rel="noopener noreferrer"
-              sx={{ display: 'flex', alignItems: 'center' }}
-            >
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Image
                 src="/images/logo-teal.png"
                 alt="Big Freight Life"
@@ -96,10 +91,7 @@ export default function IconSidebar({ open, onToggle }: IconSidebarProps) {
         <Tooltip title="Process" placement="right" disableHoverListener={open}>
           <IconButton
             size="small"
-            component="a"
-            href="https://bfl.design/process"
-            target="_blank"
-            rel="noopener noreferrer"
+            onClick={() => onNavigate?.('process')}
             sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' }, borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1 }}
           >
             <AccountTreeOutlinedIcon sx={{ fontSize: 20 }} />
@@ -117,11 +109,9 @@ export default function IconSidebar({ open, onToggle }: IconSidebarProps) {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
             {caseStudies.map((study) => (
               <Box
-                key={study.title}
-                component="a"
-                href={study.href}
-                target="_blank"
-                rel="noopener noreferrer"
+                key={study.key}
+                component="button"
+                onClick={() => onNavigate?.(`case-study:${study.key}`)}
                 sx={{
                   display: 'block',
                   px: 1.5,
@@ -133,6 +123,12 @@ export default function IconSidebar({ open, onToggle }: IconSidebarProps) {
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
+                  textAlign: 'left',
+                  border: 'none',
+                  bgcolor: 'transparent',
+                  cursor: 'pointer',
+                  width: '100%',
+                  fontFamily: 'inherit',
                   '&:hover': { bgcolor: 'action.hover', color: 'text.primary' },
                 }}
               >
