@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateChatResponse } from '@/lib/gemini';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { requireOrigin, requireJSON } from '@/lib/security';
 import { ChatMessage } from '@/lib/knowledge';
 import { logMessage } from '@/lib/chat-logger';
 
@@ -19,10 +20,22 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const originError = requireOrigin(request);
+  if (originError) return originError;
+
+  const jsonError = requireJSON(request);
+  if (jsonError) return jsonError;
+
   try {
     const body = await request.json();
     const messages: ChatMessage[] = body.messages ?? [];
-    const sessionId: string = body.sessionId ?? 'unknown';
+    const rawSessionId = body.sessionId;
+    const sessionId: string =
+      typeof rawSessionId === 'string' &&
+      rawSessionId.length <= 64 &&
+      /^[a-zA-Z0-9-]+$/.test(rawSessionId)
+        ? rawSessionId
+        : 'unknown';
 
     if (!messages.length || !messages[messages.length - 1]?.content) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });

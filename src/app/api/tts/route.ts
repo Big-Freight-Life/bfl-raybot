@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { textToSpeech } from '@/lib/elevenlabs';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { requireOrigin, requireJSON } from '@/lib/security';
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0] ?? 'unknown';
@@ -9,6 +10,12 @@ export async function POST(request: NextRequest) {
   if (!allowed) {
     return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
   }
+
+  const originError = requireOrigin(request);
+  if (originError) return originError;
+
+  const jsonError = requireJSON(request);
+  if (jsonError) return jsonError;
 
   try {
     const { text } = await request.json();

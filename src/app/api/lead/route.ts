@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { requireOrigin, requireJSON } from '@/lib/security';
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0] ?? 'unknown';
@@ -10,12 +11,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
   }
 
-  try {
-    const { name, email, message } = await request.json();
+  const originError = requireOrigin(request);
+  if (originError) return originError;
 
-    if (!email || typeof email !== 'string') {
+  const jsonError = requireJSON(request);
+  if (jsonError) return jsonError;
+
+  try {
+    const body = await request.json();
+
+    if (!body.email || typeof body.email !== 'string') {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
+
+    const stripHtml = (s: string) => s.replace(/<[^>]*>/g, '').trim();
+
+    const name = typeof body.name === 'string' ? stripHtml(body.name).slice(0, 100) : '';
+    const email = body.email.trim().toLowerCase().slice(0, 254);
+    const message = typeof body.message === 'string' ? stripHtml(body.message).slice(0, 1000) : '';
 
     const resendKey = process.env.RESEND_API_KEY;
     const contactEmail = process.env.CONTACT_EMAIL;

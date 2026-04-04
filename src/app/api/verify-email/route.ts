@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { requireOrigin, requireJSON } from '@/lib/security';
 import dns from 'dns/promises';
 
 const DISPOSABLE_DOMAINS = [
@@ -22,6 +23,12 @@ export async function POST(request: NextRequest) {
   if (!allowed) {
     return NextResponse.json({ error: 'Too many attempts. Try again in a few minutes.' }, { status: 429 });
   }
+
+  const originError = requireOrigin(request);
+  if (originError) return originError;
+
+  const jsonError = requireJSON(request);
+  if (jsonError) return jsonError;
 
   try {
     const { email, name } = await request.json();
