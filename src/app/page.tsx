@@ -90,7 +90,6 @@ export default function Home() {
       setActiveCaseStudy('about-ray');
       setActiveNavItem(action);
       setVisitedHighlights(new Set());
-      setTriggerMessage('Tell me about Ray Butler — his background, expertise, and what he does at Big Freight Life.');
       return;
     }
 

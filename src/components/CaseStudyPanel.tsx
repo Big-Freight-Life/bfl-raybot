@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Box, Typography, IconButton, Tooltip } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -23,6 +24,11 @@ export default function CaseStudyPanel({
   variant = 'default',
 }: CaseStudyPanelProps) {
   const isTabs = variant === 'tabs';
+  const [activeTab, setActiveTab] = useState(study.highlights[0]?.key ?? '');
+
+  const activeHighlight = isTabs
+    ? study.highlights.find((h) => h.key === activeTab)
+    : null;
 
   return (
     <Box
@@ -73,47 +79,60 @@ export default function CaseStudyPanel({
         </Tooltip>
       </Box>
 
-      {/* Highlights — tabs or vertical list */}
+      {/* Tabs variant — horizontal tab bar + content */}
       {isTabs ? (
-        <Box
-          sx={{
-            display: 'flex',
-            borderBottom: 1,
-            borderColor: 'divider',
-          }}
-        >
-          {study.highlights.map((highlight) => {
-            const visited = visitedHighlights.has(highlight.key);
-            const prompt = `Tell me about Ray Butler's ${highlight.title.toLowerCase()} — what defines his approach and background in this area.`;
-
-            return (
-              <Box
-                key={highlight.key}
-                component="button"
-                onClick={() => onHighlightClick(prompt)}
-                sx={{
-                  flex: 1,
-                  py: 1.25,
-                  px: 1,
-                  fontSize: '0.8125rem',
-                  fontWeight: visited ? 600 : 500,
-                  color: visited ? teal : 'text.secondary',
-                  bgcolor: 'transparent',
-                  border: 'none',
-                  borderBottom: '2px solid',
-                  borderBottomColor: visited ? teal : 'transparent',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  transition: 'all 0.15s ease',
-                  '&:hover': { color: teal, borderBottomColor: `${teal}40` },
-                }}
+        <>
+          <Box
+            sx={{
+              display: 'flex',
+              borderBottom: 1,
+              borderColor: 'divider',
+              flexShrink: 0,
+            }}
+          >
+            {study.highlights.map((highlight) => {
+              const isActive = activeTab === highlight.key;
+              return (
+                <Box
+                  key={highlight.key}
+                  component="button"
+                  onClick={() => setActiveTab(highlight.key)}
+                  sx={{
+                    flex: 1,
+                    py: 1.25,
+                    px: 1,
+                    fontSize: '0.8125rem',
+                    fontWeight: isActive ? 600 : 500,
+                    color: isActive ? teal : 'text.secondary',
+                    bgcolor: 'transparent',
+                    border: 'none',
+                    borderBottom: '2px solid',
+                    borderBottomColor: isActive ? teal : 'transparent',
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    transition: 'all 0.15s ease',
+                    '&:hover': { color: teal, borderBottomColor: isActive ? teal : `${teal}40` },
+                  }}
+                >
+                  {highlight.title}
+                </Box>
+              );
+            })}
+          </Box>
+          {/* Tab content */}
+          {activeHighlight?.content && (
+            <Box sx={{ flex: 1, overflowY: 'auto', px: 2.5, py: 2, scrollbarWidth: 'thin' }}>
+              <Typography
+                variant="body2"
+                sx={{ color: 'text.secondary', lineHeight: 1.8, whiteSpace: 'pre-wrap', fontSize: '0.8125rem' }}
               >
-                {highlight.title}
-              </Box>
-            );
-          })}
-        </Box>
+                {activeHighlight.content}
+              </Typography>
+            </Box>
+          )}
+        </>
       ) : (
+        /* Default variant — vertical list */
         <Box sx={{ px: 1.5, py: 1.5 }}>
           <Typography
             variant="caption"
