@@ -61,7 +61,7 @@ export default function Home() {
     const prompts: Record<string, string> = {
       'process': 'Tell me about the Big Freight Life process — how do you work with clients?',
       'about-ray': 'Tell me about Ray Butler — his background, expertise, and what he does at Big Freight Life.',
-      'contact': 'I'd like to get in touch — how can I contact Big Freight Life or schedule a call?',
+      'contact': 'I would like to get in touch — how can I contact Big Freight Life or schedule a call?',
       'case-study:hyland-onbase': 'Tell me the story of the Hyland OnBase Integration case study.',
       'case-study:hyland-workday': 'Tell me the story of the Hyland for Workday Integration case study.',
       'case-study:salesforce-migration': 'Tell me the story of the Salesforce Migration case study.',
