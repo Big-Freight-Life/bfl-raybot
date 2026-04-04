@@ -9,6 +9,8 @@ import IconSidebar from '@/components/IconSidebar';
 import ChatPanel from '@/components/ChatPanel';
 import AvatarStage from '@/components/AvatarStage';
 import EmailGate from '@/components/EmailGate';
+import CaseStudyPanel from '@/components/CaseStudyPanel';
+import { caseStudies } from '@/lib/case-studies';
 
 export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -21,6 +23,8 @@ export default function Home() {
   const [voiceMuted, setVoiceMuted] = useState(true);
   const [micActive, setMicActive] = useState(false);
   const [triggerMessage, setTriggerMessage] = useState<string | null>(null);
+  const [activeCaseStudy, setActiveCaseStudy] = useState<string | null>(null);
+  const [visitedHighlights, setVisitedHighlights] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const email = sessionStorage.getItem('raybot_user_email');
@@ -40,6 +44,7 @@ export default function Home() {
   const toggleDigitalTwin = useCallback(() => {
     if (!digitalTwinMode) {
       setSidebarOpen(false);
+      setActiveCaseStudy(null);
       setDigitalTwinMode(true);
     } else {
       setSidebarOpen(true);
@@ -58,16 +63,33 @@ export default function Home() {
   }, []);
 
   const handleNavigate = useCallback((action: string) => {
+    if (action.startsWith('case-study:')) {
+      const key = action.replace('case-study:', '');
+      if (key === activeCaseStudy) return;
+      setActiveCaseStudy(key);
+      setVisitedHighlights(new Set());
+      const study = caseStudies.find((s) => s.key === key);
+      if (study) {
+        setTriggerMessage(`Tell me the story of the ${study.title} case study.`);
+      }
+      return;
+    }
+
     const prompts: Record<string, string> = {
       'process': 'Tell me about the Big Freight Life process — how do you work with clients?',
       'about-ray': 'Tell me about Ray Butler — his background, expertise, and what he does at Big Freight Life.',
       'contact': 'I would like to get in touch — how can I contact Big Freight Life or schedule a call?',
-      'case-study:hyland-onbase': 'Tell me the story of the Hyland OnBase Integration case study.',
-      'case-study:hyland-workday': 'Tell me the story of the Hyland for Workday Integration case study.',
-      'case-study:salesforce-migration': 'Tell me the story of the Salesforce Migration case study.',
     };
     const msg = prompts[action];
     if (msg) setTriggerMessage(msg);
+  }, [activeCaseStudy]);
+
+  const handleHighlightClick = useCallback((prompt: string) => {
+    setTriggerMessage(prompt);
+  }, []);
+
+  const handleHighlightVisit = useCallback((key: string) => {
+    setVisitedHighlights((prev) => new Set(prev).add(key));
   }, []);
 
   const shareTranscript = useCallback(() => {
@@ -180,6 +202,26 @@ export default function Home() {
               onTriggerHandled={() => setTriggerMessage(null)}
             />
           </Box>
+
+          {(() => {
+            const activeStudy = activeCaseStudy
+              ? caseStudies.find((s) => s.key === activeCaseStudy)
+              : null;
+            return activeStudy ? (
+              <CaseStudyPanel
+                study={activeStudy}
+                onHighlightClick={(prompt) => {
+                  handleHighlightClick(prompt);
+                  const highlight = activeStudy.highlights.find((h) =>
+                    prompt.includes(h.title.toLowerCase())
+                  );
+                  if (highlight) handleHighlightVisit(highlight.key);
+                }}
+                onClose={() => setActiveCaseStudy(null)}
+                visitedHighlights={visitedHighlights}
+              />
+            ) : null;
+          })()}
         </Box>
       </Box>
 
