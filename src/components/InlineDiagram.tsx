@@ -5,7 +5,12 @@ import { Box, Typography } from '@mui/material';
 import mermaid from 'mermaid';
 import DOMPurify from 'dompurify';
 
-mermaid.initialize({ startOnLoad: false, theme: 'neutral', securityLevel: 'strict' });
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'neutral',
+  securityLevel: 'strict',
+  suppressErrorRendering: true,
+});
 
 interface InlineDiagramProps {
   code: string;

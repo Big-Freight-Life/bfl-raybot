@@ -11,7 +11,13 @@ import InlineDiagram from './InlineDiagram';
 import { useState } from 'react';
 
 function renderContent(text: string, isUser: boolean) {
-  const parts = text.split(/(```mermaid\n[\s\S]*?```)/g);
+  // Hide incomplete mermaid blocks (still streaming)
+  const hasOpenMermaid = /```mermaid\n/.test(text) && !/```mermaid\n[\s\S]*?```/.test(text);
+  const displayText = hasOpenMermaid
+    ? text.replace(/```mermaid\n[\s\S]*$/, '').trimEnd()
+    : text;
+
+  const parts = displayText.split(/(```mermaid\n[\s\S]*?```)/g);
   return parts.map((part, i) => {
     const mermaidMatch = part.match(/```mermaid\n([\s\S]*?)```/);
     if (mermaidMatch) {
