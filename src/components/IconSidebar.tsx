@@ -142,7 +142,9 @@ export default function IconSidebar({ open, onToggle, onNavigate, onNewChat, onL
 
       {/* Case Studies section — only when expanded */}
       {open && (
-        <Box sx={{ px: 1.5, mt: 2 }}>
+        <Box sx={{ px: 1.5, mt: 1 }}>
+          <Divider sx={{ mb: 1.5 }} />
+          <Box sx={{ px: 0 }}>
           <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 1, px: 0.5 }}>
             Case Studies
           </Typography>
@@ -180,14 +182,13 @@ export default function IconSidebar({ open, onToggle, onNavigate, onNewChat, onL
               );
             })}
           </Box>
+          </Box>
         </Box>
       )}
 
       {/* Chats section — only when expanded and has chats */}
       {open && chatList.length > 0 && (
-        <>
-          <Divider sx={{ mt: 2, mx: 1.5 }} />
-          <Box sx={{ px: 1.5, mt: 1.5, flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ px: 1.5, mt: 1.5, flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
             <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 1, px: 0.5, flexShrink: 0 }}>
               Chats
             </Typography>
@@ -234,8 +235,7 @@ export default function IconSidebar({ open, onToggle, onNavigate, onNewChat, onL
                 );
               })}
             </Box>
-          </Box>
-        </>
+        </Box>
       )}
     </Box>
   );
