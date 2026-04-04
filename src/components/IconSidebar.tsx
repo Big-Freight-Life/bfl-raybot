@@ -7,12 +7,7 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined';
 import Image from 'next/image';
-
-const caseStudies = [
-  { title: 'Hyland OnBase Integration', key: 'hyland-onbase' },
-  { title: 'Hyland for Workday', key: 'hyland-workday' },
-  { title: 'Salesforce Migration', key: 'salesforce-migration' },
-];
+import { caseStudies } from '@/lib/case-studies';
 
 interface IconSidebarProps {
   open: boolean;
