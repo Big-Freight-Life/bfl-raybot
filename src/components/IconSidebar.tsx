@@ -3,6 +3,8 @@
 import { Box, IconButton, Tooltip, Typography } from '@mui/material';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined';
 import Image from 'next/image';
 
@@ -96,6 +98,28 @@ export default function IconSidebar({ open, onToggle, onNavigate }: IconSidebarP
           >
             <AccountTreeOutlinedIcon sx={{ fontSize: 20 }} />
             {open && <Box component="span" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>Process</Box>}
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="About Ray" placement="right" disableHoverListener={open}>
+          <IconButton
+            size="small"
+            onClick={() => onNavigate?.('about-ray')}
+            sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' }, borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1 }}
+          >
+            <PersonOutlineIcon sx={{ fontSize: 20 }} />
+            {open && <Box component="span" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>About Ray</Box>}
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Contact Us" placement="right" disableHoverListener={open}>
+          <IconButton
+            size="small"
+            onClick={() => onNavigate?.('contact')}
+            sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' }, borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1 }}
+          >
+            <MailOutlineIcon sx={{ fontSize: 20 }} />
+            {open && <Box component="span" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>Contact Us</Box>}
           </IconButton>
         </Tooltip>
       </Box>
