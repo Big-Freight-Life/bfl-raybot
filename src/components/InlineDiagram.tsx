@@ -23,7 +23,10 @@ export default function InlineDiagram({ code }: InlineDiagramProps) {
     const id = `mermaid-inline-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     try {
       const { svg } = await mermaid.render(id, code);
-      const clean = DOMPurify.sanitize(svg, { USE_PROFILES: { svg: true, svgFilters: true } });
+      const clean = DOMPurify.sanitize(svg, {
+        USE_PROFILES: { svg: true, svgFilters: true },
+        ADD_TAGS: ['foreignObject'],
+      });
       if (containerRef.current) {
         containerRef.current.textContent = '';
         const wrapper = document.createElement('div');
