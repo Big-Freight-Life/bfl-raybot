@@ -181,14 +181,14 @@ export default function Home() {
           {/* Chat panel */}
           <Box
             sx={{
-              width: digitalTwinMode ? 320 : '100%',
-              flexShrink: 0,
+              flex: digitalTwinMode ? 'none' : 1,
+              width: digitalTwinMode ? 320 : 'auto',
               display: 'flex',
               flexDirection: 'column',
               minWidth: 0,
               borderLeft: digitalTwinMode ? 1 : 0,
               borderColor: 'divider',
-              transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-left 0.4s ease',
+              transition: 'flex 0.4s cubic-bezier(0.4, 0, 0.2, 1), width 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-left 0.4s ease',
               overflow: 'hidden',
             }}
           >
