@@ -290,6 +290,7 @@ export default function Home() {
             return activeStudy ? (
               <CaseStudyPanel
                 study={activeStudy}
+                variant={activeCaseStudy === 'about-ray' ? 'tabs' : 'default'}
                 onHighlightClick={(prompt) => {
                   handleHighlightClick(prompt);
                   const highlight = activeStudy.highlights.find((h) =>
