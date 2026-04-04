@@ -25,6 +25,7 @@ interface ChatPanelProps {
   onVoiceMutedChange?: (muted: boolean) => void;
   triggerMessage?: string | null;
   onTriggerHandled?: () => void;
+  onMessagesChange?: () => void;
 }
 
 const STORAGE_KEY = 'raybot_history';
@@ -55,7 +56,7 @@ function stripMermaidBlock(text: string): string {
   return text.replace(/```mermaid\n[\s\S]*?```/g, '').trim();
 }
 
-export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeakingChange, onListeningChange, onToggleDigitalTwin, onMicActivated, onVoiceMutedChange, triggerMessage, onTriggerHandled }: ChatPanelProps) {
+export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeakingChange, onListeningChange, onToggleDigitalTwin, onMicActivated, onVoiceMutedChange, triggerMessage, onTriggerHandled, onMessagesChange }: ChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
@@ -198,6 +199,7 @@ export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeaki
 
       if (/send me an email|book a call/i.test(finalText)) setShowLeadForm(true);
       playTTS(finalText);
+      onMessagesChange?.();
     } catch (error) {
       if ((error as Error).name === 'AbortError') {
         // User stopped — keep whatever was streamed
@@ -206,6 +208,7 @@ export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeaki
           saveHistory(updated);
           return updated;
         });
+        onMessagesChange?.();
       } else {
         setMessages((prev) => {
           const updated = prev.filter((m) => !m.isThinking);

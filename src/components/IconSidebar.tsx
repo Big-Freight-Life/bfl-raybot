@@ -1,24 +1,30 @@
 'use client';
 
-import { Box, IconButton, Tooltip, Typography } from '@mui/material';
+import { Box, Divider, IconButton, Tooltip, Typography } from '@mui/material';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined';
 import Image from 'next/image';
 import { caseStudies } from '@/lib/case-studies';
+import type { ChatSummary } from '@/lib/chat-history';
 
 interface IconSidebarProps {
   open: boolean;
   onToggle: () => void;
   onNavigate?: (action: string) => void;
+  onNewChat?: () => void;
+  onLoadChat?: (chatId: string) => void;
   activeItem?: string | null;
+  activeChatId?: string | null;
+  chatList?: ChatSummary[];
 }
 
 const teal = '#117680';
 
-export default function IconSidebar({ open, onToggle, onNavigate, activeItem }: IconSidebarProps) {
+export default function IconSidebar({ open, onToggle, onNavigate, onNewChat, onLoadChat, activeItem, activeChatId, chatList = [] }: IconSidebarProps) {
   return (
     <Box
       sx={{
@@ -77,10 +83,7 @@ export default function IconSidebar({ open, onToggle, onNavigate, activeItem }: 
         <Tooltip title="New chat" placement="right" disableHoverListener={open}>
           <IconButton
             size="small"
-            onClick={() => {
-              sessionStorage.removeItem('raybot_history');
-              window.location.reload();
-            }}
+            onClick={onNewChat}
             sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' }, borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1 }}
           >
             <EditNoteIcon sx={{ fontSize: 20 }} />
@@ -178,6 +181,61 @@ export default function IconSidebar({ open, onToggle, onNavigate, activeItem }: 
             })}
           </Box>
         </Box>
+      )}
+
+      {/* Chats section — only when expanded and has chats */}
+      {open && chatList.length > 0 && (
+        <>
+          <Divider sx={{ mt: 2, mx: 1.5 }} />
+          <Box sx={{ px: 1.5, mt: 1.5, flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 1, px: 0.5, flexShrink: 0 }}>
+              Chats
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25, overflowY: 'auto', scrollbarWidth: 'thin', flex: 1 }}>
+              {chatList.map((chat) => {
+                const isActive = activeChatId === chat.id;
+                return (
+                  <Box
+                    key={chat.id}
+                    component="button"
+                    onClick={() => onLoadChat?.(chat.id)}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      px: 1.5,
+                      py: 1,
+                      borderRadius: '8px',
+                      fontSize: '0.8125rem',
+                      color: isActive ? teal : 'text.secondary',
+                      fontWeight: isActive ? 600 : 400,
+                      textAlign: 'left',
+                      border: 'none',
+                      bgcolor: isActive ? `${teal}0F` : 'transparent',
+                      cursor: 'pointer',
+                      width: '100%',
+                      fontFamily: 'inherit',
+                      '&:hover': { bgcolor: 'action.hover', color: 'text.primary' },
+                    }}
+                  >
+                    <ChatBubbleOutlineIcon sx={{ fontSize: 14, flexShrink: 0, opacity: 0.6 }} />
+                    <Box
+                      component="span"
+                      sx={{
+                        flex: 1,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      {chat.title}
+                    </Box>
+                  </Box>
+                );
+              })}
+            </Box>
+          </Box>
+        </>
       )}
     </Box>
   );
