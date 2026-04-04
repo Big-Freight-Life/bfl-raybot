@@ -188,7 +188,7 @@ export default function IconSidebar({ open, onToggle, onNavigate, onNewChat, onL
 
       {/* Chats section — only when expanded and has chats */}
       {open && chatList.length > 0 && (
-        <Box sx={{ px: 1.5, mt: 1.5, flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ px: 1.5, mt: 3, flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
             <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 1, px: 0.5, flexShrink: 0 }}>
               Chats
             </Typography>
