@@ -109,26 +109,6 @@ export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice,
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderTop: 1, borderColor: 'divider', bgcolor: 'background.paper', px: 2, pt: 2, pb: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1, maxWidth: 768, width: '100%' }}>
-      <Button
-        variant="outlined"
-        size="small"
-        onClick={onToggleVoice}
-        startIcon={voiceMuted ? <VolumeOffIcon sx={{ fontSize: 18 }} /> : <GraphicEqIcon sx={{ fontSize: 18 }} />}
-        sx={{
-          mb: 0.5,
-          textTransform: 'none',
-          fontSize: '0.8rem',
-          borderRadius: '20px',
-          px: 1.5,
-          py: 0.5,
-          minWidth: 'auto',
-          borderColor: voiceMuted ? 'divider' : colors.primary.main,
-          color: voiceMuted ? 'text.secondary' : colors.primary.main,
-          '&:hover': { borderColor: colors.primary.main, bgcolor: 'transparent' },
-        }}
-      >
-        Voice
-      </Button>
       <Box sx={{ flex: 1, display: 'flex', alignItems: 'flex-end', border: 1, borderColor: 'divider', borderRadius: '12px', px: 1.5, py: 0.5, bgcolor: 'background.default', '&:focus-within': { borderColor: colors.primary.main } }}>
         {speechSupported && (
           <Tooltip title={isListening ? 'Stop listening' : 'Dictate'}>
@@ -148,10 +128,34 @@ export default function ChatInput({ onSend, disabled, voiceMuted, onToggleVoice,
           </IconButton>
         )}
       </Box>
-      <IconButton size="small" onClick={handleSubmit} disabled={!text.trim() || disabled}
-        sx={{ bgcolor: colors.primary.main, color: '#fff', mb: 0.5, '&:hover': { bgcolor: colors.primary.dark }, '&.Mui-disabled': { bgcolor: 'action.disabledBackground', color: 'action.disabled' } }}>
-        <SendIcon sx={{ fontSize: 18 }} />
-      </IconButton>
+      {text.trim() ? (
+        <IconButton size="small" onClick={handleSubmit} disabled={disabled}
+          sx={{ bgcolor: colors.primary.main, color: '#fff', mb: 0.5, '&:hover': { bgcolor: colors.primary.dark }, '&.Mui-disabled': { bgcolor: 'action.disabledBackground', color: 'action.disabled' } }}>
+          <SendIcon sx={{ fontSize: 18 }} />
+        </IconButton>
+      ) : (
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={onToggleVoice}
+          startIcon={voiceMuted ? <VolumeOffIcon sx={{ fontSize: 18 }} /> : <GraphicEqIcon sx={{ fontSize: 18 }} />}
+          sx={{
+            mb: 0.5,
+            textTransform: 'none',
+            fontSize: '0.8rem',
+            borderRadius: '20px',
+            px: 1.5,
+            py: 0.5,
+            minWidth: 'auto',
+            whiteSpace: 'nowrap',
+            borderColor: voiceMuted ? 'divider' : colors.primary.main,
+            color: voiceMuted ? 'text.secondary' : colors.primary.main,
+            '&:hover': { borderColor: colors.primary.main, bgcolor: 'transparent' },
+          }}
+        >
+          Voice
+        </Button>
+      )}
       </Box>
       <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', color: 'text.secondary', mt: 0.5, fontSize: '0.7rem' }}>
         Raybot can make mistakes. <Box component="a" href="https://bfl.design/contact" target="_blank" rel="noopener noreferrer" sx={{ color: 'text.secondary', textDecoration: 'underline' }}>Contact us</Box> for important stuff.
