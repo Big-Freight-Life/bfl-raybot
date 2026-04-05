@@ -84,7 +84,7 @@ export default function ChatMessage({ role, content, isThinking, isTyping, index
 
   return (
     <Box sx={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start', mb: 2, px: 1 }}>
-      <Box sx={{ maxWidth: '85%' }}>
+      <Box sx={{ maxWidth: isUser ? '85%' : '100%', width: isUser ? 'auto' : '100%' }}>
         {source && (
           <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5, px: 1, color: 'text.disabled', fontSize: '0.65rem', justifyContent: isUser ? 'flex-end' : 'flex-start' }}>
             {source === 'voice' ? '🎙 Voice' : '⌨ Text'}
@@ -94,7 +94,7 @@ export default function ChatMessage({ role, content, isThinking, isTyping, index
           sx={{
             px: 2.5, py: 1.5,
             borderRadius: isUser ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
-            bgcolor: isUser ? colors.chat.userBubble : colors.chat.botBubble,
+            bgcolor: isUser ? colors.chat.userBubble : 'transparent',
             color: isUser ? 'text.primary' : colors.chat.botText,
           }}
         >
