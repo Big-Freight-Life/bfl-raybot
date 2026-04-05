@@ -37,15 +37,20 @@ export default function InlineDiagram({ code }: InlineDiagramProps) {
       const clean = DOMPurify.sanitize(svg, {
         USE_PROFILES: { svg: true, svgFilters: true },
       });
+      // Mermaid leaves a temporary wrapper div in document.body — clean it up
+      document.getElementById(`d${id}`)?.remove();
       if (containerRef.current) {
         containerRef.current.textContent = '';
         const wrapper = document.createElement('div');
-        // Safe: content is sanitized by DOMPurify above
+        // Safe: SVG content is sanitized by DOMPurify.sanitize() above (line 37-39)
         wrapper.innerHTML = clean;
         containerRef.current.appendChild(wrapper);
       }
     } catch {
       setError(true);
+      // Mermaid leaves orphaned error SVGs in document.body on render failure
+      // wrapped in a div with "d" prefix (e.g. "dmermaid-inline-...")
+      document.getElementById(`d${id}`)?.remove();
     }
   }, [code]);
 
