@@ -35,3 +35,56 @@ export class TTLCache<T> {
     return this.get(key) !== undefined;
   }
 }
+
+export interface TieredGetOptions<T> {
+  memCache: TTLCache<T>;
+  memKey: string;
+  memTtlMs: number;
+  kvKey: string;
+  kvTtlSeconds: number;
+  fetcher: () => Promise<T>;
+}
+
+export type CacheTier = 'memory' | 'kv' | 'origin';
+
+export interface TieredGetResult<T> {
+  value: T;
+  tier: CacheTier;
+}
+
+export async function tieredGet<T>(options: TieredGetOptions<T>): Promise<TieredGetResult<T>> {
+  const { memCache, memKey, memTtlMs, kvKey, kvTtlSeconds, fetcher } = options;
+
+  // Tier 1: Memory
+  const memValue = memCache.get(memKey);
+  if (memValue !== undefined) {
+    console.debug(`[cache] ${kvKey} HIT memory`);
+    return { value: memValue, tier: 'memory' };
+  }
+
+  // Tier 2: Vercel KV
+  try {
+    const kvValue = await kv.get<T>(kvKey);
+    if (kvValue !== null && kvValue !== undefined) {
+      console.debug(`[cache] ${kvKey} HIT kv`);
+      memCache.set(memKey, kvValue, memTtlMs);
+      return { value: kvValue, tier: 'kv' };
+    }
+  } catch (err) {
+    console.error(`[cache] ${kvKey} KV read failed:`, err);
+  }
+
+  // Tier 3: Origin
+  console.debug(`[cache] ${kvKey} MISS — fetching from origin`);
+  const value = await fetcher();
+
+  // Write back to both tiers
+  memCache.set(memKey, value, memTtlMs);
+  try {
+    await kv.set(kvKey, value, { ex: kvTtlSeconds });
+  } catch (err) {
+    console.error(`[cache] ${kvKey} KV write failed:`, err);
+  }
+
+  return { value, tier: 'origin' };
+}
