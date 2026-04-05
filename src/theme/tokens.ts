@@ -6,7 +6,7 @@ export const colors = {
     800: '#1f2937', 900: '#111827',
   },
   chat: {
-    userBubble: 'rgba(17, 118, 128, 0.3)',
+    userBubble: 'rgba(17, 118, 128, 0.15)',
     userText: '#111827',
     userTextDark: '#e5e5e5',
     botBubble: '#f3f4f6',
