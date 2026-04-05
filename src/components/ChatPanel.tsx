@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Box, Typography, IconButton } from '@mui/material';
+import { Box, Chip, Divider, Typography, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import ChatMessage from './ChatMessage';
@@ -17,6 +17,7 @@ import type { Message } from '@/types/chat';
 
 interface ChatPanelProps {
   sessionId: string;
+  sessionTimestamp?: number;
   onDiagramDetected?: (code: string) => void;
   digitalTwinMode?: boolean;
   onSpeakingChange?: (speaking: boolean) => void;
@@ -29,7 +30,7 @@ interface ChatPanelProps {
   onMessagesChange?: (messages: Message[]) => void;
 }
 
-export default function ChatPanel({ sessionId, onDiagramDetected, digitalTwinMode, onSpeakingChange, onListeningChange, onToggleDigitalTwin, onMicActivated, onVoiceMutedChange, triggerMessage, onTriggerHandled, onMessagesChange }: ChatPanelProps) {
+export default function ChatPanel({ sessionId, sessionTimestamp, onDiagramDetected, digitalTwinMode, onSpeakingChange, onListeningChange, onToggleDigitalTwin, onMicActivated, onVoiceMutedChange, triggerMessage, onTriggerHandled, onMessagesChange }: ChatPanelProps) {
   const [voiceMuted, setVoiceMuted] = useState(true);
   const [showDisclaimer, setShowDisclaimer] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -96,6 +97,20 @@ export default function ChatPanel({ sessionId, onDiagramDetected, digitalTwinMod
               Hey! I&#39;m Raybot. Ask me about system design, AI architecture, or how we work.
             </Typography>
           </Box>
+        )}
+        {messages.length > 0 && sessionTimestamp && (
+          <Divider sx={{ my: 2 }}>
+            <Chip
+              label={new Date(sessionTimestamp).toLocaleDateString(undefined, {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+              })}
+              size="small"
+              sx={{ fontSize: '0.75rem', color: 'text.secondary', bgcolor: 'action.hover' }}
+            />
+          </Divider>
         )}
         {messages.map((msg, i) => (
           <ChatMessage

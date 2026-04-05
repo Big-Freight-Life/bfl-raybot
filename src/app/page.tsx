@@ -35,6 +35,7 @@ export default function Home() {
   const [loadedMessages, setLoadedMessages] = useState<Message[] | null>(null);
   const [chatKey, setChatKey] = useState(0); // forces ChatPanel remount
   const [sessionId, setSessionId] = useState('');
+  const [sessionTimestamp, setSessionTimestamp] = useState<number>(Date.now());
   const messagesRef = useRef<Message[]>([]);
 
   useEffect(() => {
@@ -137,6 +138,7 @@ export default function Home() {
     sessionStorage.setItem(STORAGE_KEY_SESSION_ID, newId);
     setSessionId(newId);
     setActiveChatId(newId);
+    setSessionTimestamp(Date.now());
     messagesRef.current = [];
     setActiveCaseStudy(null);
     setActiveNavItem(null);
@@ -152,6 +154,7 @@ export default function Home() {
     if (!chat) return;
     setActiveChatId(chatId);
     setSessionId(chatId);
+    setSessionTimestamp(chat.timestamp);
     setActiveCaseStudy(null);
     setActiveNavItem(null);
     // Load the chat into sessionStorage and remount ChatPanel
@@ -270,6 +273,7 @@ export default function Home() {
             <ChatPanel
               key={chatKey}
               sessionId={sessionId}
+              sessionTimestamp={sessionTimestamp}
               digitalTwinMode={digitalTwinMode}
               onSpeakingChange={setIsSpeaking}
               onListeningChange={setIsListening}
