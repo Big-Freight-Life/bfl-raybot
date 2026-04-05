@@ -12,7 +12,6 @@ import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined';
 import BuildOutlinedIcon from '@mui/icons-material/BuildOutlined';
 import Image from 'next/image';
 import { caseStudies } from '@/lib/case-studies';
-import { softwareTools, agentSkills } from '@/lib/toolbox';
 import { SIDEBAR_WIDTH_COLLAPSED, SIDEBAR_WIDTH_EXPANDED } from '@/lib/constants';
 import type { ChatSummary } from '@/lib/chat-history';
 
@@ -226,51 +225,6 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
               );
             })}
           </Box>
-          </Box>
-        </Box>
-      )}
-
-      {/* Toolbox section — only when expanded */}
-      {open && (
-        <Box sx={{ px: 1.5, mt: 1 }}>
-          <Divider sx={{ mb: 1.5 }} />
-          <Box sx={{ px: 0 }}>
-            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 1, px: 0.5 }}>
-              Software Tools
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
-              {softwareTools.map((tool) => {
-                const isActive = activeItem === `tool:${tool.key}`;
-                return (
-                  <SidebarItemButton
-                    key={tool.key}
-                    isActive={isActive}
-                    onClick={() => handleNavigate(`tool:${tool.key}`)}
-                  >
-                    {tool.title}
-                  </SidebarItemButton>
-                );
-              })}
-            </Box>
-          </Box>
-          <Box sx={{ px: 0, mt: 2 }}>
-            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 1, px: 0.5 }}>
-              Agent Skills
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
-              {agentSkills.map((skill) => {
-                const isActive = activeItem === `skill:${skill.key}`;
-                return (
-                  <SidebarItemButton
-                    key={skill.key}
-                    isActive={isActive}
-                    onClick={() => handleNavigate(`skill:${skill.key}`)}
-                  >
-                    {skill.title}
-                  </SidebarItemButton>
-                );
-              })}
-            </Box>
           </Box>
         </Box>
       )}
