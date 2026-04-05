@@ -66,3 +66,8 @@ export const TTS_CACHE_MAX_SIZE = 200;
 export const MX_CACHE_TTL_MS = 86_400_000; // 24 hours
 export const MX_CACHE_TTL_SECONDS = 86_400;
 export const MX_CACHE_MAX_SIZE = 500;
+
+// ─── Cache: Chat Dedup ───
+export const CHAT_DEDUP_TTL_MS = 300_000; // 5 minutes
+export const CHAT_DEDUP_TTL_SECONDS = 300;
+export const CHAT_DEDUP_MAX_SIZE = 200;

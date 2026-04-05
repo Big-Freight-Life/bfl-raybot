@@ -1,24 +1,30 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
 import { SYSTEM_PROMPT, ChatMessage } from './knowledge';
 import { GEMINI_MODEL, GEMINI_MAX_OUTPUT_TOKENS, GEMINI_TEMPERATURE } from './constants';
 
-function createModel() {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) throw new Error('GEMINI_API_KEY not set');
+/** Singleton model instance — reused across requests within the same serverless instance */
+let cachedModel: GenerativeModel | null = null;
 
-  const genAI = new GoogleGenerativeAI(apiKey);
-  return genAI.getGenerativeModel({
-    model: GEMINI_MODEL,
-    systemInstruction: SYSTEM_PROMPT,
-    generationConfig: {
-      maxOutputTokens: GEMINI_MAX_OUTPUT_TOKENS,
-      temperature: GEMINI_TEMPERATURE,
-    },
-  });
+function getModel(): GenerativeModel {
+  if (!cachedModel) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) throw new Error('GEMINI_API_KEY not set');
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+    cachedModel = genAI.getGenerativeModel({
+      model: GEMINI_MODEL,
+      systemInstruction: SYSTEM_PROMPT,
+      generationConfig: {
+        maxOutputTokens: GEMINI_MAX_OUTPUT_TOKENS,
+        temperature: GEMINI_TEMPERATURE,
+      },
+    });
+  }
+  return cachedModel;
 }
 
 function buildChat(messages: ChatMessage[]) {
-  const model = createModel();
+  const model = getModel();
   const history = messages.slice(0, -1).map((m) => ({
     role: m.role,
     parts: [{ text: m.content }],

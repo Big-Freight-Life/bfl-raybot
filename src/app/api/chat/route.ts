@@ -1,11 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createHash } from 'crypto';
+import { kv } from '@vercel/kv';
 import { streamChatResponse } from '@/lib/gemini';
 import { validateRequest, isErrorResponse } from '@/lib/api-middleware';
-import { RATE_LIMIT_CHAT, MAX_MESSAGES_HISTORY } from '@/lib/constants';
+import {
+  RATE_LIMIT_CHAT,
+  MAX_MESSAGES_HISTORY,
+  CHAT_DEDUP_TTL_MS,
+  CHAT_DEDUP_TTL_SECONDS,
+  CHAT_DEDUP_MAX_SIZE,
+} from '@/lib/constants';
 import { sanitizeMessage } from '@/lib/sanitization';
 import { validateSessionId } from '@/lib/validators';
 import { ChatMessage } from '@/lib/knowledge';
 import { logMessage } from '@/lib/chat-logger';
+import { TTLCache } from '@/lib/cache';
+
+const dedupCache = new TTLCache<string>(CHAT_DEDUP_MAX_SIZE);
+
+/** Build a dedup key from the last user message + last 2 model responses */
+function buildDedupHash(messages: ChatMessage[]): string {
+  const lastUser = messages[messages.length - 1]?.content ?? '';
+  const modelResponses = messages
+    .filter((m) => m.role === 'model')
+    .slice(-2)
+    .map((m) => m.content);
+  const payload = JSON.stringify({ q: lastUser, ctx: modelResponses });
+  return createHash('sha256').update(payload).digest('hex');
+}
 
 export async function POST(request: NextRequest) {
   const result = await validateRequest(request, {
@@ -31,6 +53,44 @@ export async function POST(request: NextRequest) {
 
     const trimmed = sanitized.slice(-MAX_MESSAGES_HISTORY);
 
+    // Dedup check: return cached response for identical recent questions
+    const dedupHash = buildDedupHash(trimmed);
+    const kvKey = `chat-dedup:${dedupHash}`;
+
+    // Tier 1: Memory
+    const memCached = dedupCache.get(dedupHash);
+    if (memCached) {
+      logMessage(sessionId, ip, userMessage, memCached).catch(() => {});
+      return new Response(memCached, {
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'X-RateLimit-Remaining': String(remaining),
+          'X-Cache': 'HIT',
+          'X-Cache-Tier': 'memory',
+        },
+      });
+    }
+
+    // Tier 2: KV
+    try {
+      const kvCached = await kv.get<string>(kvKey);
+      if (kvCached) {
+        dedupCache.set(dedupHash, kvCached, CHAT_DEDUP_TTL_MS);
+        logMessage(sessionId, ip, userMessage, kvCached).catch(() => {});
+        return new Response(kvCached, {
+          headers: {
+            'Content-Type': 'text/plain; charset=utf-8',
+            'X-RateLimit-Remaining': String(remaining),
+            'X-Cache': 'HIT',
+            'X-Cache-Tier': 'kv',
+          },
+        });
+      }
+    } catch {
+      // KV read failed — proceed to Gemini
+    }
+
+    // Cache miss — stream from Gemini
     const encoder = new TextEncoder();
     let fullResponse = '';
     const abortController = new AbortController();
@@ -43,6 +103,10 @@ export async function POST(request: NextRequest) {
             controller.enqueue(encoder.encode(chunk));
           }
           controller.close();
+
+          // Write to dedup cache (non-blocking)
+          dedupCache.set(dedupHash, fullResponse, CHAT_DEDUP_TTL_MS);
+          kv.set(kvKey, fullResponse, { ex: CHAT_DEDUP_TTL_SECONDS }).catch(() => {});
 
           // Log conversation to Vercel KV (non-blocking)
           logMessage(sessionId, ip, userMessage, fullResponse).catch(() => {});
@@ -61,6 +125,7 @@ export async function POST(request: NextRequest) {
         'Content-Type': 'text/plain; charset=utf-8',
         'Transfer-Encoding': 'chunked',
         'X-RateLimit-Remaining': String(remaining),
+        'X-Cache': 'MISS',
       },
     });
   } catch (error) {
