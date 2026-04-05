@@ -56,3 +56,13 @@ export const BLOCKED_EMAILS = [
   'test@test.com', 'a@a.com', 'email@email.com', 'fake@fake.com',
   'asdf@asdf.com', 'no@no.com', 'none@none.com',
 ] as const;
+
+// ─── Cache: TTS ───
+export const TTS_CACHE_TTL_MS = 3_600_000; // 1 hour
+export const TTS_CACHE_TTL_SECONDS = 3_600;
+export const TTS_CACHE_MAX_SIZE = 200;
+
+// ─── Cache: MX Records ───
+export const MX_CACHE_TTL_MS = 86_400_000; // 24 hours
+export const MX_CACHE_TTL_SECONDS = 86_400;
+export const MX_CACHE_MAX_SIZE = 500;
