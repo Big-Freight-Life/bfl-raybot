@@ -229,23 +229,33 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25, overflowY: 'auto', scrollbarWidth: 'thin', flex: 1 }}>
               {chatList.map((chat) => {
                 const isActive = activeChatId === chat.id;
+                const dateStr = new Date(chat.timestamp).toLocaleDateString(undefined, {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                });
                 return (
                   <SidebarItemButton
                     key={chat.id}
                     isActive={isActive}
                     onClick={() => handleLoadChat(chat.id)}
-                    icon={<ChatBubbleOutlineIcon sx={{ fontSize: 14, flexShrink: 0, opacity: 0.6 }} />}
+                    icon={<ChatBubbleOutlineIcon sx={{ fontSize: 14, flexShrink: 0, opacity: 0.6, mt: 0.25 }} />}
                   >
                     <Box
                       component="span"
                       sx={{
                         flex: 1,
-                        whiteSpace: 'nowrap',
                         overflow: 'hidden',
-                        textOverflow: 'ellipsis',
+                        display: 'flex',
+                        flexDirection: 'column',
                       }}
                     >
-                      {chat.title}
+                      <Box component="span" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {chat.title}
+                      </Box>
+                      <Box component="span" sx={{ fontSize: '0.6875rem', color: 'text.disabled', lineHeight: 1.2 }}>
+                        {dateStr}
+                      </Box>
                     </Box>
                   </SidebarItemButton>
                 );
