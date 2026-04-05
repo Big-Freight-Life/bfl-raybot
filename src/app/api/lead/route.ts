@@ -6,7 +6,7 @@ import { stripHtml, sanitizeEmail } from '@/lib/sanitization';
 import { isValidEmailFormat } from '@/lib/validators';
 
 export async function POST(request: NextRequest) {
-  const result = validateRequest(request, {
+  const result = await validateRequest(request, {
     routeKey: 'lead',
     ...RATE_LIMIT_LEAD,
   });

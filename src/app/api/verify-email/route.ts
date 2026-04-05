@@ -8,7 +8,7 @@ import { TTLCache, tieredGet } from '@/lib/cache';
 const mxCache = new TTLCache<boolean>(MX_CACHE_MAX_SIZE);
 
 export async function POST(request: NextRequest) {
-  const result = validateRequest(request, {
+  const result = await validateRequest(request, {
     routeKey: 'verify-email',
     ...RATE_LIMIT_VERIFY_EMAIL,
   });

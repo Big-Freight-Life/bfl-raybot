@@ -8,7 +8,7 @@ import { ChatMessage } from '@/lib/knowledge';
 import { logMessage } from '@/lib/chat-logger';
 
 export async function POST(request: NextRequest) {
-  const result = validateRequest(request, {
+  const result = await validateRequest(request, {
     routeKey: 'chat',
     ...RATE_LIMIT_CHAT,
   });

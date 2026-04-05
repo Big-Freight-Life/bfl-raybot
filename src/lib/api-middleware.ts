@@ -21,12 +21,12 @@ interface ValidatedRequest {
  * Run common API middleware checks: origin, content-type, rate limit.
  * Returns either a ValidatedRequest on success or a NextResponse error.
  */
-export function validateRequest(
+export async function validateRequest(
   request: NextRequest,
   options: MiddlewareOptions
-): ValidatedRequest | NextResponse {
+): Promise<ValidatedRequest | NextResponse> {
   const ip = getClientIP(request);
-  const { allowed, remaining } = checkRateLimit(
+  const { allowed, remaining } = await checkRateLimit(
     options.routeKey,
     ip,
     options.maxHits,

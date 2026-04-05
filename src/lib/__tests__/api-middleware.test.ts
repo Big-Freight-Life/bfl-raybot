@@ -40,35 +40,35 @@ const defaultOptions = { routeKey: 'chat', maxHits: 20, windowMs: 60000 };
 describe('validateRequest', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockedCheckRateLimit.mockReturnValue({ allowed: true, remaining: 19 });
+    mockedCheckRateLimit.mockResolvedValue({ allowed: true, remaining: 19 });
     mockedRequireOrigin.mockReturnValue(null);
     mockedRequireJSON.mockReturnValue(null);
   });
 
-  it('returns error on rate limit exceeded', () => {
-    mockedCheckRateLimit.mockReturnValue({ allowed: false, remaining: 0 });
-    const result = validateRequest(createRequest(), defaultOptions);
+  it('returns error on rate limit exceeded', async () => {
+    mockedCheckRateLimit.mockResolvedValue({ allowed: false, remaining: 0 });
+    const result = await validateRequest(createRequest(), defaultOptions);
     expect(result).toBeInstanceOf(NextResponse);
   });
 
-  it('returns error on bad origin', () => {
+  it('returns error on bad origin', async () => {
     mockedRequireOrigin.mockReturnValue(
       NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     );
-    const result = validateRequest(createRequest(), defaultOptions);
+    const result = await validateRequest(createRequest(), defaultOptions);
     expect(result).toBeInstanceOf(NextResponse);
   });
 
-  it('returns error on wrong content-type', () => {
+  it('returns error on wrong content-type', async () => {
     mockedRequireJSON.mockReturnValue(
       NextResponse.json({ error: 'Bad content-type' }, { status: 400 })
     );
-    const result = validateRequest(createRequest(), defaultOptions);
+    const result = await validateRequest(createRequest(), defaultOptions);
     expect(result).toBeInstanceOf(NextResponse);
   });
 
-  it('returns { ip, remaining } on success', () => {
-    const result = validateRequest(createRequest(), defaultOptions);
+  it('returns { ip, remaining } on success', async () => {
+    const result = await validateRequest(createRequest(), defaultOptions);
     expect(result).not.toBeInstanceOf(NextResponse);
     expect(result).toEqual({ ip: '127.0.0.1', remaining: 19 });
   });

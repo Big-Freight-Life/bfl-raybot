@@ -18,7 +18,7 @@ function hashText(text: string): string {
 }
 
 export async function POST(request: NextRequest) {
-  const result = validateRequest(request, {
+  const result = await validateRequest(request, {
     routeKey: 'tts',
     ...RATE_LIMIT_TTS,
   });

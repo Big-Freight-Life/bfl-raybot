@@ -6,7 +6,7 @@ import type { FeedbackType } from '@/types/chat';
 const VALID_FEEDBACK: FeedbackType[] = ['helpful', 'not_helpful'];
 
 export async function POST(request: NextRequest) {
-  const result = validateRequest(request, {
+  const result = await validateRequest(request, {
     routeKey: 'feedback',
     ...RATE_LIMIT_FEEDBACK,
   });
