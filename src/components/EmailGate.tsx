@@ -76,6 +76,9 @@ export default function EmailGate({ onVerified }: EmailGateProps) {
         <TextField
           fullWidth
           size="small"
+          id="email-gate"
+          name="email"
+          autoComplete="email"
           label="Email"
           type="email"
           required

@@ -53,9 +53,9 @@ export default function LeadCaptureForm() {
     <Box sx={{ p: 2, border: 1, borderColor: 'divider', borderRadius: 2, bgcolor: 'background.paper' }}>
       <Typography variant="subtitle2" sx={{ mb: 2 }}>Let&#39;s connect you with Ray</Typography>
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-      <TextField fullWidth size="small" label="Name" value={name} onChange={(e) => setName(e.target.value)} sx={{ mb: 1.5 }} />
-      <TextField fullWidth size="small" label="Email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} sx={{ mb: 1.5 }} />
-      <TextField fullWidth size="small" label="Message (optional)" multiline rows={2} value={message} onChange={(e) => setMessage(e.target.value)} sx={{ mb: 2 }} />
+      <TextField fullWidth size="small" id="lead-name" name="name" autoComplete="name" label="Name" value={name} onChange={(e) => setName(e.target.value)} sx={{ mb: 1.5 }} />
+      <TextField fullWidth size="small" id="lead-email" name="email" autoComplete="email" type="email" required label="Email" value={email} onChange={(e) => setEmail(e.target.value)} sx={{ mb: 1.5 }} />
+      <TextField fullWidth size="small" id="lead-message" name="message" label="Message (optional)" multiline rows={2} value={message} onChange={(e) => setMessage(e.target.value)} sx={{ mb: 2 }} />
       <Box sx={{ display: 'flex', gap: 1.5 }}>
         <Button variant="contained" startIcon={<EmailIcon />} onClick={handleSubmit} disabled={sending}
           sx={{ flex: 1, textTransform: 'none', bgcolor: colors.primary.main, '&:hover': { bgcolor: colors.primary.dark } }}>

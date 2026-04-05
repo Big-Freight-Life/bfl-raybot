@@ -149,7 +149,7 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
           </Tooltip>
         )}
         <Box
-          component="textarea" ref={textareaRef} value={text} onChange={handleInput} onKeyDown={handleKeyDown}
+          component="textarea" ref={textareaRef} id="chat-input" name="message" value={text} onChange={handleInput} onKeyDown={handleKeyDown}
           placeholder='Try "design an agent workflow"' rows={1} disabled={disabled}
           sx={{ flex: 1, border: 'none', outline: 'none', resize: 'none', fontFamily: 'inherit', fontSize: '0.875rem', lineHeight: 1.5, bgcolor: 'transparent', color: 'text.primary', py: 1, '&::placeholder': { color: 'text.secondary', opacity: 0.6 } }}
         />
