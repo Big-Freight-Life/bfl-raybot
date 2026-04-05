@@ -95,7 +95,7 @@ export default function ChatMessage({ role, content, isThinking, isTyping, index
             px: 2.5, py: 1.5,
             borderRadius: isUser ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
             bgcolor: isUser ? colors.chat.userBubble : colors.chat.botBubble,
-            color: isUser ? colors.chat.userText : colors.chat.botText,
+            color: isUser ? 'text.primary' : colors.chat.botText,
           }}
         >
           {isThinking ? (
