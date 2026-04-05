@@ -35,6 +35,27 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        source: "/images/:path*",
+        headers: [
+          ...securityHeaders,
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+      {
+        source: "/favicon.ico",
+        headers: [
+          ...securityHeaders,
+          { key: "Cache-Control", value: "public, max-age=86400" },
+        ],
+      },
+      {
+        source: "/api/:path*",
+        headers: [
+          ...securityHeaders,
+          { key: "Cache-Control", value: "no-store" },
+        ],
+      },
+      {
         source: "/(.*)",
         headers: securityHeaders,
       },
