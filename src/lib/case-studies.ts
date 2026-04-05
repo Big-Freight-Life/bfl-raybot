@@ -12,7 +12,7 @@ export interface CaseStudy {
 }
 
 export const aboutRay: CaseStudy = {
-  title: 'About Ray Butler',
+  title: 'Ray Butler',
   key: 'about-ray',
   summary: 'Design Technologist building systems that encode good decisions.',
   highlights: [
