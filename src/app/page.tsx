@@ -10,7 +10,6 @@ import ChatPanel from '@/components/ChatPanel';
 import AvatarStage from '@/components/AvatarStage';
 import EmailGate from '@/components/EmailGate';
 import CaseStudyPanel from '@/components/CaseStudyPanel';
-import ToolboxPanel from '@/components/ToolboxPanel';
 import { caseStudies, aboutRay } from '@/lib/case-studies';
 import { softwareTools, agentSkills } from '@/lib/toolbox';
 import { getChatList, saveChat, loadChat, generateTitle, type ChatSummary } from '@/lib/chat-history';
@@ -30,8 +29,6 @@ export default function Home() {
   const [micActive, setMicActive] = useState(false);
   const [triggerMessage, setTriggerMessage] = useState<string | null>(null);
   const [activeCaseStudy, setActiveCaseStudy] = useState<string | null>(null);
-  const [showToolbox, setShowToolbox] = useState(false);
-  const [activeToolboxItem, setActiveToolboxItem] = useState<string | null>(null);
   const [activeNavItem, setActiveNavItem] = useState<string | null>(null);
   const [visitedHighlights, setVisitedHighlights] = useState<Set<string>>(new Set());
   const [chatList, setChatList] = useState<ChatSummary[]>([]);
@@ -87,8 +84,6 @@ export default function Home() {
       const key = action.replace('case-study:', '');
       if (key === activeCaseStudy) return;
       setActiveCaseStudy(key);
-      setShowToolbox(false);
-      setActiveToolboxItem(null);
       setActiveNavItem(action);
       setVisitedHighlights(new Set());
       const study = caseStudies.find((s) => s.key === key);
@@ -101,8 +96,6 @@ export default function Home() {
     if (action === 'about-ray') {
       if (activeCaseStudy === 'about-ray') return;
       setActiveCaseStudy('about-ray');
-      setShowToolbox(false);
-      setActiveToolboxItem(null);
       setActiveNavItem(action);
       setVisitedHighlights(new Set());
       return;
@@ -110,14 +103,22 @@ export default function Home() {
 
     if (action === 'toolbox') {
       setActiveCaseStudy(null);
-      setShowToolbox(true);
       setActiveNavItem('toolbox');
       return;
     }
 
+    if (action.startsWith('tool:') || action.startsWith('skill:')) {
+      const key = action.replace(/^(tool|skill):/, '');
+      const item = [...softwareTools, ...agentSkills].find((i) => i.key === key);
+      if (item) {
+        setActiveCaseStudy(null);
+        setActiveNavItem(action);
+        setTriggerMessage(item.prompt);
+      }
+      return;
+    }
+
     setActiveCaseStudy(null);
-    setShowToolbox(false);
-    setActiveToolboxItem(null);
     setActiveNavItem(action);
 
     const prompts: Record<string, string> = {
@@ -325,17 +326,6 @@ export default function Home() {
             ) : null;
           })()}
 
-          {showToolbox && (
-            <ToolboxPanel
-              activeItemKey={activeToolboxItem}
-              onItemClick={(prompt) => {
-                setTriggerMessage(prompt);
-                const match = [...softwareTools, ...agentSkills].find((item) => item.prompt === prompt);
-                if (match) setActiveToolboxItem(match.key);
-              }}
-              onClose={() => { setShowToolbox(false); setActiveToolboxItem(null); setActiveNavItem(null); }}
-            />
-          )}
         </Box>
       </Box>
 
