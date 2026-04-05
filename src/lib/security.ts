@@ -9,7 +9,7 @@ function getAllowedOrigins(): string[] {
   const origins = [...ALLOWED_ORIGINS];
 
   const vercelUrl = process.env.VERCEL_URL;
-  if (vercelUrl) {
+  if (process.env.VERCEL_ENV !== 'production' && vercelUrl) {
     origins.push(`https://${vercelUrl}`);
   }
 

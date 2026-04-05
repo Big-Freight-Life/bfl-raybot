@@ -1,6 +1,8 @@
 'use client';
 
-import { Box, Divider, IconButton, Tooltip, Typography } from '@mui/material';
+import { useState } from 'react';
+import { Box, Divider, Drawer, IconButton, Tooltip, Typography } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
@@ -24,21 +26,23 @@ interface IconSidebarProps {
 
 const teal = '#117680';
 
-export default function IconSidebar({ open, onToggle, onNavigate, onNewChat, onLoadChat, activeItem, activeChatId, chatList = [] }: IconSidebarProps) {
+// Shared sidebar content used by both desktop sidebar and mobile drawer
+function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, activeItem, activeChatId, chatList = [], onMobileClose }: IconSidebarProps & { onMobileClose?: () => void }) {
+  const handleNavigate = (action: string) => {
+    onNavigate?.(action);
+    onMobileClose?.();
+  };
+  const handleNewChat = () => {
+    onNewChat?.();
+    onMobileClose?.();
+  };
+  const handleLoadChat = (chatId: string) => {
+    onLoadChat?.(chatId);
+    onMobileClose?.();
+  };
+
   return (
-    <Box
-      sx={{
-        width: open ? 260 : 52,
-        flexShrink: 0,
-        display: { xs: 'none', md: 'flex' },
-        flexDirection: 'column',
-        borderRight: 1,
-        borderColor: 'divider',
-        bgcolor: 'background.paper',
-        transition: 'width 0.2s ease',
-        overflow: 'hidden',
-      }}
-    >
+    <>
       {/* Top row */}
       <Box
         sx={{
@@ -64,7 +68,7 @@ export default function IconSidebar({ open, onToggle, onNavigate, onNewChat, onL
               />
             </Box>
             <Tooltip title="Close sidebar">
-              <IconButton size="small" onClick={onToggle} sx={{ color: 'text.secondary' }}>
+              <IconButton size="small" onClick={onMobileClose || onToggle} sx={{ color: 'text.secondary' }}>
                 <ViewSidebarOutlinedIcon sx={{ fontSize: 20 }} />
               </IconButton>
             </Tooltip>
@@ -83,7 +87,7 @@ export default function IconSidebar({ open, onToggle, onNavigate, onNewChat, onL
         <Tooltip title="New chat" placement="right" disableHoverListener={open}>
           <IconButton
             size="small"
-            onClick={onNewChat}
+            onClick={handleNewChat}
             sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' }, borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1 }}
           >
             <EditNoteIcon sx={{ fontSize: 20 }} />
@@ -94,7 +98,7 @@ export default function IconSidebar({ open, onToggle, onNavigate, onNewChat, onL
         <Tooltip title="Process" placement="right" disableHoverListener={open}>
           <IconButton
             size="small"
-            onClick={() => onNavigate?.('process')}
+            onClick={() => handleNavigate('process')}
             sx={{
               color: activeItem === 'process' ? teal : 'text.secondary',
               bgcolor: activeItem === 'process' ? `${teal}0F` : 'transparent',
@@ -110,7 +114,7 @@ export default function IconSidebar({ open, onToggle, onNavigate, onNewChat, onL
         <Tooltip title="About Ray" placement="right" disableHoverListener={open}>
           <IconButton
             size="small"
-            onClick={() => onNavigate?.('about-ray')}
+            onClick={() => handleNavigate('about-ray')}
             sx={{
               color: activeItem === 'about-ray' ? teal : 'text.secondary',
               bgcolor: activeItem === 'about-ray' ? `${teal}0F` : 'transparent',
@@ -126,7 +130,7 @@ export default function IconSidebar({ open, onToggle, onNavigate, onNewChat, onL
         <Tooltip title="Contact Us" placement="right" disableHoverListener={open}>
           <IconButton
             size="small"
-            onClick={() => onNavigate?.('contact')}
+            onClick={() => handleNavigate('contact')}
             sx={{
               color: activeItem === 'contact' ? teal : 'text.secondary',
               bgcolor: activeItem === 'contact' ? `${teal}0F` : 'transparent',
@@ -155,7 +159,7 @@ export default function IconSidebar({ open, onToggle, onNavigate, onNewChat, onL
                 <Box
                   key={study.key}
                   component="button"
-                  onClick={() => onNavigate?.(`case-study:${study.key}`)}
+                  onClick={() => handleNavigate(`case-study:${study.key}`)}
                   sx={{
                     display: 'block',
                     px: 1.5,
@@ -199,7 +203,7 @@ export default function IconSidebar({ open, onToggle, onNavigate, onNewChat, onL
                   <Box
                     key={chat.id}
                     component="button"
-                    onClick={() => onLoadChat?.(chat.id)}
+                    onClick={() => handleLoadChat(chat.id)}
                     sx={{
                       display: 'flex',
                       alignItems: 'center',
@@ -237,6 +241,72 @@ export default function IconSidebar({ open, onToggle, onNavigate, onNewChat, onL
             </Box>
         </Box>
       )}
-    </Box>
+    </>
+  );
+}
+
+export default function IconSidebar(props: IconSidebarProps) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  return (
+    <>
+      {/* I6: Mobile hamburger button — visible only on xs/sm */}
+      <IconButton
+        onClick={() => setMobileOpen(true)}
+        sx={{
+          display: { xs: 'flex', md: 'none' },
+          position: 'fixed',
+          top: 8,
+          left: 8,
+          zIndex: 1300,
+          color: 'text.secondary',
+          bgcolor: 'background.paper',
+          border: 1,
+          borderColor: 'divider',
+          '&:hover': { bgcolor: 'action.hover' },
+        }}
+        size="small"
+        aria-label="Open navigation menu"
+      >
+        <MenuIcon sx={{ fontSize: 22 }} />
+      </IconButton>
+
+      {/* I6: Mobile drawer overlay */}
+      <Drawer
+        anchor="left"
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': {
+            width: 260,
+            bgcolor: 'background.paper',
+          },
+        }}
+      >
+        <SidebarContent
+          {...props}
+          open={true}
+          onMobileClose={() => setMobileOpen(false)}
+        />
+      </Drawer>
+
+      {/* Desktop sidebar — hidden on xs/sm */}
+      <Box
+        sx={{
+          width: props.open ? 260 : 52,
+          flexShrink: 0,
+          display: { xs: 'none', md: 'flex' },
+          flexDirection: 'column',
+          borderRight: 1,
+          borderColor: 'divider',
+          bgcolor: 'background.paper',
+          transition: 'width 0.2s ease',
+          overflow: 'hidden',
+        }}
+      >
+        <SidebarContent {...props} />
+      </Box>
+    </>
   );
 }

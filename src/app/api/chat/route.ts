@@ -10,8 +10,8 @@ function sanitize(text: string): string {
 }
 
 export async function POST(request: NextRequest) {
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0] ?? 'unknown';
-  const { allowed, remaining } = checkRateLimit(ip, 20, 60 * 60 * 1000);
+  const ip = (request as any).ip ?? request.headers.get('x-forwarded-for')?.split(',').pop()?.trim() ?? 'unknown';
+  const { allowed, remaining } = checkRateLimit('chat', ip, 20, 60 * 60 * 1000);
 
   if (!allowed) {
     return NextResponse.json(
@@ -41,20 +41,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
 
-    const sanitized = [...messages];
-    const last = sanitized[sanitized.length - 1];
-    const userMessage = sanitize(last.content);
-    sanitized[sanitized.length - 1] = { ...last, content: userMessage };
+    // Sanitize ALL messages
+    const sanitized = messages.map((m) => ({ ...m, content: sanitize(m.content) }));
+    const userMessage = sanitized[sanitized.length - 1].content;
 
     const trimmed = sanitized.slice(-50);
 
     const encoder = new TextEncoder();
     let fullResponse = '';
+    const abortController = new AbortController();
 
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          for await (const chunk of streamChatResponse(trimmed)) {
+          for await (const chunk of streamChatResponse(trimmed, abortController.signal)) {
             fullResponse += chunk;
             controller.enqueue(encoder.encode(chunk));
           }
@@ -66,6 +66,9 @@ export async function POST(request: NextRequest) {
           console.error('Stream error:', error);
           controller.error(error);
         }
+      },
+      cancel() {
+        abortController.abort();
       },
     });
 

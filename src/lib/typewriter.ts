@@ -3,9 +3,12 @@ export interface TypewriterOptions {
   onComplete: () => void;
 }
 
-export function typewriterEffect(fullText: string, options: TypewriterOptions) {
+// M4: Returns a cancel function to allow cleanup
+export function typewriterEffect(fullText: string, options: TypewriterOptions): () => void {
   const { onChunk, onComplete } = options;
   let index = 0;
+  let cancelled = false;
+  let timerId: ReturnType<typeof setTimeout>;
 
   function getDelay(char: string): number {
     const base = 30 + Math.random() * 20;
@@ -17,6 +20,7 @@ export function typewriterEffect(fullText: string, options: TypewriterOptions) {
   }
 
   function tick() {
+    if (cancelled) return;
     if (index >= fullText.length) {
       onComplete();
       return;
@@ -32,8 +36,13 @@ export function typewriterEffect(fullText: string, options: TypewriterOptions) {
 
     const lastChar = fullText[index - 1];
     const delay = getDelay(lastChar);
-    setTimeout(tick, delay);
+    timerId = setTimeout(tick, delay);
   }
 
   tick();
+
+  return () => {
+    cancelled = true;
+    clearTimeout(timerId);
+  };
 }

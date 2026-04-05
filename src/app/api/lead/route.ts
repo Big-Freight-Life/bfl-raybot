@@ -4,8 +4,8 @@ import { checkRateLimit } from '@/lib/rate-limit';
 import { requireOrigin, requireJSON } from '@/lib/security';
 
 export async function POST(request: NextRequest) {
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0] ?? 'unknown';
-  const { allowed } = checkRateLimit(ip, 3, 60 * 60 * 1000);
+  const ip = (request as any).ip ?? request.headers.get('x-forwarded-for')?.split(',').pop()?.trim() ?? 'unknown';
+  const { allowed } = checkRateLimit('lead', ip, 3, 60 * 60 * 1000);
 
   if (!allowed) {
     return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
@@ -22,6 +22,10 @@ export async function POST(request: NextRequest) {
 
     if (!body.email || typeof body.email !== 'string') {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(body.email.trim())) {
+      return NextResponse.json({ error: 'Invalid email format' }, { status: 400 });
     }
 
     const stripHtml = (s: string) => s.replace(/<[^>]*>/g, '').trim();

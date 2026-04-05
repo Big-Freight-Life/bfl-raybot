@@ -16,6 +16,8 @@ const CHATS_KEY = 'raybot_chats';
 const MAX_CHATS = 20;
 
 export function getChatList(): ChatSummary[] {
+  // M2: SSR guard — localStorage is not available on the server
+  if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem(CHATS_KEY);
     if (!raw) return [];
@@ -32,6 +34,8 @@ export function getChatList(): ChatSummary[] {
 }
 
 export function saveChat(chat: SavedChat): void {
+  // M2: SSR guard
+  if (typeof window === 'undefined') return;
   try {
     const raw = localStorage.getItem(CHATS_KEY);
     const chats: SavedChat[] = raw ? JSON.parse(raw) : [];
@@ -44,6 +48,8 @@ export function saveChat(chat: SavedChat): void {
 }
 
 export function loadChat(id: string): SavedChat | null {
+  // M2: SSR guard
+  if (typeof window === 'undefined') return null;
   try {
     const raw = localStorage.getItem(CHATS_KEY);
     if (!raw) return null;
@@ -55,6 +61,8 @@ export function loadChat(id: string): SavedChat | null {
 }
 
 export function deleteChat(id: string): void {
+  // M2: SSR guard
+  if (typeof window === 'undefined') return;
   try {
     const raw = localStorage.getItem(CHATS_KEY);
     if (!raw) return;

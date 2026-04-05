@@ -5,9 +5,29 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
-import PsychologyIcon from '@mui/icons-material/Psychology';
-import ChatIcon from '@mui/icons-material/Chat';
 import { colors } from '@/theme/tokens';
+import { keyframes } from '@emotion/react';
+
+// M3: Extract keyframes to module level to prevent duplicate style injection
+const stageRingPulse = keyframes`
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.08); opacity: 0.2; }
+`;
+
+const stageRingSpeak = keyframes`
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.05); opacity: 0.3; }
+`;
+
+const waveBar = keyframes`
+  0%, 100% { height: 6px; }
+  50% { height: 32px; }
+`;
+
+const micGlow = keyframes`
+  0%, 100% { box-shadow: none; }
+  50% { box-shadow: 0 0 12px rgba(20,184,166,0.3); }
+`;
 
 interface AvatarStageProps {
   isSpeaking: boolean;
@@ -65,12 +85,8 @@ export default function AvatarStage({ isSpeaking, isListening, voiceMuted, onTog
             borderRadius: '50%',
             border: '2px solid',
             borderColor: isListening ? 'rgba(20,184,166,0.5)' : 'rgba(255,255,255,0.08)',
-            animation: isListening ? 'stageRingPulse 2s ease-in-out infinite' : 'none',
+            animation: isListening ? `${stageRingPulse} 2s ease-in-out infinite` : 'none',
             transition: 'border-color 0.3s ease',
-            '@keyframes stageRingPulse': {
-              '0%, 100%': { transform: 'scale(1)', opacity: 0.5 },
-              '50%': { transform: 'scale(1.08)', opacity: 0.2 },
-            },
           }}
         />
         {/* Inner ring */}
@@ -81,12 +97,8 @@ export default function AvatarStage({ isSpeaking, isListening, voiceMuted, onTog
             borderRadius: '50%',
             border: '2px solid',
             borderColor: isSpeaking ? 'rgba(20,184,166,0.6)' : 'rgba(255,255,255,0.05)',
-            animation: isSpeaking ? 'stageRingSpeak 1s ease-in-out infinite' : 'none',
+            animation: isSpeaking ? `${stageRingSpeak} 1s ease-in-out infinite` : 'none',
             transition: 'border-color 0.3s ease',
-            '@keyframes stageRingSpeak': {
-              '0%, 100%': { transform: 'scale(1)', opacity: 0.6 },
-              '50%': { transform: 'scale(1.05)', opacity: 0.3 },
-            },
           }}
         />
         {/* Avatar circle */}
@@ -114,12 +126,8 @@ export default function AvatarStage({ isSpeaking, isListening, voiceMuted, onTog
                     width: 3,
                     bgcolor: colors.primary.main,
                     borderRadius: 2,
-                    animation: `waveBar 0.6s ease-in-out infinite`,
+                    animation: `${waveBar} 0.6s ease-in-out infinite`,
                     animationDelay: `${i * 0.08}s`,
-                    '@keyframes waveBar': {
-                      '0%, 100%': { height: 6 },
-                      '50%': { height: 32 },
-                    },
                   }}
                 />
               ))}
@@ -173,11 +181,7 @@ export default function AvatarStage({ isSpeaking, isListening, voiceMuted, onTog
             sx={{
               color: micActive ? colors.primary.main : 'rgba(255,255,255,0.7)',
               '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' },
-              animation: micActive ? 'micGlow 2s ease-in-out infinite' : 'none',
-              '@keyframes micGlow': {
-                '0%, 100%': { boxShadow: 'none' },
-                '50%': { boxShadow: '0 0 12px rgba(20,184,166,0.3)' },
-              },
+              animation: micActive ? `${micGlow} 2s ease-in-out infinite` : 'none',
             }}
           >
             {micActive ? <MicIcon sx={{ fontSize: 22 }} /> : <MicOffIcon sx={{ fontSize: 22 }} />}

@@ -5,37 +5,43 @@ import { Box, Typography } from '@mui/material';
 import mermaid from 'mermaid';
 import DOMPurify from 'dompurify';
 
-mermaid.initialize({
-  startOnLoad: false,
-  theme: 'neutral',
-  securityLevel: 'strict',
-  suppressErrorRendering: true,
-});
+// M1: Singleton guard — only initialize mermaid once
+let mermaidInitialized = false;
 
 interface InlineDiagramProps {
   code: string;
 }
 
-// Note: innerHTML usage below is safe because DOMPurify.sanitize() strips all
-// dangerous content from the Mermaid SVG output before insertion.
+// Security note: The innerHTML assignment below is intentional and safe.
+// DOMPurify.sanitize() strips all dangerous content from the Mermaid SVG
+// output before DOM insertion. The foreignObject tag has been removed from
+// the allowlist (C4) to prevent arbitrary HTML inside SVG.
 export default function InlineDiagram({ code }: InlineDiagramProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState(false);
 
   const renderDiagram = useCallback(async () => {
     if (!code || !containerRef.current) return;
+
+    // M1: Singleton mermaid initialization
+    if (!mermaidInitialized) {
+      mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+      mermaidInitialized = true;
+    }
+
     setError(false);
     const id = `mermaid-inline-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     try {
       const { svg } = await mermaid.render(id, code);
+      // C4: Removed ADD_TAGS: ['foreignObject'] — it allows arbitrary HTML inside SVG
       const clean = DOMPurify.sanitize(svg, {
         USE_PROFILES: { svg: true, svgFilters: true },
-        ADD_TAGS: ['foreignObject'],
       });
       if (containerRef.current) {
         containerRef.current.textContent = '';
         const wrapper = document.createElement('div');
-        wrapper.innerHTML = clean; // Safe: sanitized by DOMPurify above
+        // Safe: content is sanitized by DOMPurify above
+        wrapper.innerHTML = clean;
         containerRef.current.appendChild(wrapper);
       }
     } catch {

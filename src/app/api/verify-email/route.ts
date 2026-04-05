@@ -17,8 +17,8 @@ const BLOCKED_EMAILS = [
 
 // POST: Validate email
 export async function POST(request: NextRequest) {
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0] ?? 'unknown';
-  const { allowed } = checkRateLimit(ip, 10, 10 * 60 * 1000);
+  const ip = (request as any).ip ?? request.headers.get('x-forwarded-for')?.split(',').pop()?.trim() ?? 'unknown';
+  const { allowed } = checkRateLimit('verify-email', ip, 10, 10 * 60 * 1000);
 
   if (!allowed) {
     return NextResponse.json({ error: 'Too many attempts. Try again in a few minutes.' }, { status: 429 });

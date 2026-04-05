@@ -18,6 +18,11 @@ export default function LeadCaptureForm() {
 
   const handleSubmit = async () => {
     if (!email.trim()) { setError('Email is required'); return; }
+    // M10: Validate email format before making the API call
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) {
+      setError('Please enter a valid email address');
+      return;
+    }
     setError('');
     setSending(true);
     try {

@@ -32,10 +32,11 @@ export async function generateChatResponse(messages: ChatMessage[]): Promise<str
   return result.response.text();
 }
 
-export async function* streamChatResponse(messages: ChatMessage[]): AsyncGenerator<string> {
+export async function* streamChatResponse(messages: ChatMessage[], signal?: AbortSignal): AsyncGenerator<string> {
   const { chat, lastMessage } = buildChat(messages);
   const result = await chat.sendMessageStream(lastMessage);
   for await (const chunk of result.stream) {
+    if (signal?.aborted) break;
     const text = chunk.text();
     if (text) yield text;
   }

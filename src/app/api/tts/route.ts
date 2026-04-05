@@ -4,8 +4,8 @@ import { checkRateLimit } from '@/lib/rate-limit';
 import { requireOrigin, requireJSON } from '@/lib/security';
 
 export async function POST(request: NextRequest) {
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0] ?? 'unknown';
-  const { allowed } = checkRateLimit(ip, 20, 60 * 60 * 1000);
+  const ip = (request as any).ip ?? request.headers.get('x-forwarded-for')?.split(',').pop()?.trim() ?? 'unknown';
+  const { allowed } = checkRateLimit('tts', ip, 20, 60 * 60 * 1000);
 
   if (!allowed) {
     return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });

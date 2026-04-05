@@ -1,6 +1,26 @@
 'use client';
 
 import { Box, Typography } from '@mui/material';
+import { keyframes } from '@emotion/react';
+
+// M3: Extract keyframes to module level to prevent duplicate style injection
+const avatarPulse = keyframes`
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.1); opacity: 0.2; }
+`;
+
+const avatarSpeak = keyframes`
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.15); opacity: 0.1; }
+`;
+
+const soundBar = keyframes`
+  0%, 100% { height: 8px; }
+  50% { height: var(--bar-height); }
+`;
+
+// I5: Fixed bar heights instead of Math.random()
+const BAR_HEIGHTS = [32, 38, 28, 36, 30];
 
 interface DigitalTwinAvatarProps {
   isSpeaking: boolean;
@@ -40,11 +60,7 @@ export default function DigitalTwinAvatar({ isSpeaking, isListening }: DigitalTw
               borderRadius: '50%',
               border: '2px solid',
               borderColor: '#14B8A6',
-              animation: 'avatarPulse 2s ease-in-out infinite',
-              '@keyframes avatarPulse': {
-                '0%, 100%': { transform: 'scale(1)', opacity: 0.6 },
-                '50%': { transform: 'scale(1.1)', opacity: 0.2 },
-              },
+              animation: `${avatarPulse} 2s ease-in-out infinite`,
             }}
           />
         )}
@@ -57,11 +73,7 @@ export default function DigitalTwinAvatar({ isSpeaking, isListening }: DigitalTw
               borderRadius: '50%',
               border: '3px solid',
               borderColor: '#117680',
-              animation: 'avatarSpeak 0.8s ease-in-out infinite',
-              '@keyframes avatarSpeak': {
-                '0%, 100%': { transform: 'scale(1)', opacity: 0.4 },
-                '50%': { transform: 'scale(1.15)', opacity: 0.1 },
-              },
+              animation: `${avatarSpeak} 0.8s ease-in-out infinite`,
             }}
           />
         )}
@@ -89,12 +101,9 @@ export default function DigitalTwinAvatar({ isSpeaking, isListening }: DigitalTw
                     width: 4,
                     bgcolor: '#fff',
                     borderRadius: 2,
-                    animation: 'soundBar 0.8s ease-in-out infinite',
+                    '--bar-height': `${BAR_HEIGHTS[i]}px`,
+                    animation: `${soundBar} 0.8s ease-in-out infinite`,
                     animationDelay: `${i * 0.1}s`,
-                    '@keyframes soundBar': {
-                      '0%, 100%': { height: 8 },
-                      '50%': { height: 28 + Math.random() * 12 },
-                    },
                   }}
                 />
               ))}

@@ -9,7 +9,19 @@ import MicOffIcon from '@mui/icons-material/MicOff';
 import ClearIcon from '@mui/icons-material/Clear';
 import GraphicEqIcon from '@mui/icons-material/GraphicEq';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import { keyframes } from '@emotion/react';
 import { colors } from '@/theme/tokens';
+
+const micPulse = keyframes`
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+`;
+
+// C6: Email verification is client-side only. The email gate in EmailGate.tsx
+// validates email format and MX records before granting chat access, but there
+// is no server-side token enforcement on API routes. A malicious client can
+// bypass the gate and call /api/chat directly. Server-side enforcement should
+// be added to the API route layer (outside this component's scope).
 
 interface ChatInputProps {
   onSend: (message: string, source?: 'voice' | 'text') => void;
@@ -30,10 +42,24 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
   const [speechSupported, setSpeechSupported] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  // I2: Track restart timeout and mounted state for cleanup
+  const restartTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mountedRef = useRef(true);
 
   useEffect(() => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     setSpeechSupported(!!SR);
+  }, []);
+
+  // I2: Cleanup on unmount — stop recognition and clear restart timeout
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      if (restartTimerRef.current) clearTimeout(restartTimerRef.current);
+      recognitionRef.current?.stop();
+      recognitionRef.current = null;
+    };
   }, []);
 
   const handleSubmit = useCallback(() => {
@@ -85,11 +111,13 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
     recognition.onend = () => {
       setIsListening(false);
       onListeningChange?.(false);
-      // In digital twin mode, restart listening after a pause
-      if (digitalTwinMode && !disabled) {
-        setTimeout(() => {
+      // I2: In digital twin mode, restart listening after a pause (only if still mounted)
+      if (digitalTwinMode && !disabled && mountedRef.current) {
+        if (restartTimerRef.current) clearTimeout(restartTimerRef.current);
+        restartTimerRef.current = setTimeout(() => {
+          if (!mountedRef.current) return;
           if (recognitionRef.current) {
-            try { recognition.start(); setIsListening(true); onListeningChange?.(true); } catch {}
+            try { recognition.start(); setIsListening(true); onListeningChange?.(true); } catch { /* ignore */ }
           }
         }, 500);
       }
@@ -115,7 +143,7 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
       <Box sx={{ flex: 1, display: 'flex', alignItems: 'flex-end', border: 1, borderColor: 'divider', borderRadius: '12px', px: 1.5, py: 0.5, bgcolor: 'background.default', '&:focus-within': { borderColor: colors.primary.main } }}>
         {speechSupported && (
           <Tooltip title={isListening ? 'Stop listening' : 'Dictate'}>
-            <IconButton size="small" onClick={toggleMic} sx={{ color: isListening ? colors.primary.main : 'text.secondary', mr: 0.5, animation: isListening ? 'micPulse 1.5s ease-in-out infinite' : 'none', '@keyframes micPulse': { '0%, 100%': { transform: 'scale(1)' }, '50%': { transform: 'scale(1.15)' } } }}>
+            <IconButton size="small" onClick={toggleMic} sx={{ color: isListening ? colors.primary.main : 'text.secondary', mr: 0.5, animation: isListening ? `${micPulse} 1.5s ease-in-out infinite` : 'none' }}>
               {isListening ? <MicOffIcon sx={{ fontSize: 20 }} /> : <MicIcon sx={{ fontSize: 20 }} />}
             </IconButton>
           </Tooltip>

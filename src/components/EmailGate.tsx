@@ -5,7 +5,7 @@ import { Box, Typography, TextField, Button, Paper } from '@mui/material';
 import { colors } from '@/theme/tokens';
 
 interface EmailGateProps {
-  onVerified: (email: string, name: string) => void;
+  onVerified: (email: string) => void;
 }
 
 export default function EmailGate({ onVerified }: EmailGateProps) {
@@ -30,7 +30,7 @@ export default function EmailGate({ onVerified }: EmailGateProps) {
       if (!res.ok) throw new Error(data.error || 'Validation failed');
 
       sessionStorage.setItem('raybot_user_email', email);
-      onVerified(email, '');
+      onVerified(email);
     } catch (err) {
       setError((err as Error).message);
     } finally {

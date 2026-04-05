@@ -16,6 +16,7 @@ export interface Message {
 }
 
 interface ChatPanelProps {
+  sessionId: string;
   onDiagramDetected?: (code: string) => void;
   digitalTwinMode?: boolean;
   onSpeakingChange?: (speaking: boolean) => void;
@@ -25,7 +26,7 @@ interface ChatPanelProps {
   onVoiceMutedChange?: (muted: boolean) => void;
   triggerMessage?: string | null;
   onTriggerHandled?: () => void;
-  onMessagesChange?: () => void;
+  onMessagesChange?: (messages: Message[]) => void;
 }
 
 const STORAGE_KEY = 'raybot_history';
@@ -56,7 +57,7 @@ function stripMermaidBlock(text: string): string {
   return text.replace(/```mermaid\n[\s\S]*?```/g, '').trim();
 }
 
-export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeakingChange, onListeningChange, onToggleDigitalTwin, onMicActivated, onVoiceMutedChange, triggerMessage, onTriggerHandled, onMessagesChange }: ChatPanelProps) {
+export default function ChatPanel({ sessionId, onDiagramDetected, digitalTwinMode, onSpeakingChange, onListeningChange, onToggleDigitalTwin, onMicActivated, onVoiceMutedChange, triggerMessage, onTriggerHandled, onMessagesChange }: ChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showLeadForm, setShowLeadForm] = useState(false);
@@ -65,18 +66,7 @@ export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeaki
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const loadedRef = useRef(false);
-  const sessionIdRef = useRef<string>('');
   const abortRef = useRef<AbortController | null>(null);
-
-  // Generate session ID on mount
-  useEffect(() => {
-    let id = sessionStorage.getItem('raybot_session_id');
-    if (!id) {
-      id = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-      sessionStorage.setItem('raybot_session_id', id);
-    }
-    sessionIdRef.current = id;
-  }, []);
 
   useEffect(() => {
     if (loadedRef.current) return;
@@ -88,6 +78,24 @@ export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeaki
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Clean up audio on unmount
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  // Report messages to parent whenever they change
+  useEffect(() => {
+    const saveable = messages.filter((m) => !m.isThinking);
+    if (saveable.length > 0) {
+      onMessagesChange?.(saveable);
+    }
+  }, [messages, onMessagesChange]);
 
   // Handle triggered messages from sidebar navigation
   const [pendingTrigger, setPendingTrigger] = useState<string | null>(null);
@@ -115,7 +123,14 @@ export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeaki
       if (audioRef.current) audioRef.current.pause();
       const player = new Audio(url);
       audioRef.current = player;
-      player.onended = () => onSpeakingChange?.(false);
+      player.onended = () => {
+        URL.revokeObjectURL(url);
+        onSpeakingChange?.(false);
+      };
+      player.onerror = () => {
+        URL.revokeObjectURL(url);
+        onSpeakingChange?.(false);
+      };
       player.play();
     } catch { onSpeakingChange?.(false); }
   }, [voiceMuted, digitalTwinMode, onSpeakingChange]);
@@ -145,7 +160,7 @@ export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeaki
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages, sessionId: sessionIdRef.current }),
+        body: JSON.stringify({ messages: apiMessages, sessionId }),
         signal: controller.signal,
       });
 
@@ -199,7 +214,6 @@ export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeaki
 
       if (/send me an email|book a call/i.test(finalText)) setShowLeadForm(true);
       playTTS(finalText);
-      onMessagesChange?.();
     } catch (error) {
       if ((error as Error).name === 'AbortError') {
         // User stopped — keep whatever was streamed
@@ -208,7 +222,6 @@ export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeaki
           saveHistory(updated);
           return updated;
         });
-        onMessagesChange?.();
       } else {
         setMessages((prev) => {
           const updated = prev.filter((m) => !m.isThinking);
@@ -219,7 +232,7 @@ export default function ChatPanel({ onDiagramDetected, digitalTwinMode, onSpeaki
       setIsProcessing(false);
       abortRef.current = null;
     }
-  }, [messages, onDiagramDetected, playTTS]);
+  }, [messages, sessionId, onDiagramDetected, playTTS]);
 
   // Fire pending trigger now that sendMessage is available
   useEffect(() => {
