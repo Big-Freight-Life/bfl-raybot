@@ -30,4 +30,16 @@ export const darkTheme = createTheme({
     divider: '#2a2a2a',
   },
   typography: { fontFamily: typography.fontFamily },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        containedPrimary: { color: '#000000', '&:hover': { color: '#000000' } },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: { backgroundImage: 'none' },
+      },
+    },
+  },
 });

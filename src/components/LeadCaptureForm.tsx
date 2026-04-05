@@ -4,8 +4,6 @@ import { useState } from 'react';
 import { Box, TextField, Button, Typography, Alert } from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import { colors } from '@/theme/tokens';
-
 export default function LeadCaptureForm() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -58,11 +56,11 @@ export default function LeadCaptureForm() {
       <TextField fullWidth size="small" id="lead-message" name="message" label="Message (optional)" multiline rows={2} value={message} onChange={(e) => setMessage(e.target.value)} sx={{ mb: 2 }} />
       <Box sx={{ display: 'flex', gap: 1.5 }}>
         <Button variant="contained" startIcon={<EmailIcon />} onClick={handleSubmit} disabled={sending}
-          sx={{ flex: 1, textTransform: 'none', bgcolor: colors.primary.main, '&:hover': { bgcolor: colors.primary.dark } }}>
+          sx={{ flex: 1, textTransform: 'none', bgcolor: 'primary.main', '&:hover': { bgcolor: 'primary.dark' } }}>
           {sending ? 'Sending...' : 'Send Email'}
         </Button>
         <Button variant="outlined" startIcon={<CalendarMonthIcon />} component="a" href={calendarUrl} target="_blank" rel="noopener noreferrer"
-          sx={{ flex: 1, textTransform: 'none', borderColor: colors.primary.main, color: colors.primary.main }}>
+          sx={{ flex: 1, textTransform: 'none', borderColor: 'primary.main', color: 'primary.main' }}>
           Book a Call
         </Button>
       </Box>

@@ -11,8 +11,9 @@ import AvatarStage from '@/components/AvatarStage';
 import EmailGate from '@/components/EmailGate';
 import CaseStudyPanel from '@/components/CaseStudyPanel';
 import { caseStudies, aboutRay } from '@/lib/case-studies';
+import { softwareTools, agentSkills } from '@/lib/toolbox';
 import { getChatList, saveChat, loadChat, generateTitle, type ChatSummary } from '@/lib/chat-history';
-import { STORAGE_KEY_USER_EMAIL, STORAGE_KEY_HISTORY, STORAGE_KEY_SESSION_ID, TEAL } from '@/lib/constants';
+import { STORAGE_KEY_USER_EMAIL, STORAGE_KEY_HISTORY, STORAGE_KEY_SESSION_ID } from '@/lib/constants';
 import { generateSessionId, getOrCreateSessionId } from '@/lib/session-utils';
 import type { Message } from '@/types/chat';
 
@@ -97,6 +98,35 @@ export default function Home() {
       setActiveCaseStudy('about-ray');
       setActiveNavItem(action);
       setVisitedHighlights(new Set());
+      return;
+    }
+
+    if (action.startsWith('tool:')) {
+      const key = action.replace('tool:', '');
+      const tool = softwareTools.find((t) => t.key === key);
+      if (tool) {
+        setActiveCaseStudy(null);
+        setActiveNavItem(action);
+        setTriggerMessage(tool.prompt);
+      }
+      return;
+    }
+
+    if (action.startsWith('skill:')) {
+      const key = action.replace('skill:', '');
+      const skill = agentSkills.find((s) => s.key === key);
+      if (skill) {
+        setActiveCaseStudy(null);
+        setActiveNavItem(action);
+        setTriggerMessage(skill.prompt);
+      }
+      return;
+    }
+
+    if (action === 'toolbox') {
+      setActiveCaseStudy(null);
+      setActiveNavItem('toolbox');
+      setTriggerMessage('Tell me about Ray\'s toolbox — what software tools and AI skills does he use?');
       return;
     }
 
@@ -198,7 +228,7 @@ export default function Home() {
         {/* Top bar */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, height: 49, borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}>
           <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.25rem' }}>
-            <Box component="span" sx={{ color: TEAL }}>ray</Box>bot
+            <Box component="span" sx={{ color: 'primary.main' }}>ray</Box>bot
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Tooltip title={digitalTwinMode ? 'Switch to chat' : 'Digital Twin'}>
@@ -206,8 +236,8 @@ export default function Home() {
                 size="small"
                 onClick={toggleDigitalTwin}
                 sx={{
-                  color: digitalTwinMode ? TEAL : 'text.secondary',
-                  bgcolor: digitalTwinMode ? 'rgba(17,118,128,0.08)' : 'transparent',
+                  color: digitalTwinMode ? 'primary.main' : 'text.secondary',
+                  bgcolor: digitalTwinMode ? 'action.selected' : 'transparent',
                 }}
               >
                 <PsychologyIcon sx={{ fontSize: 22 }} />
@@ -317,7 +347,7 @@ export default function Home() {
         onClose={() => setShowMicToast(false)}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert onClose={() => setShowMicToast(false)} severity="info" variant="filled" sx={{ bgcolor: TEAL }}>
+        <Alert onClose={() => setShowMicToast(false)} severity="info" variant="filled" sx={{ bgcolor: 'primary.main' }}>
           Microphone is on. You can also type your messages.
         </Alert>
       </Snackbar>

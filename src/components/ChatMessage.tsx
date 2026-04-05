@@ -25,7 +25,7 @@ function renderContent(text: string, isUser: boolean) {
           lineHeight: 1.7, whiteSpace: 'pre-wrap',
           '& code': {
             fontFamily: "'SF Mono', monospace", fontSize: '0.8125rem',
-            bgcolor: isUser ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.06)',
+            bgcolor: isUser ? 'rgba(255,255,255,0.15)' : 'action.hover',
             px: 0.75, py: 0.25, borderRadius: '4px',
           },
         }}
@@ -124,8 +124,8 @@ export default function ChatMessage({ role, content, isThinking, isTyping, index
           sx={{
             px: isUser ? 2.5 : 0, py: 1.5,
             borderRadius: isUser ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
-            bgcolor: isUser ? colors.chat.userBubble : 'transparent',
-            color: isUser ? 'text.primary' : colors.chat.botText,
+            bgcolor: isUser ? (theme => theme.palette.mode === 'dark' ? 'rgba(45,212,191,0.10)' : colors.chat.userBubble) : 'transparent',
+            color: 'text.primary',
           }}
         >
           {isThinking ? (
@@ -136,7 +136,7 @@ export default function ChatMessage({ role, content, isThinking, isTyping, index
             {isTyping && (
               <Box component="span" sx={{
                 display: 'inline-block', width: 2, height: '1em',
-                bgcolor: isUser ? '#fff' : colors.gray[900],
+                bgcolor: 'text.primary',
                 ml: '2px', verticalAlign: 'text-bottom',
                 animation: 'cursorBlink 1s step-end infinite',
                 '@keyframes cursorBlink': { '0%, 100%': { opacity: 1 }, '50%': { opacity: 0 } },

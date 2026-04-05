@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import mermaid from 'mermaid';
 import DOMPurify from 'dompurify';
 
-// M1: Singleton guard — only initialize mermaid once
-let mermaidInitialized = false;
+// M1: Track which theme mermaid was last initialized with
+let mermaidTheme: string | null = null;
 
 interface InlineDiagramProps {
   code: string;
@@ -19,14 +19,17 @@ interface InlineDiagramProps {
 export default function InlineDiagram({ code }: InlineDiagramProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState(false);
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const renderDiagram = useCallback(async () => {
     if (!code || !containerRef.current) return;
 
-    // M1: Singleton mermaid initialization
-    if (!mermaidInitialized) {
-      mermaid.initialize({ startOnLoad: false, theme: 'dark' });
-      mermaidInitialized = true;
+    // M1: Re-initialize mermaid when theme changes
+    const targetTheme = isDark ? 'dark' : 'default';
+    if (mermaidTheme !== targetTheme) {
+      mermaid.initialize({ startOnLoad: false, theme: targetTheme });
+      mermaidTheme = targetTheme;
     }
 
     setError(false);
@@ -52,7 +55,7 @@ export default function InlineDiagram({ code }: InlineDiagramProps) {
       // wrapped in a div with "d" prefix (e.g. "dmermaid-inline-...")
       document.getElementById(`d${id}`)?.remove();
     }
-  }, [code]);
+  }, [code, isDark]);
 
   useEffect(() => { renderDiagram(); }, [renderDiagram]);
 
@@ -66,7 +69,7 @@ export default function InlineDiagram({ code }: InlineDiagramProps) {
       sx={{
         my: 1.5,
         p: 2,
-        bgcolor: '#fff',
+        bgcolor: 'background.paper',
         borderRadius: '8px',
         border: '1px solid',
         borderColor: 'divider',

@@ -10,8 +10,6 @@ import ClearIcon from '@mui/icons-material/Clear';
 import GraphicEqIcon from '@mui/icons-material/GraphicEq';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import { keyframes } from '@emotion/react';
-import { colors } from '@/theme/tokens';
-
 const micPulse = keyframes`
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.15); }
@@ -140,10 +138,10 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderTop: 1, borderColor: 'divider', bgcolor: 'background.paper', px: 2, pt: 2, pb: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1, maxWidth: 768, width: '100%' }}>
-      <Box sx={{ flex: 1, display: 'flex', alignItems: 'flex-end', border: 1, borderColor: 'divider', borderRadius: '12px', px: 1.5, py: 0.5, bgcolor: 'background.default', '&:focus-within': { borderColor: colors.primary.main } }}>
+      <Box sx={{ flex: 1, display: 'flex', alignItems: 'flex-end', border: 1, borderColor: 'divider', borderRadius: '12px', px: 1.5, py: 0.5, bgcolor: 'background.default', '&:focus-within': { borderColor: 'primary.main' } }}>
         {speechSupported && (
           <Tooltip title={isListening ? 'Stop listening' : 'Dictate'}>
-            <IconButton size="small" onClick={toggleMic} sx={{ color: isListening ? colors.primary.main : 'text.secondary', mr: 0.5, animation: isListening ? `${micPulse} 1.5s ease-in-out infinite` : 'none' }}>
+            <IconButton size="small" onClick={toggleMic} sx={{ color: isListening ? 'primary.main' : 'text.secondary', mr: 0.5, animation: isListening ? `${micPulse} 1.5s ease-in-out infinite` : 'none' }}>
               {isListening ? <MicOffIcon sx={{ fontSize: 20 }} /> : <MicIcon sx={{ fontSize: 20 }} />}
             </IconButton>
           </Tooltip>
@@ -168,7 +166,7 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
         </Tooltip>
       ) : text.trim() ? (
         <IconButton size="small" onClick={handleSubmit} disabled={disabled}
-          sx={{ bgcolor: colors.primary.main, color: '#fff', mb: 0.5, '&:hover': { bgcolor: colors.primary.dark }, '&.Mui-disabled': { bgcolor: 'action.disabledBackground', color: 'action.disabled' } }}>
+          sx={{ bgcolor: 'primary.main', color: '#fff', mb: 0.5, '&:hover': { bgcolor: 'primary.dark' }, '&.Mui-disabled': { bgcolor: 'action.disabledBackground', color: 'action.disabled' } }}>
           <SendIcon sx={{ fontSize: 18 }} />
         </IconButton>
       ) : (
@@ -186,9 +184,9 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
             py: 0.5,
             minWidth: 'auto',
             whiteSpace: 'nowrap',
-            borderColor: voiceMuted ? 'divider' : colors.primary.main,
-            color: voiceMuted ? 'text.secondary' : colors.primary.main,
-            '&:hover': { borderColor: colors.primary.main, bgcolor: 'transparent' },
+            borderColor: voiceMuted ? 'divider' : 'primary.main',
+            color: voiceMuted ? 'text.secondary' : 'primary.main',
+            '&:hover': { borderColor: 'primary.main', bgcolor: 'transparent' },
           }}
         >
           Voice

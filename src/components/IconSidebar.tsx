@@ -9,9 +9,11 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined';
+import BuildOutlinedIcon from '@mui/icons-material/BuildOutlined';
 import Image from 'next/image';
 import { caseStudies } from '@/lib/case-studies';
-import { TEAL, TEAL_BG, SIDEBAR_WIDTH_COLLAPSED, SIDEBAR_WIDTH_EXPANDED } from '@/lib/constants';
+import { softwareTools, agentSkills } from '@/lib/toolbox';
+import { SIDEBAR_WIDTH_COLLAPSED, SIDEBAR_WIDTH_EXPANDED } from '@/lib/constants';
 import type { ChatSummary } from '@/lib/chat-history';
 
 interface IconSidebarProps {
@@ -43,8 +45,8 @@ function NavButton({ tooltip, icon, label, open, isActive, onClick }: NavButtonP
         size="small"
         onClick={onClick}
         sx={{
-          color: isActive ? TEAL : 'text.secondary',
-          bgcolor: isActive ? TEAL_BG : 'transparent',
+          color: isActive ? 'primary.main' : 'text.secondary',
+          bgcolor: isActive ? 'action.selected' : 'transparent',
           '&:hover': { color: 'text.primary', bgcolor: 'action.hover' },
           borderRadius: open ? '8px' : '50%',
           width: open ? '100%' : 'auto',
@@ -82,7 +84,7 @@ function SidebarItemButton({ isActive, onClick, children, icon }: SidebarItemBut
         py: 1,
         borderRadius: '8px',
         fontSize: '0.8125rem',
-        color: isActive ? TEAL : 'text.secondary',
+        color: isActive ? 'primary.main' : 'text.secondary',
         fontWeight: isActive ? 600 : 400,
         textDecoration: 'none',
         whiteSpace: 'nowrap',
@@ -90,7 +92,7 @@ function SidebarItemButton({ isActive, onClick, children, icon }: SidebarItemBut
         textOverflow: 'ellipsis',
         textAlign: 'left',
         border: 'none',
-        bgcolor: isActive ? TEAL_BG : 'transparent',
+        bgcolor: isActive ? 'action.selected' : 'transparent',
         cursor: 'pointer',
         width: '100%',
         fontFamily: 'inherit',
@@ -192,6 +194,14 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
           isActive={activeItem === 'contact'}
           onClick={() => handleNavigate('contact')}
         />
+        <NavButton
+          tooltip="Toolbox"
+          icon={<BuildOutlinedIcon sx={{ fontSize: 20 }} />}
+          label="Toolbox"
+          open={open}
+          isActive={activeItem?.startsWith('tool:') || activeItem?.startsWith('skill:')}
+          onClick={() => handleNavigate('toolbox')}
+        />
       </Box>
 
       {/* Case Studies section — only when expanded */}
@@ -216,6 +226,51 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
               );
             })}
           </Box>
+          </Box>
+        </Box>
+      )}
+
+      {/* Toolbox section — only when expanded */}
+      {open && (
+        <Box sx={{ px: 1.5, mt: 1 }}>
+          <Divider sx={{ mb: 1.5 }} />
+          <Box sx={{ px: 0 }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 1, px: 0.5 }}>
+              Software Tools
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+              {softwareTools.map((tool) => {
+                const isActive = activeItem === `tool:${tool.key}`;
+                return (
+                  <SidebarItemButton
+                    key={tool.key}
+                    isActive={isActive}
+                    onClick={() => handleNavigate(`tool:${tool.key}`)}
+                  >
+                    {tool.title}
+                  </SidebarItemButton>
+                );
+              })}
+            </Box>
+          </Box>
+          <Box sx={{ px: 0, mt: 2 }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 1, px: 0.5 }}>
+              Agent Skills
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+              {agentSkills.map((skill) => {
+                const isActive = activeItem === `skill:${skill.key}`;
+                return (
+                  <SidebarItemButton
+                    key={skill.key}
+                    isActive={isActive}
+                    onClick={() => handleNavigate(`skill:${skill.key}`)}
+                  >
+                    {skill.title}
+                  </SidebarItemButton>
+                );
+              })}
+            </Box>
           </Box>
         </Box>
       )}

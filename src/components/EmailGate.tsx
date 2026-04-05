@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 import { Box, Typography, TextField, Button, Paper } from '@mui/material';
-import { colors } from '@/theme/tokens';
-
 interface EmailGateProps {
   onVerified: (email: string) => void;
 }
@@ -67,7 +65,7 @@ export default function EmailGate({ onVerified }: EmailGateProps) {
         }}
       >
         <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>
-          <Box component="span" sx={{ color: colors.primary.main }}>ray</Box>bot
+          <Box component="span" sx={{ color: 'primary.main' }}>ray</Box>bot
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
           Enter your email to start chatting with Raybot.
@@ -96,9 +94,9 @@ export default function EmailGate({ onVerified }: EmailGateProps) {
           disabled={checking}
           sx={{
             textTransform: 'none',
-            bgcolor: colors.primary.main,
+            bgcolor: 'primary.main',
             py: 1.25,
-            '&:hover': { bgcolor: colors.primary.dark },
+            '&:hover': { bgcolor: 'primary.dark' },
           }}
         >
           {checking ? 'Checking...' : 'Start Chatting'}
