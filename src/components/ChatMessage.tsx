@@ -92,7 +92,7 @@ export default function ChatMessage({ role, content, isThinking, isTyping, index
         )}
         <Box
           sx={{
-            px: 2.5, py: 1.5,
+            px: isUser ? 2.5 : 0, py: 1.5,
             borderRadius: isUser ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
             bgcolor: isUser ? colors.chat.userBubble : 'transparent',
             color: isUser ? 'text.primary' : colors.chat.botText,
