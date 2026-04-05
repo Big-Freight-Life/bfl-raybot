@@ -1,20 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkRateLimit } from '@/lib/rate-limit';
-import { requireOrigin, requireJSON } from '@/lib/security';
+import { validateRequest, isErrorResponse } from '@/lib/api-middleware';
+import { RATE_LIMIT_FEEDBACK } from '@/lib/constants';
+import type { FeedbackType } from '@/types/chat';
+
+const VALID_FEEDBACK: FeedbackType[] = ['helpful', 'not_helpful'];
 
 export async function POST(request: NextRequest) {
-  const ip = (request as any).ip ?? request.headers.get('x-forwarded-for')?.split(',').pop()?.trim() ?? 'unknown';
-  const { allowed } = checkRateLimit('feedback', ip, 30, 60 * 60 * 1000);
-
-  if (!allowed) {
-    return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
-  }
-
-  const originError = requireOrigin(request);
-  if (originError) return originError;
-
-  const jsonError = requireJSON(request);
-  if (jsonError) return jsonError;
+  const result = validateRequest(request, {
+    routeKey: 'feedback',
+    ...RATE_LIMIT_FEEDBACK,
+  });
+  if (isErrorResponse(result)) return result;
 
   try {
     const { messageIndex, feedback } = await request.json();
@@ -23,7 +19,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid messageIndex' }, { status: 400 });
     }
 
-    if (feedback !== 'helpful' && feedback !== 'not_helpful') {
+    if (!VALID_FEEDBACK.includes(feedback)) {
       return NextResponse.json({ error: 'Invalid feedback value' }, { status: 400 });
     }
 

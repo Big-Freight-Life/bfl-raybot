@@ -1,21 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { textToSpeech } from '@/lib/elevenlabs';
-import { checkRateLimit } from '@/lib/rate-limit';
-import { requireOrigin, requireJSON } from '@/lib/security';
+import { validateRequest, isErrorResponse } from '@/lib/api-middleware';
+import { RATE_LIMIT_TTS, MAX_TTS_TEXT_LENGTH } from '@/lib/constants';
 
 export async function POST(request: NextRequest) {
-  const ip = (request as any).ip ?? request.headers.get('x-forwarded-for')?.split(',').pop()?.trim() ?? 'unknown';
-  const { allowed } = checkRateLimit('tts', ip, 20, 60 * 60 * 1000);
-
-  if (!allowed) {
-    return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
-  }
-
-  const originError = requireOrigin(request);
-  if (originError) return originError;
-
-  const jsonError = requireJSON(request);
-  if (jsonError) return jsonError;
+  const result = validateRequest(request, {
+    routeKey: 'tts',
+    ...RATE_LIMIT_TTS,
+  });
+  if (isErrorResponse(result)) return result;
 
   try {
     const { text } = await request.json();
@@ -23,7 +16,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Text is required' }, { status: 400 });
     }
 
-    const audioBuffer = await textToSpeech(text.slice(0, 1000));
+    const audioBuffer = await textToSpeech(text.slice(0, MAX_TTS_TEXT_LENGTH));
     const base64 = Buffer.from(audioBuffer).toString('base64');
 
     return NextResponse.json({ audio: base64 });

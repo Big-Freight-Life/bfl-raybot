@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Box, Divider, Drawer, IconButton, Tooltip, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import EditNoteIcon from '@mui/icons-material/EditNote';
@@ -11,6 +11,7 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined';
 import Image from 'next/image';
 import { caseStudies } from '@/lib/case-studies';
+import { TEAL, TEAL_BG, SIDEBAR_WIDTH_COLLAPSED, SIDEBAR_WIDTH_EXPANDED } from '@/lib/constants';
 import type { ChatSummary } from '@/lib/chat-history';
 
 interface IconSidebarProps {
@@ -24,7 +25,83 @@ interface IconSidebarProps {
   chatList?: ChatSummary[];
 }
 
-const teal = '#117680';
+/* ─── NavButton sub-component ─── */
+
+interface NavButtonProps {
+  tooltip: string;
+  icon: ReactNode;
+  label?: string;
+  open: boolean;
+  isActive?: boolean;
+  onClick: () => void;
+}
+
+function NavButton({ tooltip, icon, label, open, isActive, onClick }: NavButtonProps) {
+  return (
+    <Tooltip title={tooltip} placement="right" disableHoverListener={open}>
+      <IconButton
+        size="small"
+        onClick={onClick}
+        sx={{
+          color: isActive ? TEAL : 'text.secondary',
+          bgcolor: isActive ? TEAL_BG : 'transparent',
+          '&:hover': { color: 'text.primary', bgcolor: 'action.hover' },
+          borderRadius: open ? '8px' : '50%',
+          width: open ? '100%' : 'auto',
+          justifyContent: 'flex-start',
+          gap: 1.5,
+          px: open ? 1.5 : 1,
+        }}
+      >
+        {icon}
+        {open && <Box component="span" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>{label || tooltip}</Box>}
+      </IconButton>
+    </Tooltip>
+  );
+}
+
+/* ─── SidebarItemButton sub-component ─── */
+
+interface SidebarItemButtonProps {
+  isActive: boolean;
+  onClick: () => void;
+  children: ReactNode;
+  icon?: ReactNode;
+}
+
+function SidebarItemButton({ isActive, onClick, children, icon }: SidebarItemButtonProps) {
+  return (
+    <Box
+      component="button"
+      onClick={onClick}
+      sx={{
+        display: icon ? 'flex' : 'block',
+        alignItems: icon ? 'center' : undefined,
+        gap: icon ? 1 : undefined,
+        px: 1.5,
+        py: 1,
+        borderRadius: '8px',
+        fontSize: '0.8125rem',
+        color: isActive ? TEAL : 'text.secondary',
+        fontWeight: isActive ? 600 : 400,
+        textDecoration: 'none',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        textAlign: 'left',
+        border: 'none',
+        bgcolor: isActive ? TEAL_BG : 'transparent',
+        cursor: 'pointer',
+        width: '100%',
+        fontFamily: 'inherit',
+        '&:hover': { bgcolor: 'action.hover', color: 'text.primary' },
+      }}
+    >
+      {icon}
+      {children}
+    </Box>
+  );
+}
 
 // Shared sidebar content used by both desktop sidebar and mobile drawer
 function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, activeItem, activeChatId, chatList = [], onMobileClose }: IconSidebarProps & { onMobileClose?: () => void }) {
@@ -84,64 +161,37 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
 
       {/* Nav items */}
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: open ? 'flex-start' : 'center', py: 1, gap: 0.5, px: open ? 1 : 0 }}>
-        <Tooltip title="New chat" placement="right" disableHoverListener={open}>
-          <IconButton
-            size="small"
-            onClick={handleNewChat}
-            sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary' }, borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1 }}
-          >
-            <EditNoteIcon sx={{ fontSize: 20 }} />
-            {open && <Box component="span" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>New chat</Box>}
-          </IconButton>
-        </Tooltip>
-
-        <Tooltip title="Process" placement="right" disableHoverListener={open}>
-          <IconButton
-            size="small"
-            onClick={() => handleNavigate('process')}
-            sx={{
-              color: activeItem === 'process' ? teal : 'text.secondary',
-              bgcolor: activeItem === 'process' ? `${teal}0F` : 'transparent',
-              '&:hover': { color: 'text.primary', bgcolor: 'action.hover' },
-              borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1,
-            }}
-          >
-            <AccountTreeOutlinedIcon sx={{ fontSize: 20 }} />
-            {open && <Box component="span" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>Process</Box>}
-          </IconButton>
-        </Tooltip>
-
-        <Tooltip title="About Ray" placement="right" disableHoverListener={open}>
-          <IconButton
-            size="small"
-            onClick={() => handleNavigate('about-ray')}
-            sx={{
-              color: activeItem === 'about-ray' ? teal : 'text.secondary',
-              bgcolor: activeItem === 'about-ray' ? `${teal}0F` : 'transparent',
-              '&:hover': { color: 'text.primary', bgcolor: 'action.hover' },
-              borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1,
-            }}
-          >
-            <PersonOutlineIcon sx={{ fontSize: 20 }} />
-            {open && <Box component="span" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>About Ray</Box>}
-          </IconButton>
-        </Tooltip>
-
-        <Tooltip title="Contact Us" placement="right" disableHoverListener={open}>
-          <IconButton
-            size="small"
-            onClick={() => handleNavigate('contact')}
-            sx={{
-              color: activeItem === 'contact' ? teal : 'text.secondary',
-              bgcolor: activeItem === 'contact' ? `${teal}0F` : 'transparent',
-              '&:hover': { color: 'text.primary', bgcolor: 'action.hover' },
-              borderRadius: open ? '8px' : '50%', width: open ? '100%' : 'auto', justifyContent: 'flex-start', gap: 1.5, px: open ? 1.5 : 1,
-            }}
-          >
-            <MailOutlineIcon sx={{ fontSize: 20 }} />
-            {open && <Box component="span" sx={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>Contact Us</Box>}
-          </IconButton>
-        </Tooltip>
+        <NavButton
+          tooltip="New chat"
+          icon={<EditNoteIcon sx={{ fontSize: 20 }} />}
+          label="New chat"
+          open={open}
+          onClick={handleNewChat}
+        />
+        <NavButton
+          tooltip="Process"
+          icon={<AccountTreeOutlinedIcon sx={{ fontSize: 20 }} />}
+          label="Process"
+          open={open}
+          isActive={activeItem === 'process'}
+          onClick={() => handleNavigate('process')}
+        />
+        <NavButton
+          tooltip="About Ray"
+          icon={<PersonOutlineIcon sx={{ fontSize: 20 }} />}
+          label="About Ray"
+          open={open}
+          isActive={activeItem === 'about-ray'}
+          onClick={() => handleNavigate('about-ray')}
+        />
+        <NavButton
+          tooltip="Contact Us"
+          icon={<MailOutlineIcon sx={{ fontSize: 20 }} />}
+          label="Contact Us"
+          open={open}
+          isActive={activeItem === 'contact'}
+          onClick={() => handleNavigate('contact')}
+        />
       </Box>
 
       {/* Case Studies section — only when expanded */}
@@ -156,33 +206,13 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
             {caseStudies.map((study) => {
               const isActive = activeItem === `case-study:${study.key}`;
               return (
-                <Box
+                <SidebarItemButton
                   key={study.key}
-                  component="button"
+                  isActive={isActive}
                   onClick={() => handleNavigate(`case-study:${study.key}`)}
-                  sx={{
-                    display: 'block',
-                    px: 1.5,
-                    py: 1,
-                    borderRadius: '8px',
-                    fontSize: '0.8125rem',
-                    color: isActive ? teal : 'text.secondary',
-                    fontWeight: isActive ? 600 : 400,
-                    textDecoration: 'none',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    textAlign: 'left',
-                    border: 'none',
-                    bgcolor: isActive ? `${teal}0F` : 'transparent',
-                    cursor: 'pointer',
-                    width: '100%',
-                    fontFamily: 'inherit',
-                    '&:hover': { bgcolor: 'action.hover', color: 'text.primary' },
-                  }}
                 >
                   {study.title}
-                </Box>
+                </SidebarItemButton>
               );
             })}
           </Box>
@@ -200,30 +230,12 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
               {chatList.map((chat) => {
                 const isActive = activeChatId === chat.id;
                 return (
-                  <Box
+                  <SidebarItemButton
                     key={chat.id}
-                    component="button"
+                    isActive={isActive}
                     onClick={() => handleLoadChat(chat.id)}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 1,
-                      px: 1.5,
-                      py: 1,
-                      borderRadius: '8px',
-                      fontSize: '0.8125rem',
-                      color: isActive ? teal : 'text.secondary',
-                      fontWeight: isActive ? 600 : 400,
-                      textAlign: 'left',
-                      border: 'none',
-                      bgcolor: isActive ? `${teal}0F` : 'transparent',
-                      cursor: 'pointer',
-                      width: '100%',
-                      fontFamily: 'inherit',
-                      '&:hover': { bgcolor: 'action.hover', color: 'text.primary' },
-                    }}
+                    icon={<ChatBubbleOutlineIcon sx={{ fontSize: 14, flexShrink: 0, opacity: 0.6 }} />}
                   >
-                    <ChatBubbleOutlineIcon sx={{ fontSize: 14, flexShrink: 0, opacity: 0.6 }} />
                     <Box
                       component="span"
                       sx={{
@@ -235,7 +247,7 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
                     >
                       {chat.title}
                     </Box>
-                  </Box>
+                  </SidebarItemButton>
                 );
               })}
             </Box>
@@ -279,7 +291,7 @@ export default function IconSidebar(props: IconSidebarProps) {
         sx={{
           display: { xs: 'block', md: 'none' },
           '& .MuiDrawer-paper': {
-            width: 260,
+            width: SIDEBAR_WIDTH_EXPANDED,
             bgcolor: 'background.paper',
           },
         }}
@@ -294,7 +306,7 @@ export default function IconSidebar(props: IconSidebarProps) {
       {/* Desktop sidebar — hidden on xs/sm */}
       <Box
         sx={{
-          width: props.open ? 260 : 52,
+          width: props.open ? SIDEBAR_WIDTH_EXPANDED : SIDEBAR_WIDTH_COLLAPSED,
           flexShrink: 0,
           display: { xs: 'none', md: 'flex' },
           flexDirection: 'column',

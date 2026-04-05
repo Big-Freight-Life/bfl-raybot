@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { SYSTEM_PROMPT, ChatMessage } from './knowledge';
+import { GEMINI_MODEL, GEMINI_MAX_OUTPUT_TOKENS, GEMINI_TEMPERATURE } from './constants';
 
 function createModel() {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -7,11 +8,11 @@ function createModel() {
 
   const genAI = new GoogleGenerativeAI(apiKey);
   return genAI.getGenerativeModel({
-    model: 'gemini-2.5-flash',
+    model: GEMINI_MODEL,
     systemInstruction: SYSTEM_PROMPT,
     generationConfig: {
-      maxOutputTokens: 1024,
-      temperature: 0.7,
+      maxOutputTokens: GEMINI_MAX_OUTPUT_TOKENS,
+      temperature: GEMINI_TEMPERATURE,
     },
   });
 }

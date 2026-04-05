@@ -12,6 +12,9 @@ import EmailGate from '@/components/EmailGate';
 import CaseStudyPanel from '@/components/CaseStudyPanel';
 import { caseStudies, aboutRay } from '@/lib/case-studies';
 import { getChatList, saveChat, loadChat, generateTitle, type ChatSummary } from '@/lib/chat-history';
+import { STORAGE_KEY_USER_EMAIL, STORAGE_KEY_HISTORY, STORAGE_KEY_SESSION_ID, TEAL } from '@/lib/constants';
+import { generateSessionId, getOrCreateSessionId } from '@/lib/session-utils';
+import type { Message } from '@/types/chat';
 
 export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -29,13 +32,13 @@ export default function Home() {
   const [visitedHighlights, setVisitedHighlights] = useState<Set<string>>(new Set());
   const [chatList, setChatList] = useState<ChatSummary[]>([]);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
-  const [loadedMessages, setLoadedMessages] = useState<{ role: 'user' | 'bot'; content: string; source?: 'voice' | 'text' }[] | null>(null);
+  const [loadedMessages, setLoadedMessages] = useState<Message[] | null>(null);
   const [chatKey, setChatKey] = useState(0); // forces ChatPanel remount
   const [sessionId, setSessionId] = useState('');
-  const messagesRef = useRef<{ role: 'user' | 'bot'; content: string; source?: 'voice' | 'text' }[]>([]);
+  const messagesRef = useRef<Message[]>([]);
 
   useEffect(() => {
-    const email = sessionStorage.getItem('raybot_user_email');
+    const email = sessionStorage.getItem(STORAGE_KEY_USER_EMAIL);
     if (email) {
       setVerified(true);
       setUserEmail(email);
@@ -43,11 +46,7 @@ export default function Home() {
       setVerified(false);
     }
     setChatList(getChatList());
-    let sid = sessionStorage.getItem('raybot_session_id');
-    if (!sid) {
-      sid = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-      sessionStorage.setItem('raybot_session_id', sid);
-    }
+    const sid = getOrCreateSessionId();
     setSessionId(sid);
     setActiveChatId(sid);
   }, []);
@@ -133,9 +132,9 @@ export default function Home() {
 
   const handleNewChat = useCallback(() => {
     saveCurrentChat();
-    sessionStorage.removeItem('raybot_history');
-    const newId = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-    sessionStorage.setItem('raybot_session_id', newId);
+    sessionStorage.removeItem(STORAGE_KEY_HISTORY);
+    const newId = generateSessionId();
+    sessionStorage.setItem(STORAGE_KEY_SESSION_ID, newId);
     setSessionId(newId);
     setActiveChatId(newId);
     messagesRef.current = [];
@@ -156,15 +155,15 @@ export default function Home() {
     setActiveCaseStudy(null);
     setActiveNavItem(null);
     // Load the chat into sessionStorage and remount ChatPanel
-    sessionStorage.setItem('raybot_history', JSON.stringify(chat.messages));
-    sessionStorage.setItem('raybot_session_id', chatId);
+    sessionStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(chat.messages));
+    sessionStorage.setItem(STORAGE_KEY_SESSION_ID, chatId);
     messagesRef.current = chat.messages;
     setLoadedMessages(chat.messages);
     setChatKey((k) => k + 1);
   }, [activeChatId, saveCurrentChat]);
 
   // Update messages ref and auto-save when messages change
-  const handleMessagesChange = useCallback((msgs: { role: 'user' | 'bot'; content: string; source?: 'voice' | 'text' }[]) => {
+  const handleMessagesChange = useCallback((msgs: Message[]) => {
     messagesRef.current = msgs;
     saveCurrentChat();
   }, [saveCurrentChat]);
@@ -181,7 +180,7 @@ export default function Home() {
         })
         .join('\n\n');
       const subject = `Raybot Transcript — ${new Date().toLocaleDateString()}`;
-      const email = sessionStorage.getItem('raybot_user_email') || '';
+      const email = sessionStorage.getItem(STORAGE_KEY_USER_EMAIL) || '';
       window.open(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`);
     } catch { /* ignore */ }
   }, []);
@@ -196,7 +195,7 @@ export default function Home() {
         {/* Top bar */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, height: 49, borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}>
           <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.25rem' }}>
-            <Box component="span" sx={{ color: '#117680' }}>ray</Box>bot
+            <Box component="span" sx={{ color: TEAL }}>ray</Box>bot
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Tooltip title={digitalTwinMode ? 'Switch to chat' : 'Digital Twin'}>
@@ -204,7 +203,7 @@ export default function Home() {
                 size="small"
                 onClick={toggleDigitalTwin}
                 sx={{
-                  color: digitalTwinMode ? '#117680' : 'text.secondary',
+                  color: digitalTwinMode ? TEAL : 'text.secondary',
                   bgcolor: digitalTwinMode ? 'rgba(17,118,128,0.08)' : 'transparent',
                 }}
               >
@@ -314,7 +313,7 @@ export default function Home() {
         onClose={() => setShowMicToast(false)}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert onClose={() => setShowMicToast(false)} severity="info" variant="filled" sx={{ bgcolor: '#117680' }}>
+        <Alert onClose={() => setShowMicToast(false)} severity="info" variant="filled" sx={{ bgcolor: TEAL }}>
           Microphone is on. You can also type your messages.
         </Alert>
       </Snackbar>

@@ -1,34 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { checkRateLimit } from '@/lib/rate-limit';
-import { requireOrigin, requireJSON } from '@/lib/security';
+import { validateRequest, isErrorResponse } from '@/lib/api-middleware';
+import { RATE_LIMIT_VERIFY_EMAIL } from '@/lib/constants';
+import { isValidEmailFormat, isBlockedEmail, isDisposableDomain, getEmailDomain } from '@/lib/validators';
 import dns from 'dns/promises';
-
-const DISPOSABLE_DOMAINS = [
-  'mailinator.com', 'guerrillamail.com', 'tempmail.com', 'throwaway.email',
-  'yopmail.com', 'sharklasers.com', 'guerrillamailblock.com', 'grr.la',
-  'dispostable.com', 'trashmail.com', 'fakeinbox.com', 'maildrop.cc',
-  'temp-mail.org', '10minutemail.com', 'tempail.com', 'tmpmail.net',
-];
-
-const BLOCKED_EMAILS = [
-  'test@test.com', 'a@a.com', 'email@email.com', 'fake@fake.com',
-  'asdf@asdf.com', 'no@no.com', 'none@none.com',
-];
 
 // POST: Validate email
 export async function POST(request: NextRequest) {
-  const ip = (request as any).ip ?? request.headers.get('x-forwarded-for')?.split(',').pop()?.trim() ?? 'unknown';
-  const { allowed } = checkRateLimit('verify-email', ip, 10, 10 * 60 * 1000);
-
-  if (!allowed) {
-    return NextResponse.json({ error: 'Too many attempts. Try again in a few minutes.' }, { status: 429 });
-  }
-
-  const originError = requireOrigin(request);
-  if (originError) return originError;
-
-  const jsonError = requireJSON(request);
-  if (jsonError) return jsonError;
+  const result = validateRequest(request, {
+    routeKey: 'verify-email',
+    ...RATE_LIMIT_VERIFY_EMAIL,
+  });
+  if (isErrorResponse(result)) return result;
 
   try {
     const { email, name } = await request.json();
@@ -40,20 +22,21 @@ export async function POST(request: NextRequest) {
     const trimmed = email.trim().toLowerCase();
 
     // Format check
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(trimmed)) {
+    if (!isValidEmailFormat(trimmed)) {
       return NextResponse.json({ error: 'Enter a valid email address' }, { status: 400 });
     }
 
     // Blocked emails
-    if (BLOCKED_EMAILS.includes(trimmed)) {
+    if (isBlockedEmail(trimmed)) {
       return NextResponse.json({ error: 'Please use a real email address' }, { status: 400 });
     }
 
     // Disposable domain check
-    const domain = trimmed.split('@')[1];
-    if (DISPOSABLE_DOMAINS.includes(domain)) {
+    if (isDisposableDomain(trimmed)) {
       return NextResponse.json({ error: 'Disposable email addresses are not allowed' }, { status: 400 });
     }
+
+    const domain = getEmailDomain(trimmed);
 
     // MX record check — does the domain actually accept email?
     try {

@@ -28,7 +28,15 @@ export function validateOrigin(request: NextRequest): boolean {
   if (!check) return false;
 
   const allowed = getAllowedOrigins();
-  return allowed.some((o) => check === o || check.startsWith(o + '/'));
+
+  // Use URL constructor for proper origin matching to prevent subdomain spoofing
+  try {
+    const checkUrl = new URL(check);
+    const checkOrigin = checkUrl.origin; // e.g. "https://raybot.bfl.design"
+    return allowed.some((o) => checkOrigin === o);
+  } catch {
+    return false;
+  }
 }
 
 export function requireOrigin(request: NextRequest): NextResponse | null {

@@ -1,19 +1,19 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Box, Typography, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 import LeadCaptureForm from './LeadCaptureForm';
+import { useAudioPlayer } from '@/hooks/useAudioPlayer';
+import { useChat } from '@/hooks/useChat';
+import { useChatHistory } from '@/hooks/useChatHistory';
 
-export interface Message {
-  role: 'user' | 'bot';
-  content: string;
-  isThinking?: boolean;
-  source?: 'voice' | 'text';
-}
+// Re-export Message from shared types for backward compatibility
+export type { Message } from '@/types/chat';
+import type { Message } from '@/types/chat';
 
 interface ChatPanelProps {
   sessionId: string;
@@ -29,65 +29,37 @@ interface ChatPanelProps {
   onMessagesChange?: (messages: Message[]) => void;
 }
 
-const STORAGE_KEY = 'raybot_history';
-const MAX_MESSAGES = 50;
-
-function loadHistory(): Message[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    return JSON.parse(raw);
-  } catch { return []; }
-}
-
-function saveHistory(messages: Message[]) {
-  try {
-    const saveable = messages.filter((m) => !m.isThinking).slice(-MAX_MESSAGES);
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(saveable));
-  } catch { /* ignore */ }
-}
-
-function extractMermaid(text: string): string | null {
-  const match = text.match(/```mermaid\n([\s\S]*?)```/);
-  return match ? match[1].trim() : null;
-}
-
-function stripMermaidBlock(text: string): string {
-  return text.replace(/```mermaid\n[\s\S]*?```/g, '').trim();
-}
-
 export default function ChatPanel({ sessionId, onDiagramDetected, digitalTwinMode, onSpeakingChange, onListeningChange, onToggleDigitalTwin, onMicActivated, onVoiceMutedChange, triggerMessage, onTriggerHandled, onMessagesChange }: ChatPanelProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [showLeadForm, setShowLeadForm] = useState(false);
   const [voiceMuted, setVoiceMuted] = useState(true);
   const [showDisclaimer, setShowDisclaimer] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const loadedRef = useRef(false);
-  const abortRef = useRef<AbortController | null>(null);
+
+  const { loadHistory, saveHistory } = useChatHistory();
+
+  const { playTTS, stopAudio, audioRef } = useAudioPlayer({
+    voiceMuted,
+    digitalTwinMode,
+    onSpeakingChange,
+  });
+
+  const { messages, setMessages, isProcessing, sendMessage, stopResponse, showLeadForm } = useChat({
+    sessionId,
+    onDiagramDetected,
+    saveHistory,
+    playTTS,
+  });
 
   useEffect(() => {
     if (loadedRef.current) return;
     loadedRef.current = true;
     const history = loadHistory();
     if (history.length) setMessages(history);
-  }, []);
+  }, [loadHistory, setMessages]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-
-  // Clean up audio on unmount
-  useEffect(() => {
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-    };
-  }, []);
 
   // Report messages to parent whenever they change
   useEffect(() => {
@@ -105,134 +77,6 @@ export default function ChatPanel({ sessionId, onDiagramDetected, digitalTwinMod
       onTriggerHandled?.();
     }
   }, [triggerMessage, onTriggerHandled]);
-
-  const playTTS = useCallback(async (text: string) => {
-    if (voiceMuted && !digitalTwinMode) return;
-    try {
-      onSpeakingChange?.(true);
-      const res = await fetch('/api/tts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: stripMermaidBlock(text) }),
-      });
-      if (!res.ok) { onSpeakingChange?.(false); return; }
-      const { audio } = await res.json();
-      const audioBlob = Uint8Array.from(atob(audio), (c) => c.charCodeAt(0));
-      const blob = new Blob([audioBlob], { type: 'audio/mpeg' });
-      const url = URL.createObjectURL(blob);
-      if (audioRef.current) audioRef.current.pause();
-      const player = new Audio(url);
-      audioRef.current = player;
-      player.onended = () => {
-        URL.revokeObjectURL(url);
-        onSpeakingChange?.(false);
-      };
-      player.onerror = () => {
-        URL.revokeObjectURL(url);
-        onSpeakingChange?.(false);
-      };
-      player.play();
-    } catch { onSpeakingChange?.(false); }
-  }, [voiceMuted, digitalTwinMode, onSpeakingChange]);
-
-  const stopResponse = useCallback(() => {
-    if (abortRef.current) {
-      abortRef.current.abort();
-      abortRef.current = null;
-    }
-  }, []);
-
-  const sendMessage = useCallback(async (text: string, source: 'voice' | 'text' = 'text') => {
-    const userMsg: Message = { role: 'user', content: text, source };
-    const thinkingMsg: Message = { role: 'bot', content: '', isThinking: true };
-    setMessages((prev) => [...prev, userMsg, thinkingMsg]);
-    setIsProcessing(true);
-
-    const apiMessages = [...messages.filter((m) => !m.isThinking), userMsg].map((m) => ({
-      role: m.role === 'user' ? 'user' as const : 'model' as const,
-      content: m.content,
-    }));
-
-    const controller = new AbortController();
-    abortRef.current = controller;
-
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages, sessionId }),
-        signal: controller.signal,
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || 'Request failed');
-      }
-
-      const reader = res.body?.getReader();
-      if (!reader) throw new Error('No response stream');
-
-      const decoder = new TextDecoder();
-      let accumulated = '';
-
-      // Replace thinking msg with streaming bot msg
-      setMessages((prev) => {
-        const updated = prev.filter((m) => !m.isThinking);
-        return [...updated, { role: 'bot' as const, content: '' }];
-      });
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        accumulated += decoder.decode(value, { stream: true });
-        const current = accumulated;
-        setMessages((prev) => {
-          const updated = [...prev];
-          const last = updated[updated.length - 1];
-          if (last?.role === 'bot') {
-            updated[updated.length - 1] = { ...last, content: current };
-          }
-          return updated;
-        });
-      }
-
-      // Finalize
-      const finalText = accumulated;
-      setMessages((prev) => {
-        const updated = [...prev];
-        const last = updated[updated.length - 1];
-        if (last?.role === 'bot') {
-          updated[updated.length - 1] = { role: 'bot', content: finalText };
-        }
-        saveHistory(updated);
-        return updated;
-      });
-
-      const mermaidCode = extractMermaid(finalText);
-      if (mermaidCode && onDiagramDetected) onDiagramDetected(mermaidCode);
-
-      if (/send me an email|book a call/i.test(finalText)) setShowLeadForm(true);
-      playTTS(finalText);
-    } catch (error) {
-      if ((error as Error).name === 'AbortError') {
-        // User stopped — keep whatever was streamed
-        setMessages((prev) => {
-          const updated = [...prev].filter((m) => !m.isThinking);
-          saveHistory(updated);
-          return updated;
-        });
-      } else {
-        setMessages((prev) => {
-          const updated = prev.filter((m) => !m.isThinking);
-          return [...updated, { role: 'bot', content: (error as Error).message || 'Something went wrong.' }];
-        });
-      }
-    } finally {
-      setIsProcessing(false);
-      abortRef.current = null;
-    }
-  }, [messages, sessionId, onDiagramDetected, playTTS]);
 
   // Fire pending trigger now that sendMessage is available
   useEffect(() => {

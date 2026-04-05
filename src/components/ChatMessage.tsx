@@ -9,21 +9,14 @@ import { colors } from '@/theme/tokens';
 import ThinkingDots from './ThinkingDots';
 import InlineDiagram from './InlineDiagram';
 import { useState } from 'react';
+import { splitContentByMermaid } from '@/lib/mermaid-utils';
 
 function renderContent(text: string, isUser: boolean) {
-  // Hide incomplete mermaid blocks (still streaming)
-  const hasOpenMermaid = /```mermaid\n/.test(text) && !/```mermaid\n[\s\S]*?```/.test(text);
-  const displayText = hasOpenMermaid
-    ? text.replace(/```mermaid\n[\s\S]*$/, '').trimEnd()
-    : text;
-
-  const parts = displayText.split(/(```mermaid\n[\s\S]*?```)/g);
-  return parts.map((part, i) => {
-    const mermaidMatch = part.match(/```mermaid\n([\s\S]*?)```/);
-    if (mermaidMatch) {
-      return <InlineDiagram key={i} code={mermaidMatch[1].trim()} />;
+  const segments = splitContentByMermaid(text);
+  return segments.map((segment, i) => {
+    if (segment.type === 'mermaid') {
+      return <InlineDiagram key={i} code={segment.content} />;
     }
-    if (!part.trim()) return null;
     return (
       <Typography
         key={i}
@@ -37,24 +30,21 @@ function renderContent(text: string, isUser: boolean) {
           },
         }}
       >
-        {part}
+        {segment.content}
       </Typography>
     );
   });
 }
 
-interface ChatMessageProps {
-  role: 'user' | 'bot';
+/* ─── MessageActions sub-component ─── */
+
+interface MessageActionsProps {
   content: string;
-  isThinking?: boolean;
-  isTyping?: boolean;
   index: number;
-  source?: 'voice' | 'text';
 }
 
-export default function ChatMessage({ role, content, isThinking, isTyping, index, source }: ChatMessageProps) {
+function MessageActions({ content, index }: MessageActionsProps) {
   const [copied, setCopied] = useState(false);
-  const isUser = role === 'user';
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(content);
@@ -81,6 +71,46 @@ export default function ChatMessage({ role, content, isThinking, isTyping, index
       });
     } catch { /* silent */ }
   };
+
+  return (
+    <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5, pl: 0 }}>
+      <Tooltip title={copied ? 'Copied!' : 'Copy'}>
+        <IconButton size="small" onClick={handleCopy} sx={{ color: 'text.secondary' }}>
+          <ContentCopyIcon sx={{ fontSize: 16 }} />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Download">
+        <IconButton size="small" onClick={handleDownload} sx={{ color: 'text.secondary' }}>
+          <DownloadIcon sx={{ fontSize: 16 }} />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Helpful">
+        <IconButton size="small" onClick={() => handleFeedback('helpful')} sx={{ color: 'text.secondary' }}>
+          <ThumbUpOffAltIcon sx={{ fontSize: 16 }} />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Not helpful">
+        <IconButton size="small" onClick={() => handleFeedback('not_helpful')} sx={{ color: 'text.secondary' }}>
+          <ThumbDownOffAltIcon sx={{ fontSize: 16 }} />
+        </IconButton>
+      </Tooltip>
+    </Box>
+  );
+}
+
+/* ─── ChatMessage component ─── */
+
+interface ChatMessageProps {
+  role: 'user' | 'bot';
+  content: string;
+  isThinking?: boolean;
+  isTyping?: boolean;
+  index: number;
+  source?: 'voice' | 'text';
+}
+
+export default function ChatMessage({ role, content, isThinking, isTyping, index, source }: ChatMessageProps) {
+  const isUser = role === 'user';
 
   return (
     <Box sx={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start', mb: 2, px: 1 }}>
@@ -116,28 +146,7 @@ export default function ChatMessage({ role, content, isThinking, isTyping, index
           )}
         </Box>
         {!isUser && !isThinking && !isTyping && content && (
-          <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5, pl: 0 }}>
-            <Tooltip title={copied ? 'Copied!' : 'Copy'}>
-              <IconButton size="small" onClick={handleCopy} sx={{ color: 'text.secondary' }}>
-                <ContentCopyIcon sx={{ fontSize: 16 }} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Download">
-              <IconButton size="small" onClick={handleDownload} sx={{ color: 'text.secondary' }}>
-                <DownloadIcon sx={{ fontSize: 16 }} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Helpful">
-              <IconButton size="small" onClick={() => handleFeedback('helpful')} sx={{ color: 'text.secondary' }}>
-                <ThumbUpOffAltIcon sx={{ fontSize: 16 }} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Not helpful">
-              <IconButton size="small" onClick={() => handleFeedback('not_helpful')} sx={{ color: 'text.secondary' }}>
-                <ThumbDownOffAltIcon sx={{ fontSize: 16 }} />
-              </IconButton>
-            </Tooltip>
-          </Box>
+          <MessageActions content={content} index={index} />
         )}
       </Box>
     </Box>

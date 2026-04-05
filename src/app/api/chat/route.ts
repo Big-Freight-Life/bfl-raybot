@@ -1,51 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { streamChatResponse } from '@/lib/gemini';
-import { checkRateLimit } from '@/lib/rate-limit';
-import { requireOrigin, requireJSON } from '@/lib/security';
+import { validateRequest, isErrorResponse } from '@/lib/api-middleware';
+import { RATE_LIMIT_CHAT, MAX_MESSAGES_HISTORY } from '@/lib/constants';
+import { sanitizeMessage } from '@/lib/sanitization';
+import { validateSessionId } from '@/lib/validators';
 import { ChatMessage } from '@/lib/knowledge';
 import { logMessage } from '@/lib/chat-logger';
 
-function sanitize(text: string): string {
-  return text.replace(/<[^>]*>/g, '').trim().slice(0, 2000);
-}
-
 export async function POST(request: NextRequest) {
-  const ip = (request as any).ip ?? request.headers.get('x-forwarded-for')?.split(',').pop()?.trim() ?? 'unknown';
-  const { allowed, remaining } = checkRateLimit('chat', ip, 20, 60 * 60 * 1000);
-
-  if (!allowed) {
-    return NextResponse.json(
-      { error: 'Rate limit exceeded. Please try again later.' },
-      { status: 429, headers: { 'X-RateLimit-Remaining': '0' } }
-    );
-  }
-
-  const originError = requireOrigin(request);
-  if (originError) return originError;
-
-  const jsonError = requireJSON(request);
-  if (jsonError) return jsonError;
+  const result = validateRequest(request, {
+    routeKey: 'chat',
+    ...RATE_LIMIT_CHAT,
+  });
+  if (isErrorResponse(result)) return result;
+  const { ip, remaining } = result;
 
   try {
     const body = await request.json();
     const messages: ChatMessage[] = body.messages ?? [];
     const rawSessionId = body.sessionId;
-    const sessionId: string =
-      typeof rawSessionId === 'string' &&
-      rawSessionId.length <= 64 &&
-      /^[a-zA-Z0-9-]+$/.test(rawSessionId)
-        ? rawSessionId
-        : 'unknown';
+    const sessionId: string = validateSessionId(rawSessionId) ? rawSessionId : 'unknown';
 
     if (!messages.length || !messages[messages.length - 1]?.content) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
 
     // Sanitize ALL messages
-    const sanitized = messages.map((m) => ({ ...m, content: sanitize(m.content) }));
+    const sanitized = messages.map((m) => ({ ...m, content: sanitizeMessage(m.content) }));
     const userMessage = sanitized[sanitized.length - 1].content;
 
-    const trimmed = sanitized.slice(-50);
+    const trimmed = sanitized.slice(-MAX_MESSAGES_HISTORY);
 
     const encoder = new TextEncoder();
     let fullResponse = '';

@@ -1,21 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
-import { checkRateLimit } from '@/lib/rate-limit';
-import { requireOrigin, requireJSON } from '@/lib/security';
+import { validateRequest, isErrorResponse } from '@/lib/api-middleware';
+import { RATE_LIMIT_LEAD, MAX_NAME_LENGTH, MAX_LEAD_MESSAGE_LENGTH, NOREPLY_EMAIL } from '@/lib/constants';
+import { stripHtml, sanitizeEmail } from '@/lib/sanitization';
+import { isValidEmailFormat } from '@/lib/validators';
 
 export async function POST(request: NextRequest) {
-  const ip = (request as any).ip ?? request.headers.get('x-forwarded-for')?.split(',').pop()?.trim() ?? 'unknown';
-  const { allowed } = checkRateLimit('lead', ip, 3, 60 * 60 * 1000);
-
-  if (!allowed) {
-    return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
-  }
-
-  const originError = requireOrigin(request);
-  if (originError) return originError;
-
-  const jsonError = requireJSON(request);
-  if (jsonError) return jsonError;
+  const result = validateRequest(request, {
+    routeKey: 'lead',
+    ...RATE_LIMIT_LEAD,
+  });
+  if (isErrorResponse(result)) return result;
 
   try {
     const body = await request.json();
@@ -24,22 +19,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(body.email.trim())) {
+    if (!isValidEmailFormat(body.email.trim())) {
       return NextResponse.json({ error: 'Invalid email format' }, { status: 400 });
     }
 
-    const stripHtml = (s: string) => s.replace(/<[^>]*>/g, '').trim();
-
-    const name = typeof body.name === 'string' ? stripHtml(body.name).slice(0, 100) : '';
-    const email = body.email.trim().toLowerCase().slice(0, 254);
-    const message = typeof body.message === 'string' ? stripHtml(body.message).slice(0, 1000) : '';
+    const name = typeof body.name === 'string' ? stripHtml(body.name).slice(0, MAX_NAME_LENGTH) : '';
+    const email = sanitizeEmail(body.email);
+    const message = typeof body.message === 'string' ? stripHtml(body.message).slice(0, MAX_LEAD_MESSAGE_LENGTH) : '';
 
     const resendKey = process.env.RESEND_API_KEY;
     const contactEmail = process.env.CONTACT_EMAIL;
     if (resendKey && contactEmail) {
       const resend = new Resend(resendKey);
       await resend.emails.send({
-        from: 'Raybot <noreply@bfl.design>',
+        from: NOREPLY_EMAIL,
         to: contactEmail,
         subject: `Raybot Lead: ${name || 'Anonymous'}`,
         text: `Name: ${name || 'Not provided'}\nEmail: ${email}\nMessage: ${message || 'No message'}\n\nSent from raybot.bfl.design`,
