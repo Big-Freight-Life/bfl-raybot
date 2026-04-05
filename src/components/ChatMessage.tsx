@@ -116,7 +116,7 @@ export default function ChatMessage({ role, content, isThinking, isTyping, index
           )}
         </Box>
         {!isUser && !isThinking && !isTyping && content && (
-          <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5, pl: 1 }}>
+          <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5, pl: 0 }}>
             <Tooltip title={copied ? 'Copied!' : 'Copy'}>
               <IconButton size="small" onClick={handleCopy} sx={{ color: 'text.secondary' }}>
                 <ContentCopyIcon sx={{ fontSize: 16 }} />
