@@ -228,7 +228,7 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25, overflowY: 'auto', scrollbarWidth: 'thin', flex: 1 }}>
               {chatList.map((chat) => {
-                const isActive = activeChatId === chat.id;
+                const isActive = activeChatId === chat.id && !activeItem;
                 const dateStr = new Date(chat.timestamp).toLocaleDateString(undefined, {
                   month: 'short',
                   day: 'numeric',
