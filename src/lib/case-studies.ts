@@ -53,7 +53,7 @@ export const caseStudies: CaseStudy[] = [
     key: 'hyland-onbase',
     role: 'Lead Design Technologist',
     date: '2024',
-    summary: 'Enterprise content management integration for document-heavy workflows.',
+    summary: 'A federated integration layer that turned Hyland OnBase into the source of truth for millions of documents flowing across ERP, HR, and finance systems. Replaced fragile point-to-point integrations with a canonical schema, event-driven message broker, and AI-assisted metadata extraction. Built for compliance teams who needed every document touch traceable.',
     highlights: [
       {
         title: 'The Challenge',
@@ -110,7 +110,7 @@ export const caseStudies: CaseStudy[] = [
     key: 'hyland-workday',
     role: 'Design Technologist',
     date: '2023',
-    summary: 'Connecting Hyland content services with Workday HR and finance workflows.',
+    summary: 'A bidirectional sync layer that brought Hyland documents into Workday workflows for HR, finance, and approval routing. Surfaced supporting documents directly inside the Workday UI through a custom tab, eliminating context switching. Document generation flows the other direction so templated agreements and approvals stay in sync across both systems.',
     highlights: [
       {
         title: 'The Challenge',
@@ -167,7 +167,7 @@ export const caseStudies: CaseStudy[] = [
     key: 'salesforce-migration',
     role: 'Solutions Architect',
     date: '2022',
-    summary: 'Large-scale CRM migration with data integrity and workflow preservation.',
+    summary: 'A staged migration pipeline that moved a decade of CRM customizations into Salesforce with zero downtime. Used change-data-capture for extraction, a transformation rule engine for field mapping and dedup, and aggressive post-load validation to guarantee data integrity. Workflows were re-implemented natively in Salesforce Flow rather than lifted-and-shifted.',
     highlights: [
       {
         title: 'The Challenge',
