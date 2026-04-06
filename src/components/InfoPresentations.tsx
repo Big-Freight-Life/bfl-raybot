@@ -237,6 +237,12 @@ export function ContactPresentation() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
       <Box>
+        <Box
+          component="img"
+          src="/images/logo-teal.png"
+          alt="Big Freight Life"
+          sx={{ width: 48, height: 48, display: 'block', mb: 1.5 }}
+        />
         <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1.2, color: 'text.primary', mb: 0.5 }}>
           Get in touch
         </Typography>
