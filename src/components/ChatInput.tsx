@@ -7,7 +7,7 @@ import StopIcon from '@mui/icons-material/Stop';
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import ClearIcon from '@mui/icons-material/Clear';
-import GraphicEqIcon from '@mui/icons-material/GraphicEq';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import { keyframes } from '@emotion/react';
 const micPulse = keyframes`
@@ -138,7 +138,7 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderTop: 1, borderColor: 'divider', bgcolor: 'background.paper', px: 2, pt: 2, pb: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1, maxWidth: 768, width: '100%' }}>
-      <Box sx={{ flex: 1, display: 'flex', alignItems: 'flex-end', border: 1, borderColor: 'divider', borderRadius: '12px', px: 1.5, py: 0.5, bgcolor: 'background.default', '&:focus-within': { borderColor: 'primary.main' } }}>
+      <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', border: 1, borderColor: 'divider', borderRadius: '12px', px: 1.5, py: 0.5, bgcolor: 'background.default', '&:focus-within': { borderColor: 'primary.main' } }}>
         {speechSupported && (
           <Tooltip title={isListening ? 'Stop listening' : 'Dictate'}>
             <IconButton size="small" onClick={toggleMic} sx={{ color: isListening ? 'primary.main' : 'text.secondary', mr: 0.5, animation: isListening ? `${micPulse} 1.5s ease-in-out infinite` : 'none' }}>
@@ -158,7 +158,7 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
         )}
         <Tooltip title={voiceMuted ? 'Unmute voice' : 'Mute voice'}>
           <IconButton size="small" onClick={onToggleVoice} sx={{ color: voiceMuted ? 'text.secondary' : 'primary.main' }}>
-            {voiceMuted ? <VolumeOffIcon sx={{ fontSize: 20 }} /> : <GraphicEqIcon sx={{ fontSize: 20 }} />}
+            {voiceMuted ? <VolumeOffIcon sx={{ fontSize: 20 }} /> : <VolumeUpIcon sx={{ fontSize: 20 }} />}
           </IconButton>
         </Tooltip>
       </Box>
