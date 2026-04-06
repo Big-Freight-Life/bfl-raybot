@@ -49,23 +49,23 @@ export default function CaseStudyPresentation({ study }: CaseStudyPresentationPr
             {study.summary}
           </Typography>
           {(study.role || study.date) && (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
               {study.role && (
                 <Box>
-                  <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontSize: '0.6875rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                  <Typography sx={{ display: 'block', color: 'text.secondary', fontSize: '0.6875rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600, lineHeight: 1.4 }}>
                     Role
                   </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.primary', fontSize: '0.8125rem' }}>
+                  <Typography sx={{ color: 'text.primary', fontSize: '0.8125rem', lineHeight: 1.4 }}>
                     {study.role}
                   </Typography>
                 </Box>
               )}
               {study.date && (
                 <Box>
-                  <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontSize: '0.6875rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                  <Typography sx={{ display: 'block', color: 'text.secondary', fontSize: '0.6875rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600, lineHeight: 1.4 }}>
                     Date
                   </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.primary', fontSize: '0.8125rem' }}>
+                  <Typography sx={{ color: 'text.primary', fontSize: '0.8125rem', lineHeight: 1.4 }}>
                     {study.date}
                   </Typography>
                 </Box>
