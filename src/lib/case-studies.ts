@@ -83,43 +83,31 @@ export const processInfo: CaseStudy = {
 export const contactInfo: CaseStudy = {
   title: 'Contact Us',
   key: 'contact',
-  summary: 'How to get in touch with Big Freight Life.',
+  summary: 'Get in touch with Big Freight Life.',
   presentation: [
-    { type: 'image', alt: 'Contact Big Freight Life', caption: 'Start a conversation', color: '#0e5f67' },
+    { type: 'heading', level: 2, text: 'Address' },
+    { type: 'paragraph', text: 'Big Freight Life LLC\n1351 N Buckner Blvd #180397\nDallas, TX 75218' },
     { type: 'heading', level: 2, text: 'Email' },
-    { type: 'paragraph', text: 'The fastest way to start a conversation is email. Send a short note describing what you are working on, the constraints you are navigating, and what a good outcome would look like.' },
-    { type: 'paragraph', text: 'We respond to every inbound message — typically within one business day. If your message includes a clear problem statement, the first reply will usually include initial framing or questions, not a sales pitch.' },
-    { type: 'heading', level: 2, text: 'Schedule a Call' },
-    { type: 'paragraph', text: 'For deeper conversations, book a 30-minute working session directly. The agenda is yours:' },
-    { type: 'list', items: [
-      'Talk through a system you are designing or rebuilding',
-      'Review an existing architecture and where it is straining',
-      'Explore whether a Big Freight Life engagement is the right fit',
-      'Get a second opinion on a decision in motion',
-    ]},
-    { type: 'paragraph', text: 'No prep required. Bring whatever artifacts you have — diagrams, docs, screenshots, or just the question on your mind.' },
-    { type: 'heading', level: 2, text: 'What to Expect' },
-    { type: 'paragraph', text: 'First conversations are diagnostic, not transactional. We will not pitch a solution before understanding the situation.' },
-    { type: 'paragraph', text: 'If there is a fit, the next step is usually a short paid discovery — a structured diagnosis with concrete deliverables, not an open-ended retainer. If there is not a fit, we will say so and, where possible, point you to someone who is.' },
+    { type: 'paragraph', text: 'hello@bflux.co' },
+    { type: 'heading', level: 2, text: 'Business Hours' },
+    { type: 'paragraph', text: 'Monday – Friday, 9am – 6pm CT' },
   ],
   highlights: [
     {
+      title: 'Address',
+      key: 'address',
+      content:
+        'Big Freight Life LLC\n1351 N Buckner Blvd #180397\nDallas, TX 75218',
+    },
+    {
       title: 'Email',
       key: 'email',
-      content:
-        'The fastest way to start a conversation is email. Send a short note describing what you are working on, the constraints you are navigating, and what a good outcome would look like.\n\nWe respond to every inbound message — typically within one business day. If your message includes a clear problem statement, the first reply will usually include initial framing or questions, not a sales pitch.',
+      content: 'hello@bflux.co',
     },
     {
-      title: 'Schedule a Call',
-      key: 'schedule',
-      content:
-        'For deeper conversations, book a 30-minute working session directly. The agenda is yours:\n\n• Talk through a system you are designing or rebuilding\n• Review an existing architecture and where it is straining\n• Explore whether a Big Freight Life engagement is the right fit\n• Get a second opinion on a decision in motion\n\nNo prep required. Bring whatever artifacts you have — diagrams, docs, screenshots, or just the question on your mind.',
-    },
-    {
-      title: 'What to Expect',
-      key: 'expect',
-      content:
-        'First conversations are diagnostic, not transactional. We will not pitch a solution before understanding the situation.\n\nIf there is a fit, the next step is usually a short paid discovery — a structured diagnosis with concrete deliverables, not an open-ended retainer. If there is not a fit, we will say so and, where possible, point you to someone who is.',
+      title: 'Business Hours',
+      key: 'hours',
+      content: 'Monday – Friday, 9am – 6pm CT',
     },
   ],
 };

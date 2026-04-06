@@ -118,9 +118,15 @@ export default function CaseStudyPanel({
             variant="h6"
             sx={{ fontWeight: 700, lineHeight: 1.3 }}
           >
-            {isTabs ? study.title : study.key === 'process' ? 'More About Process' : 'More About Project'}
+            {isTabs
+              ? study.title
+              : study.key === 'process'
+                ? 'More About Process'
+                : study.key === 'contact'
+                  ? 'More About Contact'
+                  : 'More About Project'}
           </Typography>
-          {!isTabs && study.key !== 'process' && (
+          {!isTabs && study.key !== 'process' && study.key !== 'contact' && (
             <Typography
               variant="caption"
               sx={{ color: 'text.secondary', display: 'block', mt: 0.5, lineHeight: 1.4 }}
@@ -188,7 +194,7 @@ export default function CaseStudyPanel({
       ) : (
         /* Default variant — vertical list */
         <Box sx={{ px: 1.5, py: 1.5 }}>
-          {study.key !== 'process' && (
+          {study.key !== 'process' && study.key !== 'contact' && (
             <RadioGroup
               row
               value={caseView}
@@ -207,7 +213,7 @@ export default function CaseStudyPanel({
               />
             </RadioGroup>
           )}
-          {study.key !== 'process' && caseView === 'architecture' ? (
+          {study.key !== 'process' && study.key !== 'contact' && caseView === 'architecture' ? (
             <Box sx={{ px: 1, py: 2, textAlign: 'center' }}>
               <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.8125rem', lineHeight: 1.6, textAlign: 'left', whiteSpace: 'pre-wrap' }}>
                 {study.architecture || 'Architecture notes coming soon.'}
