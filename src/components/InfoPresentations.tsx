@@ -97,25 +97,40 @@ export function AboutRayPresentation() {
         </Box>
       </Box>
 
-      {/* CTA */}
-      <Button
-        component="a"
-        href="https://www.linkedin.com/in/braybutler/"
-        target="_blank"
-        rel="noopener noreferrer"
-        variant="outlined"
-        startIcon={<LinkedInIcon />}
-        endIcon={<OpenInNewIcon sx={{ fontSize: '14px !important' }} />}
-        sx={{
-          alignSelf: 'flex-start',
-          textTransform: 'none',
-          borderColor: 'primary.main',
-          color: 'primary.main',
-          '&:hover': { borderColor: 'primary.dark', bgcolor: 'rgba(17,118,128,0.04)' },
-        }}
-      >
-        Connect on LinkedIn
-      </Button>
+      {/* CTAs */}
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+        <Button
+          component="a"
+          href="https://www.linkedin.com/in/braybutler/"
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="outlined"
+          startIcon={<LinkedInIcon />}
+          endIcon={<OpenInNewIcon sx={{ fontSize: '14px !important' }} />}
+          sx={{
+            textTransform: 'none',
+            borderColor: 'primary.main',
+            color: 'primary.main',
+            '&:hover': { borderColor: 'primary.dark', bgcolor: 'rgba(17,118,128,0.04)' },
+          }}
+        >
+          Connect on LinkedIn
+        </Button>
+        <Button
+          component="a"
+          href="mailto:hello@bflux.co"
+          variant="outlined"
+          startIcon={<EmailOutlinedIcon />}
+          sx={{
+            textTransform: 'none',
+            borderColor: 'primary.main',
+            color: 'primary.main',
+            '&:hover': { borderColor: 'primary.dark', bgcolor: 'rgba(17,118,128,0.04)' },
+          }}
+        >
+          Email Ray
+        </Button>
+      </Box>
     </Box>
   );
 }
