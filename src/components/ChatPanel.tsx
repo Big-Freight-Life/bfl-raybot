@@ -110,7 +110,28 @@ export default function ChatPanel({ sessionId, sessionTimestamp, onDiagramDetect
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Box sx={{ flex: 1, overflowY: 'auto', py: 2, px: { xs: 2, md: 3 }, scrollbarWidth: 'thin', maxWidth: 768, mx: 'auto', width: '100%' }}>
+      <Box
+        sx={{
+          flex: 1,
+          overflowY: 'auto',
+          py: 2,
+          px: { xs: 2, md: 3 },
+          maxWidth: 768,
+          mx: 'auto',
+          width: '100%',
+          scrollbarWidth: 'thin',
+          scrollbarColor: (theme) => `${theme.palette.action.disabled} transparent`,
+          '&::-webkit-scrollbar': { width: '8px' },
+          '&::-webkit-scrollbar-track': { background: 'transparent' },
+          '&::-webkit-scrollbar-thumb': {
+            background: (theme) => theme.palette.action.disabled,
+            borderRadius: '4px',
+          },
+          '&::-webkit-scrollbar-thumb:hover': {
+            background: (theme) => theme.palette.action.active,
+          },
+        }}
+      >
         {messages.length === 0 && (
           <Box sx={{ textAlign: 'center', pt: 8, px: 3, color: 'text.secondary' }}>
             <ChatBubbleOutlineIcon sx={{ fontSize: 40, mb: 2, color: 'text.disabled' }} />
