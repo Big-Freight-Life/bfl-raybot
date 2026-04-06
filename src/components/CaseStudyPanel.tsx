@@ -1,12 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, Typography, IconButton, Tooltip } from '@mui/material';
+import { Box, Typography, IconButton, Tooltip, Radio, RadioGroup, FormControlLabel } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import type { CaseStudy } from '@/lib/case-studies';
-
-const teal = '#117680';
+import { softwareTools, agentSkills } from '@/lib/toolbox';
 
 interface CaseStudyPanelProps {
   study: CaseStudy;
@@ -14,6 +13,61 @@ interface CaseStudyPanelProps {
   onClose: () => void;
   visitedHighlights: Set<string>;
   variant?: 'default' | 'tabs';
+}
+
+/* ─── ToolboxTabContent sub-component ─── */
+
+function ToolboxTabContent({ onItemClick }: { onItemClick: (prompt: string) => void }) {
+  const [category, setCategory] = useState<'tools' | 'skills'>('tools');
+  const items = category === 'tools' ? softwareTools : agentSkills;
+
+  return (
+    <Box sx={{ flex: 1, overflowY: 'auto', scrollbarWidth: 'thin' }}>
+      <Box sx={{ px: 2.5, py: 2, borderBottom: 1, borderColor: 'divider' }}>
+        <RadioGroup
+          value={category}
+          onChange={(e) => setCategory(e.target.value as 'tools' | 'skills')}
+        >
+          <FormControlLabel
+            value="tools"
+            control={<Radio size="small" sx={{ py: 0.5, '&.Mui-checked': { color: 'primary.main' } }} />}
+            label={<Typography variant="body2" sx={{ fontSize: '0.8125rem' }}>Software Tools</Typography>}
+          />
+          <FormControlLabel
+            value="skills"
+            control={<Radio size="small" sx={{ py: 0.5, '&.Mui-checked': { color: 'primary.main' } }} />}
+            label={<Typography variant="body2" sx={{ fontSize: '0.8125rem' }}>Agent Skills</Typography>}
+          />
+        </RadioGroup>
+      </Box>
+      <Box sx={{ px: 1.5, py: 1.5, display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+        {items.map((item) => (
+          <Box
+            key={item.key}
+            component="button"
+            onClick={() => onItemClick(item.prompt)}
+            sx={{
+              display: 'block',
+              px: 1.5,
+              py: 1,
+              borderRadius: '8px',
+              fontSize: '0.8125rem',
+              color: 'text.secondary',
+              textAlign: 'left',
+              border: 'none',
+              bgcolor: 'transparent',
+              cursor: 'pointer',
+              width: '100%',
+              fontFamily: 'inherit',
+              '&:hover': { bgcolor: 'action.hover', color: 'text.primary' },
+            }}
+          >
+            {item.title}
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
 }
 
 export default function CaseStudyPanel({
@@ -103,15 +157,15 @@ export default function CaseStudyPanel({
                     px: 1,
                     fontSize: '0.8125rem',
                     fontWeight: isActive ? 600 : 500,
-                    color: isActive ? teal : 'text.secondary',
+                    color: isActive ? 'primary.main' : 'text.secondary',
                     bgcolor: 'transparent',
                     border: 'none',
                     borderBottom: '2px solid',
-                    borderBottomColor: isActive ? teal : 'transparent',
+                    borderBottomColor: isActive ? 'primary.main' : 'transparent',
                     cursor: 'pointer',
                     fontFamily: 'inherit',
                     transition: 'all 0.15s ease',
-                    '&:hover': { color: teal, borderBottomColor: isActive ? teal : `${teal}40` },
+                    '&:hover': { color: 'primary.main', borderBottomColor: isActive ? 'primary.main' : 'action.hover' },
                   }}
                 >
                   {highlight.title}
@@ -120,7 +174,9 @@ export default function CaseStudyPanel({
             })}
           </Box>
           {/* Tab content */}
-          {activeHighlight?.content && (
+          {activeTab === 'toolbox' ? (
+            <ToolboxTabContent onItemClick={onHighlightClick} />
+          ) : activeHighlight?.content ? (
             <Box sx={{ flex: 1, overflowY: 'auto', px: 2.5, py: 2, scrollbarWidth: 'thin' }}>
               <Typography
                 variant="body2"
@@ -129,7 +185,7 @@ export default function CaseStudyPanel({
                 {activeHighlight.content}
               </Typography>
             </Box>
-          )}
+          ) : null}
         </>
       ) : (
         /* Default variant — vertical list */

@@ -11,7 +11,6 @@ import AvatarStage from '@/components/AvatarStage';
 import EmailGate from '@/components/EmailGate';
 import CaseStudyPanel from '@/components/CaseStudyPanel';
 import { caseStudies, aboutRay } from '@/lib/case-studies';
-import { softwareTools, agentSkills } from '@/lib/toolbox';
 import { getChatList, saveChat, loadChat, generateTitle, type ChatSummary } from '@/lib/chat-history';
 import { STORAGE_KEY_USER_EMAIL, STORAGE_KEY_HISTORY, STORAGE_KEY_SESSION_ID } from '@/lib/constants';
 import { generateSessionId, getOrCreateSessionId } from '@/lib/session-utils';
@@ -98,23 +97,6 @@ export default function Home() {
       setActiveCaseStudy('about-ray');
       setActiveNavItem(action);
       setVisitedHighlights(new Set());
-      return;
-    }
-
-    if (action === 'toolbox') {
-      setActiveCaseStudy(null);
-      setActiveNavItem('toolbox');
-      return;
-    }
-
-    if (action.startsWith('tool:') || action.startsWith('skill:')) {
-      const key = action.replace(/^(tool|skill):/, '');
-      const item = [...softwareTools, ...agentSkills].find((i) => i.key === key);
-      if (item) {
-        setActiveCaseStudy(null);
-        setActiveNavItem(action);
-        setTriggerMessage(item.prompt);
-      }
       return;
     }
 

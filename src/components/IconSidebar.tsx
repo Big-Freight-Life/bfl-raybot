@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, type ReactNode } from 'react';
-import { Box, Divider, Drawer, IconButton, Tooltip, Typography, Radio, RadioGroup, FormControlLabel } from '@mui/material';
+import { Box, Divider, Drawer, IconButton, Tooltip, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
@@ -9,10 +9,8 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined';
-import BuildOutlinedIcon from '@mui/icons-material/BuildOutlined';
 import Image from 'next/image';
 import { caseStudies } from '@/lib/case-studies';
-import { softwareTools, agentSkills } from '@/lib/toolbox';
 import { SIDEBAR_WIDTH_COLLAPSED, SIDEBAR_WIDTH_EXPANDED } from '@/lib/constants';
 import type { ChatSummary } from '@/lib/chat-history';
 
@@ -101,49 +99,6 @@ function SidebarItemButton({ isActive, onClick, children, icon }: SidebarItemBut
     >
       {icon}
       {children}
-    </Box>
-  );
-}
-
-/* ─── ToolboxInline sub-component ─── */
-
-function ToolboxInline({ activeItem, onNavigate }: { activeItem?: string | null; onNavigate: (action: string) => void }) {
-  const [tab, setTab] = useState<'tools' | 'skills'>('tools');
-  const items = tab === 'tools' ? softwareTools : agentSkills;
-  const prefix = tab === 'tools' ? 'tool' : 'skill';
-
-  return (
-    <Box sx={{ px: 1.5, mt: 0.5 }}>
-      <RadioGroup
-        value={tab}
-        onChange={(e) => setTab(e.target.value as 'tools' | 'skills')}
-        sx={{ px: 0.5, mb: 0.5 }}
-      >
-        <FormControlLabel
-          value="tools"
-          control={<Radio size="small" sx={{ py: 0.25, '&.Mui-checked': { color: 'primary.main' } }} />}
-          label={<Typography variant="body2" sx={{ fontSize: '0.8125rem' }}>Software Tools</Typography>}
-        />
-        <FormControlLabel
-          value="skills"
-          control={<Radio size="small" sx={{ py: 0.25, '&.Mui-checked': { color: 'primary.main' } }} />}
-          label={<Typography variant="body2" sx={{ fontSize: '0.8125rem' }}>Agent Skills</Typography>}
-        />
-      </RadioGroup>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
-        {items.map((item) => {
-          const isActive = activeItem === `${prefix}:${item.key}`;
-          return (
-            <SidebarItemButton
-              key={item.key}
-              isActive={isActive}
-              onClick={() => onNavigate(`${prefix}:${item.key}`)}
-            >
-              {item.title}
-            </SidebarItemButton>
-          );
-        })}
-      </Box>
     </Box>
   );
 }
@@ -237,20 +192,7 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
           isActive={activeItem === 'contact'}
           onClick={() => handleNavigate('contact')}
         />
-        <NavButton
-          tooltip="Toolbox"
-          icon={<BuildOutlinedIcon sx={{ fontSize: 20 }} />}
-          label="Toolbox"
-          open={open}
-          isActive={activeItem === 'toolbox' || activeItem?.startsWith('tool:') || activeItem?.startsWith('skill:')}
-          onClick={() => handleNavigate('toolbox')}
-        />
       </Box>
-
-      {/* Toolbox section — only when expanded and toolbox is active */}
-      {open && (activeItem === 'toolbox' || activeItem?.startsWith('tool:') || activeItem?.startsWith('skill:')) && (
-        <ToolboxInline activeItem={activeItem} onNavigate={handleNavigate} />
-      )}
 
       {/* Case Studies section — only when expanded */}
       {open && (
