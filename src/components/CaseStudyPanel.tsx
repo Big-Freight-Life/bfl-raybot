@@ -115,7 +115,7 @@ export default function CaseStudyPanel({
             variant="h6"
             sx={{ fontWeight: 700, lineHeight: 1.3 }}
           >
-            {study.title}
+            {isTabs ? study.title : 'More About Project'}
           </Typography>
         </Box>
         <Tooltip title="Close panel">
