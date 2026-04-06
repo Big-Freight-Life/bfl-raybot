@@ -61,21 +61,9 @@ export default function ChatPanel({ sessionId, sessionTimestamp, onDiagramDetect
 
   useEffect(() => {
     const lastMsg = messages[messages.length - 1];
-    const isCaseStudy = !!lastMsg?.caseStudyKey;
-    // Use instant scroll for case studies (large content), smooth for normal chat
-    // Delay slightly so DOM has time to render the case study content
-    const scroll = () => {
-      messagesEndRef.current?.scrollIntoView({
-        behavior: isCaseStudy ? 'auto' : 'smooth',
-        block: 'end',
-      });
-    };
-    if (isCaseStudy) {
-      // Wait for layout, then scroll to the end of the case study
-      requestAnimationFrame(() => requestAnimationFrame(scroll));
-    } else {
-      scroll();
-    }
+    // Skip auto-scroll for case study messages — they should stay at the top
+    if (lastMsg?.caseStudyKey) return;
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   // Report messages to parent whenever they change
