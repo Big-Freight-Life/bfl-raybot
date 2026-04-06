@@ -247,11 +247,12 @@ export default function CaseStudyPanel({
                       width: 28,
                       height: 28,
                       borderRadius: '50%',
-                      bgcolor: 'primary.main',
-                      color: '#fff',
+                      bgcolor: 'transparent',
+                      color: 'text.secondary',
                       flexShrink: 0,
                       opacity: 0,
-                      transition: 'opacity 0.2s ease',
+                      transition: 'all 0.2s ease',
+                      '&:hover': { bgcolor: 'primary.main', color: '#fff' },
                     }}
                   >
                     <PlayArrowIcon sx={{ fontSize: 16 }} />
