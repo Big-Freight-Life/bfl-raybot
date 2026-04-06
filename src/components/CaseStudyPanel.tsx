@@ -117,6 +117,14 @@ export default function CaseStudyPanel({
           >
             {isTabs ? study.title : 'More About Project'}
           </Typography>
+          {!isTabs && (
+            <Typography
+              variant="caption"
+              sx={{ color: 'text.secondary', display: 'block', mt: 0.5, lineHeight: 1.4 }}
+            >
+              {study.title}
+            </Typography>
+          )}
         </Box>
         <Tooltip title="Close panel">
           <IconButton
