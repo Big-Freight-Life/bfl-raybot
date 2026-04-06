@@ -49,7 +49,7 @@ export default function CaseStudyPresentation({ study }: CaseStudyPresentationPr
             {study.summary}
           </Typography>
           {(study.role || study.date) && (
-            <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {study.role && (
                 <Box>
                   <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontSize: '0.6875rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
