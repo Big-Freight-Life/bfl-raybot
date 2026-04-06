@@ -53,7 +53,7 @@ export const caseStudies: CaseStudy[] = [
     key: 'hyland-onbase',
     role: 'Lead Design Technologist',
     date: '2024',
-    summary: 'A federated integration layer that turned Hyland OnBase into the source of truth for millions of documents flowing across ERP, HR, and finance systems. Replaced fragile point-to-point integrations with a canonical schema, event-driven message broker, and AI-assisted metadata extraction. Built for compliance teams who needed every document touch traceable.',
+    summary: 'A federated integration layer that made Hyland OnBase the source of truth for millions of documents across ERP, HR, and finance systems — replacing fragile point-to-point integrations with a canonical schema and AI-assisted metadata extraction.',
     highlights: [
       {
         title: 'The Challenge',
@@ -89,7 +89,6 @@ export const caseStudies: CaseStudy[] = [
     architecture:
       'A federated integration layer sits between Hyland OnBase and downstream enterprise systems (ERP, HR, finance). Document events in OnBase trigger webhook notifications that are routed through a message broker, normalized into a canonical schema, and distributed to consuming systems.\n\nMetadata extraction runs through a rules engine with optional AI fallback for unstructured documents. Audit logs are centralized in a dedicated observability pipeline so compliance teams can trace every document touch across systems.\n\nKey components: OnBase event webhooks, Kafka-based message broker, canonical document schema, rules-based metadata engine, AI fallback service, audit log aggregator.',
     presentation: [
-      { type: 'paragraph', text: 'Enterprise content management integration for document-heavy workflows across ERP, HR, and finance systems.' },
       { type: 'image', alt: 'System architecture overview', caption: 'Federated integration layer', color: '#0e5f67' },
       { type: 'heading', level: 2, text: 'The Challenge' },
       { type: 'paragraph', text: 'A Fortune 500 customer needed OnBase to become the source of truth for millions of documents flowing between ERP, HR, and finance systems. Existing integrations were fragile, event-driven logic was duplicated across teams, and compliance required every document touch be auditable.' },
@@ -110,7 +109,7 @@ export const caseStudies: CaseStudy[] = [
     key: 'hyland-workday',
     role: 'Design Technologist',
     date: '2023',
-    summary: 'A bidirectional sync layer that brought Hyland documents into Workday workflows for HR, finance, and approval routing. Surfaced supporting documents directly inside the Workday UI through a custom tab, eliminating context switching. Document generation flows the other direction so templated agreements and approvals stay in sync across both systems.',
+    summary: 'A bidirectional sync layer bringing Hyland documents into Workday workflows for HR, finance, and approval routing — surfacing supporting documents directly inside the Workday UI to eliminate context switching.',
     highlights: [
       {
         title: 'The Challenge',
@@ -146,7 +145,6 @@ export const caseStudies: CaseStudy[] = [
     architecture:
       'A bidirectional sync layer connects Workday business objects (workers, positions, requisitions) to Hyland document repositories. When a Workday transaction occurs, the sync layer resolves the related document set from Hyland and attaches it to the Workday record via a custom tab integration.\n\nDocument generation flows the other direction: Workday triggers produce templated documents in Hyland, which are then indexed and made available back to Workday workflows for approval routing.\n\nKey components: Workday web services client, Hyland content services API, bidirectional sync engine, document template service, custom tab UI integration, approval routing adapter.',
     presentation: [
-      { type: 'paragraph', text: 'Connecting Hyland content services with Workday HR and finance workflows through a bidirectional sync layer.' },
       { type: 'image', alt: 'Workday + Hyland integration', caption: 'Bidirectional sync architecture', color: '#0e5f67' },
       { type: 'heading', level: 2, text: 'The Challenge' },
       { type: 'paragraph', text: 'HR and finance teams were manually attaching supporting documents to Workday records — offer letters, invoices, signed agreements — creating a disjointed experience and compliance gaps. Workday had no native content repository and Hyland had no native Workday UI.' },
@@ -167,7 +165,7 @@ export const caseStudies: CaseStudy[] = [
     key: 'salesforce-migration',
     role: 'Solutions Architect',
     date: '2022',
-    summary: 'A staged migration pipeline that moved a decade of CRM customizations into Salesforce with zero downtime. Used change-data-capture for extraction, a transformation rule engine for field mapping and dedup, and aggressive post-load validation to guarantee data integrity. Workflows were re-implemented natively in Salesforce Flow rather than lifted-and-shifted.',
+    summary: 'A staged migration pipeline that moved a decade of CRM customizations into Salesforce with zero downtime and 99.9% data integrity — workflows re-implemented natively in Salesforce Flow rather than lifted-and-shifted.',
     highlights: [
       {
         title: 'The Challenge',
@@ -203,7 +201,6 @@ export const caseStudies: CaseStudy[] = [
     architecture:
       'A staged migration pipeline moved data from a legacy CRM into Salesforce in three phases: extract, transform, and load-validate. Extraction used change-data-capture to snapshot the source in a read-only replica. Transformation applied field-level mapping rules and deduplication logic in a dedicated staging environment.\n\nThe load phase ran in parallel batches with automatic rollback on record-level failures. Post-load validation cross-checked counts, foreign key integrity, and workflow state across both systems. Workflows and automations were re-implemented natively in Salesforce Flow to preserve business logic.\n\nKey components: CDC extractor, staging database, transformation rule engine, batch loader with rollback, validation harness, Salesforce Flow migration.',
     presentation: [
-      { type: 'paragraph', text: 'Large-scale CRM migration with zero downtime, preserving data integrity and business workflows at every step.' },
       { type: 'image', alt: 'Migration pipeline diagram', caption: 'Three-phase migration pipeline', color: '#0e5f67' },
       { type: 'heading', level: 2, text: 'The Challenge' },
       { type: 'paragraph', text: 'A legacy CRM had years of customization, undocumented workflows, and inconsistent data. Leadership wanted to move to Salesforce without losing business logic or breaking downstream reports. The risk was high — any missed workflow meant a broken revenue process.' },

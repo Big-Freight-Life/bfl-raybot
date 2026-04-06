@@ -45,30 +45,37 @@ export default function CaseStudyPresentation({ study }: CaseStudyPresentationPr
           >
             Summary
           </Typography>
-          <Typography variant="body2" sx={{ lineHeight: 1.6, color: 'text.primary', mb: study.role || study.date ? 1.5 : 0 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              lineHeight: 1.6,
+              color: 'text.primary',
+              mb: study.role || study.date ? 1.5 : 0,
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+            }}
+          >
             {study.summary}
           </Typography>
           {(study.role || study.date) && (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
               {study.role && (
-                <Box>
-                  <Typography sx={{ display: 'block', color: 'text.secondary', fontSize: '0.6875rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600, lineHeight: 1.4 }}>
+                <Typography sx={{ fontSize: '0.8125rem', color: 'text.primary', lineHeight: 1.5 }}>
+                  <Box component="span" sx={{ color: 'text.secondary', fontSize: '0.6875rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600, mr: 1 }}>
                     Role
-                  </Typography>
-                  <Typography sx={{ color: 'text.primary', fontSize: '0.8125rem', lineHeight: 1.4 }}>
-                    {study.role}
-                  </Typography>
-                </Box>
+                  </Box>
+                  {study.role}
+                </Typography>
               )}
               {study.date && (
-                <Box>
-                  <Typography sx={{ display: 'block', color: 'text.secondary', fontSize: '0.6875rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600, lineHeight: 1.4 }}>
+                <Typography sx={{ fontSize: '0.8125rem', color: 'text.primary', lineHeight: 1.5 }}>
+                  <Box component="span" sx={{ color: 'text.secondary', fontSize: '0.6875rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600, mr: 1 }}>
                     Date
-                  </Typography>
-                  <Typography sx={{ color: 'text.primary', fontSize: '0.8125rem', lineHeight: 1.4 }}>
-                    {study.date}
-                  </Typography>
-                </Box>
+                  </Box>
+                  {study.date}
+                </Typography>
               )}
             </Box>
           )}
