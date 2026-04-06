@@ -9,7 +9,7 @@ export interface SavedChat {
   id: string;
   title: string;
   timestamp: number;
-  messages: { role: 'user' | 'bot'; content: string; source?: 'voice' | 'text' }[];
+  messages: { role: 'user' | 'bot'; content: string; source?: 'voice' | 'text'; timestamp?: number; caseStudyKey?: string }[];
 }
 
 const CHATS_KEY = 'raybot_chats';

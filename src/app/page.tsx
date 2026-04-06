@@ -27,6 +27,7 @@ export default function Home() {
   const [voiceMuted, setVoiceMuted] = useState(true);
   const [micActive, setMicActive] = useState(false);
   const [triggerMessage, setTriggerMessage] = useState<string | null>(null);
+  const [triggerCaseStudy, setTriggerCaseStudy] = useState<string | null>(null);
   const [activeCaseStudy, setActiveCaseStudy] = useState<string | null>(null);
   const [activeNavItem, setActiveNavItem] = useState<string | null>(null);
   const [visitedHighlights, setVisitedHighlights] = useState<Set<string>>(new Set());
@@ -87,7 +88,7 @@ export default function Home() {
       setVisitedHighlights(new Set());
       const study = caseStudies.find((s) => s.key === key);
       if (study) {
-        setTriggerMessage(`Tell me the story of the ${study.title} case study.`);
+        setTriggerCaseStudy(key);
       }
       return;
     }
@@ -280,7 +281,8 @@ export default function Home() {
               onToggleDigitalTwin={toggleDigitalTwin}
               onMicActivated={handleMicActivated}
               triggerMessage={triggerMessage}
-              onTriggerHandled={() => setTriggerMessage(null)}
+              triggerCaseStudy={triggerCaseStudy}
+              onTriggerHandled={() => { setTriggerMessage(null); setTriggerCaseStudy(null); }}
               onMessagesChange={handleMessagesChange}
             />
           </Box>

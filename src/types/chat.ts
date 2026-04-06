@@ -13,6 +13,7 @@ export interface Message {
   isThinking?: boolean;
   source?: 'voice' | 'text';
   timestamp?: number;
+  caseStudyKey?: string;
 }
 
 /** Saved chat summary for sidebar list */

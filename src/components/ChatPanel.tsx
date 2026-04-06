@@ -26,11 +26,12 @@ interface ChatPanelProps {
   onMicActivated?: () => void;
   onVoiceMutedChange?: (muted: boolean) => void;
   triggerMessage?: string | null;
+  triggerCaseStudy?: string | null;
   onTriggerHandled?: () => void;
   onMessagesChange?: (messages: Message[]) => void;
 }
 
-export default function ChatPanel({ sessionId, sessionTimestamp, onDiagramDetected, digitalTwinMode, onSpeakingChange, onListeningChange, onToggleDigitalTwin, onMicActivated, onVoiceMutedChange, triggerMessage, onTriggerHandled, onMessagesChange }: ChatPanelProps) {
+export default function ChatPanel({ sessionId, sessionTimestamp, onDiagramDetected, digitalTwinMode, onSpeakingChange, onListeningChange, onToggleDigitalTwin, onMicActivated, onVoiceMutedChange, triggerMessage, triggerCaseStudy, onTriggerHandled, onMessagesChange }: ChatPanelProps) {
   const [voiceMuted, setVoiceMuted] = useState(true);
   const [showDisclaimer, setShowDisclaimer] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -87,6 +88,23 @@ export default function ChatPanel({ sessionId, sessionTimestamp, onDiagramDetect
     }
   }, [pendingTrigger, isProcessing, sendMessage]);
 
+  // Handle preloaded case study — inject a bot message with caseStudyKey, no API call
+  useEffect(() => {
+    if (!triggerCaseStudy) return;
+    setMessages((prev) => {
+      // Don't duplicate if already at the end
+      const last = prev[prev.length - 1];
+      if (last?.caseStudyKey === triggerCaseStudy) return prev;
+      const next: Message[] = [
+        ...prev,
+        { role: 'bot', content: '', caseStudyKey: triggerCaseStudy, timestamp: Date.now() },
+      ];
+      saveHistory(next);
+      return next;
+    });
+    onTriggerHandled?.();
+  }, [triggerCaseStudy, setMessages, saveHistory, onTriggerHandled]);
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <Box sx={{ flex: 1, overflowY: 'auto', py: 2, px: { xs: 2, md: 3 }, scrollbarWidth: 'thin', maxWidth: 768, mx: 'auto', width: '100%' }}>
@@ -125,6 +143,7 @@ export default function ChatPanel({ sessionId, sessionTimestamp, onDiagramDetect
                 role={msg.role} content={msg.content}
                 isThinking={msg.isThinking} index={i}
                 source={msg.source}
+                caseStudyKey={msg.caseStudyKey}
               />
             </Box>
           );

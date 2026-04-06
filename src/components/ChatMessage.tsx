@@ -8,8 +8,10 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { colors } from '@/theme/tokens';
 import ThinkingDots from './ThinkingDots';
 import InlineDiagram from './InlineDiagram';
+import CaseStudyPresentation from './CaseStudyPresentation';
 import { useState } from 'react';
 import { splitContentByMermaid } from '@/lib/mermaid-utils';
+import { caseStudies } from '@/lib/case-studies';
 
 function renderContent(text: string, isUser: boolean) {
   const segments = splitContentByMermaid(text);
@@ -107,10 +109,12 @@ interface ChatMessageProps {
   isTyping?: boolean;
   index: number;
   source?: 'voice' | 'text';
+  caseStudyKey?: string;
 }
 
-export default function ChatMessage({ role, content, isThinking, isTyping, index, source }: ChatMessageProps) {
+export default function ChatMessage({ role, content, isThinking, isTyping, index, source, caseStudyKey }: ChatMessageProps) {
   const isUser = role === 'user';
+  const caseStudy = caseStudyKey ? caseStudies.find((s) => s.key === caseStudyKey) : null;
 
   return (
     <Box sx={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start', mb: 2, px: 1 }}>
@@ -130,6 +134,8 @@ export default function ChatMessage({ role, content, isThinking, isTyping, index
         >
           {isThinking ? (
             <ThinkingDots />
+          ) : caseStudy ? (
+            <CaseStudyPresentation study={caseStudy} />
           ) : (
             <>
             {renderContent(content, isUser)}
