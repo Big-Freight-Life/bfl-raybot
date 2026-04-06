@@ -12,6 +12,15 @@ export default function CaseStudyPresentation({ study }: CaseStudyPresentationPr
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      {/* Title */}
+      <Typography
+        component="h1"
+        sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1.3, color: 'text.primary' }}
+      >
+        {study.title}
+      </Typography>
+
+      {/* Summary block with role and date */}
       {study.summary && (
         <Box
           sx={{
@@ -30,17 +39,43 @@ export default function CaseStudyPresentation({ study }: CaseStudyPresentationPr
               letterSpacing: '0.05em',
               textTransform: 'uppercase',
               display: 'block',
-              mb: 0.5,
+              mb: 0.75,
               fontSize: '0.6875rem',
             }}
           >
             Summary
           </Typography>
-          <Typography variant="body2" sx={{ lineHeight: 1.6, color: 'text.primary' }}>
+          <Typography variant="body2" sx={{ lineHeight: 1.6, color: 'text.primary', mb: study.role || study.date ? 1.5 : 0 }}>
             {study.summary}
           </Typography>
+          {(study.role || study.date) && (
+            <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
+              {study.role && (
+                <Box>
+                  <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontSize: '0.6875rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                    Role
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'text.primary', fontSize: '0.8125rem' }}>
+                    {study.role}
+                  </Typography>
+                </Box>
+              )}
+              {study.date && (
+                <Box>
+                  <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontSize: '0.6875rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                    Date
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'text.primary', fontSize: '0.8125rem' }}>
+                    {study.date}
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+          )}
         </Box>
       )}
+
+      {/* Rest of the presentation content */}
       {study.presentation.map((block, i) => (
         <BlockRenderer key={i} block={block} />
       ))}
