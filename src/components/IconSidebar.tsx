@@ -79,6 +79,7 @@ interface IconSidebarProps {
   activeItem?: string | null;
   activeChatId?: string | null;
   chatList?: ChatSummary[];
+  isNewChatActive?: boolean;
 }
 
 /* ─── NavButton sub-component ─── */
@@ -160,7 +161,7 @@ function SidebarItemButton({ isActive, onClick, children, icon }: SidebarItemBut
 }
 
 // Shared sidebar content used by both desktop sidebar and mobile drawer
-function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, activeItem, activeChatId, chatList = [], onMobileClose }: IconSidebarProps & { onMobileClose?: () => void }) {
+function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, activeItem, activeChatId, chatList = [], isNewChatActive, onMobileClose }: IconSidebarProps & { onMobileClose?: () => void }) {
   const handleNavigate = (action: string) => {
     onNavigate?.(action);
     onMobileClose?.();
@@ -222,6 +223,7 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
           icon={<EditNoteIcon sx={{ fontSize: 20 }} />}
           label="New chat"
           open={open}
+          isActive={isNewChatActive}
           onClick={handleNewChat}
         />
         <NavButton

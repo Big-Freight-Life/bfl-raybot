@@ -128,6 +128,9 @@ export default function Home() {
   const saveCurrentChat = useCallback(() => {
     const currentMessages = messagesRef.current;
     if (!currentMessages.length || !sessionId) return;
+    // Only save chats that have at least one user message
+    const hasUserMessage = currentMessages.some((m) => m.role === 'user');
+    if (!hasUserMessage) return;
     saveChat({
       id: sessionId,
       title: generateTitle(currentMessages),
@@ -198,7 +201,17 @@ export default function Home() {
     <Box sx={{ display: 'flex', height: '100vh' }}>
       {verified === false && <EmailGate onVerified={handleVerified} />}
 
-      <IconSidebar open={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} onNavigate={handleNavigate} onNewChat={handleNewChat} onLoadChat={handleLoadChat} activeItem={activeNavItem} activeChatId={activeChatId} chatList={chatList} />
+      <IconSidebar
+        open={sidebarOpen}
+        onToggle={() => setSidebarOpen(!sidebarOpen)}
+        onNavigate={handleNavigate}
+        onNewChat={handleNewChat}
+        onLoadChat={handleLoadChat}
+        activeItem={activeNavItem}
+        activeChatId={activeChatId}
+        chatList={chatList}
+        isNewChatActive={!activeNavItem && !chatList.some((c) => c.id === activeChatId)}
+      />
 
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         {/* Top bar */}
