@@ -157,7 +157,7 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
           </IconButton>
         )}
         {!text && (
-          <Tooltip title={voiceMuted ? 'Unmute voice' : 'Mute voice'}>
+          <Tooltip title={voiceMuted ? 'Turn voice mode on' : 'Turn voice mode off'}>
             <IconButton
               size="small"
               onClick={onToggleVoice}
