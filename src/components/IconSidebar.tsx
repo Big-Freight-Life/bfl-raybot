@@ -353,6 +353,18 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
           </Box>
         </Box>
       )}
+
+      {/* Copyright — bottom left, only when sidebar is expanded */}
+      {open && (
+        <Box sx={{ mt: 'auto', px: 2, py: 1.5, flexShrink: 0 }}>
+          <Typography
+            variant="caption"
+            sx={{ color: 'text.disabled', fontSize: '0.6875rem', lineHeight: 1.4 }}
+          >
+            © {new Date().getFullYear()} Big Freight Life LLC
+          </Typography>
+        </Box>
+      )}
     </>
   );
 }
