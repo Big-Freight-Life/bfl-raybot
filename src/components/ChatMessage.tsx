@@ -11,7 +11,7 @@ import InlineDiagram from './InlineDiagram';
 import CaseStudyPresentation from './CaseStudyPresentation';
 import { useState } from 'react';
 import { splitContentByMermaid } from '@/lib/mermaid-utils';
-import { caseStudies } from '@/lib/case-studies';
+import { findCaseStudyByKey } from '@/lib/case-studies';
 
 function renderContent(text: string, isUser: boolean) {
   const segments = splitContentByMermaid(text);
@@ -114,7 +114,7 @@ interface ChatMessageProps {
 
 export default function ChatMessage({ role, content, isThinking, isTyping, index, source, caseStudyKey }: ChatMessageProps) {
   const isUser = role === 'user';
-  const caseStudy = caseStudyKey ? caseStudies.find((s) => s.key === caseStudyKey) : null;
+  const caseStudy = caseStudyKey ? findCaseStudyByKey(caseStudyKey) : null;
 
   return (
     <Box sx={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start', mb: 2, px: 1 }}>

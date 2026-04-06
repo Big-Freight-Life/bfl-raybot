@@ -276,3 +276,10 @@ export const caseStudies: CaseStudy[] = [
     ],
   },
 ];
+
+export function findCaseStudyByKey(key: string): CaseStudy | undefined {
+  if (key === 'about-ray') return aboutRay;
+  if (key === 'process') return processInfo;
+  if (key === 'contact') return contactInfo;
+  return caseStudies.find((s) => s.key === key);
+}

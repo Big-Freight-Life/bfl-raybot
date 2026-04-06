@@ -10,7 +10,7 @@ import ChatPanel from '@/components/ChatPanel';
 import AvatarStage from '@/components/AvatarStage';
 import EmailGate from '@/components/EmailGate';
 import CaseStudyPanel from '@/components/CaseStudyPanel';
-import { caseStudies, aboutRay, processInfo, contactInfo } from '@/lib/case-studies';
+import { caseStudies, findCaseStudyByKey } from '@/lib/case-studies';
 import { getChatList, saveChat, loadChat, generateTitle, type ChatSummary } from '@/lib/chat-history';
 import { STORAGE_KEY_USER_EMAIL, STORAGE_KEY_HISTORY, STORAGE_KEY_SESSION_ID } from '@/lib/constants';
 import { generateSessionId } from '@/lib/session-utils';
@@ -99,9 +99,12 @@ export default function Home() {
 
     if (action === 'about-ray' || action === 'process' || action === 'contact') {
       if (activeCaseStudy === action) return;
+      // Start a new chat and trigger the case study, same as case studies
+      handleNewChat();
       setActiveCaseStudy(action);
       setActiveNavItem(action);
       setVisitedHighlights(new Set());
+      setTriggerCaseStudy(action);
       return;
     }
 
@@ -299,20 +302,11 @@ export default function Home() {
           </Box>
 
           {(() => {
-            const activeStudy = activeCaseStudy === 'about-ray'
-              ? aboutRay
-              : activeCaseStudy === 'process'
-                ? processInfo
-                : activeCaseStudy === 'contact'
-                  ? contactInfo
-                  : activeCaseStudy
-                    ? caseStudies.find((s) => s.key === activeCaseStudy)
-                    : null;
-            const isTabsVariant = activeCaseStudy === 'about-ray' || activeCaseStudy === 'process' || activeCaseStudy === 'contact';
+            const activeStudy = activeCaseStudy ? findCaseStudyByKey(activeCaseStudy) : null;
             return activeStudy ? (
               <CaseStudyPanel
                 study={activeStudy}
-                variant={isTabsVariant ? 'tabs' : 'default'}
+                variant="default"
                 onHighlightClick={(prompt) => {
                   handleHighlightClick(prompt);
                   const highlight = activeStudy.highlights.find((h) =>
