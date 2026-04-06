@@ -119,9 +119,9 @@ export default function CaseStudyPanel({
             variant="h6"
             sx={{ fontWeight: 700, lineHeight: 1.3 }}
           >
-            {isTabs ? study.title : 'More About Project'}
+            {isTabs ? study.title : study.key === 'process' ? 'More About Process' : 'More About Project'}
           </Typography>
-          {!isTabs && (
+          {!isTabs && study.key !== 'process' && (
             <Typography
               variant="caption"
               sx={{ color: 'text.secondary', display: 'block', mt: 0.5, lineHeight: 1.4 }}
@@ -198,24 +198,26 @@ export default function CaseStudyPanel({
       ) : (
         /* Default variant — vertical list */
         <Box sx={{ px: 1.5, py: 1.5 }}>
-          <RadioGroup
-            row
-            value={caseView}
-            onChange={(e) => setCaseView(e.target.value as 'notes' | 'architecture')}
-            sx={{ px: 0.5, mb: 1 }}
-          >
-            <FormControlLabel
-              value="notes"
-              control={<Radio size="small" sx={{ py: 0.5, '&.Mui-checked': { color: 'primary.main' } }} />}
-              label={<Typography variant="body2" sx={{ fontSize: '0.8125rem' }}>Case Notes</Typography>}
-            />
-            <FormControlLabel
-              value="architecture"
-              control={<Radio size="small" sx={{ py: 0.5, '&.Mui-checked': { color: 'primary.main' } }} />}
-              label={<Typography variant="body2" sx={{ fontSize: '0.8125rem' }}>Architecture</Typography>}
-            />
-          </RadioGroup>
-          {caseView === 'architecture' ? (
+          {study.key !== 'process' && (
+            <RadioGroup
+              row
+              value={caseView}
+              onChange={(e) => setCaseView(e.target.value as 'notes' | 'architecture')}
+              sx={{ px: 0.5, mb: 1 }}
+            >
+              <FormControlLabel
+                value="notes"
+                control={<Radio size="small" sx={{ py: 0.5, '&.Mui-checked': { color: 'primary.main' } }} />}
+                label={<Typography variant="body2" sx={{ fontSize: '0.8125rem' }}>Case Notes</Typography>}
+              />
+              <FormControlLabel
+                value="architecture"
+                control={<Radio size="small" sx={{ py: 0.5, '&.Mui-checked': { color: 'primary.main' } }} />}
+                label={<Typography variant="body2" sx={{ fontSize: '0.8125rem' }}>Architecture</Typography>}
+              />
+            </RadioGroup>
+          )}
+          {study.key !== 'process' && caseView === 'architecture' ? (
             <Box sx={{ px: 1, py: 2, textAlign: 'center' }}>
               <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.8125rem', lineHeight: 1.6, textAlign: 'left', whiteSpace: 'pre-wrap' }}>
                 {study.architecture || 'Architecture notes coming soon.'}
