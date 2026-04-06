@@ -111,9 +111,10 @@ interface ChatMessageProps {
   index: number;
   source?: 'voice' | 'text';
   caseStudyKey?: string;
+  timestamp?: number;
 }
 
-export default function ChatMessage({ role, content, isThinking, isTyping, index, source, caseStudyKey }: ChatMessageProps) {
+export default function ChatMessage({ role, content, isThinking, isTyping, index, source, caseStudyKey, timestamp }: ChatMessageProps) {
   const isUser = role === 'user';
   const caseStudy = caseStudyKey ? findCaseStudyByKey(caseStudyKey) : null;
 
@@ -136,11 +137,11 @@ export default function ChatMessage({ role, content, isThinking, isTyping, index
           {isThinking ? (
             <ThinkingDots />
           ) : caseStudyKey === 'about-ray' ? (
-            <AboutRayPresentation />
+            <AboutRayPresentation timestamp={timestamp} />
           ) : caseStudyKey === 'process' ? (
-            <ProcessPresentation />
+            <ProcessPresentation timestamp={timestamp} />
           ) : caseStudyKey === 'contact' ? (
-            <ContactPresentation />
+            <ContactPresentation timestamp={timestamp} />
           ) : caseStudy ? (
             <CaseStudyPresentation study={caseStudy} />
           ) : (

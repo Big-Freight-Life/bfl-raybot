@@ -168,6 +168,7 @@ export default function ChatPanel({ sessionId, sessionTimestamp, onDiagramDetect
                 isThinking={msg.isThinking} index={i}
                 source={msg.source}
                 caseStudyKey={msg.caseStudyKey}
+                timestamp={msg.timestamp}
               />
             </Box>
           );
