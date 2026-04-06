@@ -81,6 +81,7 @@ export default function CaseStudyPanel({
 }: CaseStudyPanelProps) {
   const isTabs = variant === 'tabs';
   const [activeTab, setActiveTab] = useState(study.highlights[0]?.key ?? '');
+  const [caseView, setCaseView] = useState<'notes' | 'architecture'>('notes');
 
   const activeHighlight = isTabs
     ? study.highlights.find((h) => h.key === activeTab)
@@ -194,20 +195,30 @@ export default function CaseStudyPanel({
       ) : (
         /* Default variant — vertical list */
         <Box sx={{ px: 1.5, py: 1.5 }}>
-          <Typography
-            variant="caption"
-            sx={{
-              color: 'text.secondary',
-              fontWeight: 600,
-              letterSpacing: '0.05em',
-              textTransform: 'uppercase',
-              display: 'block',
-              mb: 1,
-              px: 0.5,
-            }}
+          <RadioGroup
+            row
+            value={caseView}
+            onChange={(e) => setCaseView(e.target.value as 'notes' | 'architecture')}
+            sx={{ px: 0.5, mb: 1 }}
           >
-            Highlights
-          </Typography>
+            <FormControlLabel
+              value="notes"
+              control={<Radio size="small" sx={{ py: 0.5, '&.Mui-checked': { color: 'primary.main' } }} />}
+              label={<Typography variant="body2" sx={{ fontSize: '0.8125rem' }}>Case Notes</Typography>}
+            />
+            <FormControlLabel
+              value="architecture"
+              control={<Radio size="small" sx={{ py: 0.5, '&.Mui-checked': { color: 'primary.main' } }} />}
+              label={<Typography variant="body2" sx={{ fontSize: '0.8125rem' }}>Architecture</Typography>}
+            />
+          </RadioGroup>
+          {caseView === 'architecture' ? (
+            <Box sx={{ px: 1, py: 2, textAlign: 'center' }}>
+              <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.8125rem', lineHeight: 1.6 }}>
+                Architecture diagrams coming soon.
+              </Typography>
+            </Box>
+          ) : (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
             {study.highlights.map((highlight) => {
               const visited = visitedHighlights.has(highlight.key);
@@ -269,6 +280,7 @@ export default function CaseStudyPanel({
               );
             })}
           </Box>
+          )}
         </Box>
       )}
     </Box>
