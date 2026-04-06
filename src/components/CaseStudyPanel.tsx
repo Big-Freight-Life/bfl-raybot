@@ -237,10 +237,25 @@ export default function CaseStudyPanel({
                   <Box component="span" sx={{ flex: 1 }}>
                     {highlight.title}
                   </Box>
-                  <PlayArrowIcon
+                  <Box
+                    component="span"
                     className="play-icon"
-                    sx={{ fontSize: 18, flexShrink: 0, opacity: 0, transition: 'opacity 0.2s ease', color: 'text.secondary' }}
-                  />
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 28,
+                      height: 28,
+                      borderRadius: '50%',
+                      bgcolor: 'primary.main',
+                      color: '#fff',
+                      flexShrink: 0,
+                      opacity: 0,
+                      transition: 'opacity 0.2s ease',
+                    }}
+                  >
+                    <PlayArrowIcon sx={{ fontSize: 16 }} />
+                  </Box>
                 </Box>
               );
             })}
