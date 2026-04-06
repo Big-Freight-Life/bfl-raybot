@@ -214,8 +214,8 @@ export default function CaseStudyPanel({
           </RadioGroup>
           {caseView === 'architecture' ? (
             <Box sx={{ px: 1, py: 2, textAlign: 'center' }}>
-              <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.8125rem', lineHeight: 1.6 }}>
-                Architecture diagrams coming soon.
+              <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.8125rem', lineHeight: 1.6, textAlign: 'left', whiteSpace: 'pre-wrap' }}>
+                {study.architecture || 'Architecture notes coming soon.'}
               </Typography>
             </Box>
           ) : (

@@ -9,6 +9,7 @@ export interface CaseStudy {
   key: string;
   summary: string;
   highlights: CaseStudyHighlight[];
+  architecture?: string;
 }
 
 export const aboutRay: CaseStudy = {
@@ -49,6 +50,8 @@ export const caseStudies: CaseStudy[] = [
       { title: 'Results', key: 'results' },
       { title: 'Lessons Learned', key: 'lessons' },
     ],
+    architecture:
+      'A federated integration layer sits between Hyland OnBase and downstream enterprise systems (ERP, HR, finance). Document events in OnBase trigger webhook notifications that are routed through a message broker, normalized into a canonical schema, and distributed to consuming systems.\n\nMetadata extraction runs through a rules engine with optional AI fallback for unstructured documents. Audit logs are centralized in a dedicated observability pipeline so compliance teams can trace every document touch across systems.\n\nKey components: OnBase event webhooks, Kafka-based message broker, canonical document schema, rules-based metadata engine, AI fallback service, audit log aggregator.',
   },
   {
     title: 'Hyland for Workday',
@@ -61,6 +64,8 @@ export const caseStudies: CaseStudy[] = [
       { title: 'Results', key: 'results' },
       { title: 'Lessons Learned', key: 'lessons' },
     ],
+    architecture:
+      'A bidirectional sync layer connects Workday business objects (workers, positions, requisitions) to Hyland document repositories. When a Workday transaction occurs, the sync layer resolves the related document set from Hyland and attaches it to the Workday record via a custom tab integration.\n\nDocument generation flows the other direction: Workday triggers produce templated documents in Hyland, which are then indexed and made available back to Workday workflows for approval routing.\n\nKey components: Workday web services client, Hyland content services API, bidirectional sync engine, document template service, custom tab UI integration, approval routing adapter.',
   },
   {
     title: 'Salesforce Migration',
@@ -73,5 +78,7 @@ export const caseStudies: CaseStudy[] = [
       { title: 'Results', key: 'results' },
       { title: 'Lessons Learned', key: 'lessons' },
     ],
+    architecture:
+      'A staged migration pipeline moved data from a legacy CRM into Salesforce in three phases: extract, transform, and load-validate. Extraction used change-data-capture to snapshot the source in a read-only replica. Transformation applied field-level mapping rules and deduplication logic in a dedicated staging environment.\n\nThe load phase ran in parallel batches with automatic rollback on record-level failures. Post-load validation cross-checked counts, foreign key integrity, and workflow state across both systems. Workflows and automations were re-implemented natively in Salesforce Flow to preserve business logic.\n\nKey components: CDC extractor, staging database, transformation rule engine, batch loader with rollback, validation harness, Salesforce Flow migration.',
   },
 ];
