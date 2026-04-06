@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat Input — Voice States</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Poppins', -apple-system, sans-serif; background: #0a0a0a; color: #e5e5e5; display: flex; flex-direction: column; align-items: center; padding: 40px; gap: 40px; }
+
+  .label { font-size: 13px; font-weight: 600; color: #a3a3a3; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; }
+  .sublabel { font-size: 12px; color: #666; text-align: center; margin-bottom: 8px; }
+
+  .demo { max-width: 768px; width: 100%; }
+  .bar-row { display: flex; align-items: center; gap: 8px; }
+
+  .input-box {
+    flex: 1; display: flex; align-items: center;
+    border-radius: 12px;
+    padding: 4px 12px; background: #0a0a0a; min-height: 42px;
+    position: relative; overflow: hidden;
+    border: 1px solid #2a2a2a;
+  }
+
+  .icon-btn {
+    width: 32px; height: 32px; border-radius: 50%; border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+  }
+  .mic-btn { background: none; color: #a3a3a3; }
+  .voice-off { background: #2a2a2a; color: #a3a3a3; }
+  .voice-on { background: #2a2a2a; color: #a3a3a3; }
+  svg { width: 20px; height: 20px; }
+  .voice-icon svg { width: 24px; height: 24px; }
+  .stop-icon svg { width: 20px; height: 20px; }
+
+  .placeholder-text { flex: 1; color: #a3a3a3; font-size: 14px; opacity: 0.6; padding: 8px 0; }
+  .spacer { flex: 1; }
+
+  .voice-line-container {
+    position: absolute;
+    left: 100px; right: 100px; top: 0; bottom: 0;
+    display: flex; align-items: center;
+    pointer-events: none;
+  }
+  .voice-line-container canvas { width: 100%; height: 100%; }
+
+  .flat-line {
+    position: absolute;
+    left: 100px; right: 100px; top: 50%; height: 2px;
+    background: #1a9aa6; border-radius: 1px;
+  }
+</style>
+</head>
+<body>
+
+<div class="label">Voice Button — All States (border kept, wave inside)</div>
+
+<!-- State 1: Default -->
+<div class="demo">
+  <div class="sublabel">1. Default — voice off</div>
+  <div class="bar-row">
+    <div class="input-box">
+      <button class="icon-btn mic-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg></button>
+      <span class="placeholder-text">Try "design an agent workflow"</span>
+      <button class="icon-btn voice-off voice-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 18h2V6H7v12zm4-12v12h2V6h-2zm-8 8h2v-4H3v4zm12-6v8h2V8h-2zm4 2v4h2v-4h-2z"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- State 2: Voice on, silent -->
+<div class="demo">
+  <div class="sublabel">2. Voice on, silent — flat line inside border</div>
+  <div class="bar-row">
+    <div class="input-box">
+      <div class="flat-line"></div>
+      <div class="spacer"></div>
+      <button class="icon-btn voice-on stop-icon"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- State 3: Voice on, speaking -->
+<div class="demo">
+  <div class="sublabel">3. Voice on, speaking — soundwave inside border</div>
+  <div class="bar-row">
+    <div class="input-box">
+      <div class="voice-line-container"><canvas id="wave"></canvas></div>
+      <div class="spacer"></div>
+      <button class="icon-btn voice-on stop-icon"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- Interactive -->
+<div style="margin-top: 24px; width: 100%; max-width: 768px;">
+  <div class="label" style="margin-bottom: 16px;">Interactive — Click the button to toggle</div>
+  <div class="bar-row">
+    <div class="input-box" id="interactiveBox">
+      <button class="icon-btn mic-btn" id="iMic" style="transition: all 0.3s ease;"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg></button>
+      <span class="placeholder-text" id="iPlaceholder" style="transition: all 0.3s ease;">Try "design an agent workflow"</span>
+      <div class="voice-line-container" id="iWave" style="opacity:0; transition: opacity 0.3s ease;"><canvas id="iCanvas"></canvas></div>
+      <div class="spacer"></div>
+      <button class="icon-btn voice-off voice-icon" id="iBtn" onclick="toggle()" style="transition: all 0.3s ease;">
+        <svg id="iIconWave" viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px;"><path d="M7 18h2V6H7v12zm4-12v12h2V6h-2zm-8 8h2v-4H3v4zm12-6v8h2V8h-2zm4 2v4h2v-4h-2z"/></svg>
+        <svg id="iIconStop" viewBox="0 0 24 24" fill="currentColor" style="display:none; width:20px; height:20px;"><rect x="6" y="6" width="12" height="12"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+function drawWave(canvasId, color) {
+  const canvas = document.getElementById(canvasId);
+  const parent = canvas.parentElement;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const w = parent.offsetWidth; const h = parent.offsetHeight;
+  canvas.width = w * dpr; canvas.height = h * dpr;
+  canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  function draw() {
+    const w = parent.offsetWidth; const h = parent.offsetHeight;
+    const cy = h / 2; const time = Date.now() / 1000;
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.lineCap = 'round';
+    ctx.beginPath();
+    for (let i = 0; i <= 120; i++) {
+      const t = i / 120; const x = t * w;
+      const fade = Math.sin(t * Math.PI);
+      const wave = Math.sin(t*14+time*5)*0.45 + Math.sin(t*20-time*3.5)*0.3 + Math.sin(t*9+time*7)*0.25;
+      const y = cy + wave * 10 * fade;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+drawWave('wave', '#1a9aa6');
+
+// Interactive
+let voiceOn = false;
+let iAmp = 0, iTarget = 0;
+const iCanvas = document.getElementById('iCanvas');
+const iCtx = iCanvas.getContext('2d');
+const iParent = document.getElementById('iWave');
+const dpr = window.devicePixelRatio || 1;
+const pw = iParent.offsetWidth; const ph = iParent.offsetHeight;
+iCanvas.width = pw * dpr; iCanvas.height = ph * dpr;
+iCanvas.style.width = pw + 'px'; iCanvas.style.height = ph + 'px';
+iCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+function toggle() {
+  voiceOn = !voiceOn;
+  const mic = document.getElementById('iMic');
+  const pl = document.getElementById('iPlaceholder');
+  const wv = document.getElementById('iWave');
+  const btn = document.getElementById('iBtn');
+  const iconWave = document.getElementById('iIconWave');
+  const iconStop = document.getElementById('iIconStop');
+  if (voiceOn) {
+    mic.style.opacity = '0'; mic.style.width = '0'; mic.style.overflow = 'hidden';
+    pl.style.opacity = '0'; pl.style.width = '0'; pl.style.overflow = 'hidden';
+    wv.style.opacity = '1';
+    btn.className = 'icon-btn voice-on stop-icon';
+    iconWave.style.display = 'none'; iconStop.style.display = '';
+    iTarget = 1;
+  } else {
+    mic.style.opacity = '1'; mic.style.width = '32px'; mic.style.overflow = '';
+    pl.style.opacity = '0.6'; pl.style.width = ''; pl.style.overflow = '';
+    wv.style.opacity = '0';
+    btn.className = 'icon-btn voice-off voice-icon';
+    iconWave.style.display = ''; iconStop.style.display = 'none';
+    iTarget = 0;
+  }
+}
+
+function drawI() {
+  iAmp += (iTarget - iAmp) * 0.06;
+  const w = iParent.offsetWidth; const h = iParent.offsetHeight;
+  const cy = h / 2; const time = Date.now() / 1000;
+  iCtx.clearRect(0, 0, w, h);
+  iCtx.strokeStyle = '#1a9aa6'; iCtx.lineWidth = 2; iCtx.lineCap = 'round';
+  iCtx.beginPath();
+  for (let i = 0; i <= 120; i++) {
+    const t = i / 120; const x = t * w;
+    const fade = Math.sin(t * Math.PI);
+    const wave = Math.sin(t*14+time*5)*0.45 + Math.sin(t*20-time*3.5)*0.3 + Math.sin(t*9+time*7)*0.25;
+    const y = cy + wave * 10 * fade * iAmp;
+    if (i === 0) iCtx.moveTo(x, y); else iCtx.lineTo(x, y);
+  }
+  iCtx.stroke();
+  requestAnimationFrame(drawI);
+}
+drawI();
+</script>
+
+</body>
+</html>

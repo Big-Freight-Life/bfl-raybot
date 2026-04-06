@@ -9,6 +9,7 @@ import { colors } from '@/theme/tokens';
 import ThinkingDots from './ThinkingDots';
 import InlineDiagram from './InlineDiagram';
 import CaseStudyPresentation from './CaseStudyPresentation';
+import { AboutRayPresentation, ProcessPresentation, ContactPresentation } from './InfoPresentations';
 import { useState } from 'react';
 import { splitContentByMermaid } from '@/lib/mermaid-utils';
 import { findCaseStudyByKey } from '@/lib/case-studies';
@@ -134,6 +135,12 @@ export default function ChatMessage({ role, content, isThinking, isTyping, index
         >
           {isThinking ? (
             <ThinkingDots />
+          ) : caseStudyKey === 'about-ray' ? (
+            <AboutRayPresentation />
+          ) : caseStudyKey === 'process' ? (
+            <ProcessPresentation />
+          ) : caseStudyKey === 'contact' ? (
+            <ContactPresentation />
           ) : caseStudy ? (
             <CaseStudyPresentation study={caseStudy} />
           ) : (
