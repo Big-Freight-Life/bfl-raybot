@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Box, Typography, IconButton, Tooltip, Radio, RadioGroup, FormControlLabel } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import type { CaseStudy } from '@/lib/case-studies';
 import { softwareTools, agentSkills } from '@/lib/toolbox';
@@ -82,7 +84,7 @@ export default function CaseStudyPanel({
   const isTabs = variant === 'tabs';
   const [activeTab, setActiveTab] = useState(study.highlights[0]?.key ?? '');
   const [caseView, setCaseView] = useState<'notes' | 'architecture'>('notes');
-  const [expandedKey, setExpandedKey] = useState<string | null>(null);
+  const [expandedKey, setExpandedKey] = useState<string | null>(study.highlights[0]?.key ?? null);
 
   const activeHighlight = isTabs
     ? study.highlights.find((h) => h.key === activeTab)
@@ -247,6 +249,11 @@ export default function CaseStudyPanel({
                       '&:hover .play-icon': { opacity: 1 },
                     }}
                   >
+                    {isExpanded ? (
+                      <KeyboardArrowUpIcon sx={{ fontSize: 18, flexShrink: 0 }} />
+                    ) : (
+                      <KeyboardArrowDownIcon sx={{ fontSize: 18, flexShrink: 0 }} />
+                    )}
                     {visited && (
                       <CheckCircleOutlineIcon
                         sx={{ fontSize: 16, color: 'text.disabled', flexShrink: 0 }}
