@@ -156,7 +156,7 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
           px: 1.5,
           py: 0.5,
           bgcolor: 'background.default',
-          '&:focus-within': { borderColor: 'primary.main' },
+          '&:focus-within': voiceActive ? {} : { borderColor: 'primary.main' },
         }}
       >
         {/* Voice wave line inside box when voice mode is active */}
