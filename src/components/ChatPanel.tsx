@@ -98,27 +98,37 @@ export default function ChatPanel({ sessionId, sessionTimestamp, onDiagramDetect
             </Typography>
           </Box>
         )}
-        {messages.length > 0 && sessionTimestamp && (
-          <Divider sx={{ my: 2 }}>
-            <Chip
-              label={new Date(sessionTimestamp).toLocaleDateString(undefined, {
-                weekday: 'short',
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-              })}
-              size="small"
-              sx={{ fontSize: '0.75rem', color: 'text.secondary', bgcolor: 'action.hover' }}
-            />
-          </Divider>
-        )}
-        {messages.map((msg, i) => (
-          <ChatMessage
-            key={i} role={msg.role} content={msg.content}
-            isThinking={msg.isThinking} index={i}
-            source={msg.source}
-          />
-        ))}
+        {messages.map((msg, i) => {
+          // Determine if we need a date divider before this message
+          const msgTs = msg.timestamp ?? sessionTimestamp;
+          const prevTs = i > 0 ? (messages[i - 1].timestamp ?? sessionTimestamp) : null;
+          const showDivider =
+            msgTs != null &&
+            (i === 0 || (prevTs != null && new Date(msgTs).toDateString() !== new Date(prevTs).toDateString()));
+          return (
+            <Box key={i}>
+              {showDivider && (
+                <Divider sx={{ my: 2 }}>
+                  <Chip
+                    label={new Date(msgTs!).toLocaleDateString(undefined, {
+                      weekday: 'short',
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                    size="small"
+                    sx={{ fontSize: '0.75rem', color: 'text.secondary', bgcolor: 'action.hover' }}
+                  />
+                </Divider>
+              )}
+              <ChatMessage
+                role={msg.role} content={msg.content}
+                isThinking={msg.isThinking} index={i}
+                source={msg.source}
+              />
+            </Box>
+          );
+        })}
         {showLeadForm && (
           <Box sx={{ px: 2, mb: 2, maxWidth: 400 }}>
             <LeadCaptureForm />

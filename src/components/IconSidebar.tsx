@@ -14,6 +14,62 @@ import { caseStudies } from '@/lib/case-studies';
 import { SIDEBAR_WIDTH_COLLAPSED, SIDEBAR_WIDTH_EXPANDED } from '@/lib/constants';
 import type { ChatSummary } from '@/lib/chat-history';
 
+/* ─── Chat grouping helpers ─── */
+
+interface ChatGroup {
+  label: string;
+  chats: ChatSummary[];
+}
+
+function groupChatsByDate(chats: ChatSummary[]): ChatGroup[] {
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const startOfYesterday = startOfToday - 24 * 60 * 60 * 1000;
+  const sevenDaysAgo = startOfToday - 7 * 24 * 60 * 60 * 1000;
+  const thirtyDaysAgo = startOfToday - 30 * 24 * 60 * 60 * 1000;
+
+  const today: ChatSummary[] = [];
+  const yesterday: ChatSummary[] = [];
+  const previous7: ChatSummary[] = [];
+  const previous30: ChatSummary[] = [];
+  const older: Record<string, ChatSummary[]> = {};
+  const olderOrder: string[] = [];
+
+  // Sort newest first
+  const sorted = [...chats].sort((a, b) => b.timestamp - a.timestamp);
+
+  for (const chat of sorted) {
+    const ts = chat.timestamp;
+    if (ts >= startOfToday) {
+      today.push(chat);
+    } else if (ts >= startOfYesterday) {
+      yesterday.push(chat);
+    } else if (ts >= sevenDaysAgo) {
+      previous7.push(chat);
+    } else if (ts >= thirtyDaysAgo) {
+      previous30.push(chat);
+    } else {
+      const d = new Date(ts);
+      const label = d.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+      if (!older[label]) {
+        older[label] = [];
+        olderOrder.push(label);
+      }
+      older[label].push(chat);
+    }
+  }
+
+  const groups: ChatGroup[] = [];
+  if (today.length) groups.push({ label: 'Today', chats: today });
+  if (yesterday.length) groups.push({ label: 'Yesterday', chats: yesterday });
+  if (previous7.length) groups.push({ label: 'Previous 7 Days', chats: previous7 });
+  if (previous30.length) groups.push({ label: 'Previous 30 Days', chats: previous30 });
+  for (const label of olderOrder) {
+    groups.push({ label, chats: older[label] });
+  }
+  return groups;
+}
+
 interface IconSidebarProps {
   open: boolean;
   onToggle: () => void;
@@ -220,47 +276,35 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
         </Box>
       )}
 
-      {/* Chats section — only when expanded and has chats */}
+      {/* Chats section — grouped by date bucket */}
       {open && chatList.length > 0 && (
         <Box sx={{ px: 1.5, mt: 3, flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 1, px: 0.5, flexShrink: 0 }}>
-              Chats
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25, overflowY: 'auto', scrollbarWidth: 'thin', flex: 1 }}>
-              {chatList.map((chat) => {
-                const isActive = activeChatId === chat.id && !activeItem;
-                const dateStr = new Date(chat.timestamp).toLocaleDateString(undefined, {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                });
-                return (
-                  <SidebarItemButton
-                    key={chat.id}
-                    isActive={isActive}
-                    onClick={() => handleLoadChat(chat.id)}
-                    icon={<ChatBubbleOutlineIcon sx={{ fontSize: 14, flexShrink: 0, opacity: 0.6, mt: 0.25 }} />}
-                  >
-                    <Box
-                      component="span"
-                      sx={{
-                        flex: 1,
-                        overflow: 'hidden',
-                        display: 'flex',
-                        flexDirection: 'column',
-                      }}
-                    >
-                      <Box component="span" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {chat.title}
-                      </Box>
-                      <Box component="span" sx={{ fontSize: '0.6875rem', color: 'text.disabled', lineHeight: 1.2 }}>
-                        {dateStr}
-                      </Box>
-                    </Box>
-                  </SidebarItemButton>
-                );
-              })}
-            </Box>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, overflowY: 'auto', scrollbarWidth: 'thin', flex: 1 }}>
+            {groupChatsByDate(chatList).map((group) => (
+              <Box key={group.label}>
+                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 0.5, px: 0.5 }}>
+                  {group.label}
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                  {group.chats.map((chat) => {
+                    const isActive = activeChatId === chat.id && !activeItem;
+                    return (
+                      <SidebarItemButton
+                        key={chat.id}
+                        isActive={isActive}
+                        onClick={() => handleLoadChat(chat.id)}
+                        icon={<ChatBubbleOutlineIcon sx={{ fontSize: 14, flexShrink: 0, opacity: 0.6, mt: 0.25 }} />}
+                      >
+                        <Box component="span" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {chat.title}
+                        </Box>
+                      </SidebarItemButton>
+                    );
+                  })}
+                </Box>
+              </Box>
+            ))}
+          </Box>
         </Box>
       )}
     </>

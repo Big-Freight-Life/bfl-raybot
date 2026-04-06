@@ -12,6 +12,7 @@ export interface Message {
   content: string;
   isThinking?: boolean;
   source?: 'voice' | 'text';
+  timestamp?: number;
 }
 
 /** Saved chat summary for sidebar list */

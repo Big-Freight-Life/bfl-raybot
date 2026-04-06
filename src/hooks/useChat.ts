@@ -24,7 +24,8 @@ export function useChat({ sessionId, onDiagramDetected, saveHistory, playTTS }: 
   }, []);
 
   const sendMessage = useCallback(async (text: string, source: 'voice' | 'text' = 'text') => {
-    const userMsg: Message = { role: 'user', content: text, source };
+    const now = Date.now();
+    const userMsg: Message = { role: 'user', content: text, source, timestamp: now };
     const thinkingMsg: Message = { role: 'bot', content: '', isThinking: true };
     setMessages((prev) => [...prev, userMsg, thinkingMsg]);
     setIsProcessing(true);
@@ -59,7 +60,7 @@ export function useChat({ sessionId, onDiagramDetected, saveHistory, playTTS }: 
       // Replace thinking msg with streaming bot msg
       setMessages((prev) => {
         const updated = prev.filter((m) => !m.isThinking);
-        return [...updated, { role: 'bot' as const, content: '' }];
+        return [...updated, { role: 'bot' as const, content: '', timestamp: Date.now() }];
       });
 
       while (true) {
@@ -84,7 +85,7 @@ export function useChat({ sessionId, onDiagramDetected, saveHistory, playTTS }: 
         const updated = [...prev];
         const last = updated[updated.length - 1];
         if (last?.role === 'bot') {
-          updated[updated.length - 1] = { role: 'bot', content: finalText };
+          updated[updated.length - 1] = { role: 'bot', content: finalText, timestamp: last.timestamp ?? Date.now() };
         }
         saveHistory(updated);
         return updated;
