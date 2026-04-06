@@ -12,6 +12,35 @@ export default function CaseStudyPresentation({ study }: CaseStudyPresentationPr
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      {study.summary && (
+        <Box
+          sx={{
+            p: 2,
+            borderRadius: '12px',
+            bgcolor: 'action.hover',
+            borderLeft: 3,
+            borderColor: 'primary.main',
+          }}
+        >
+          <Typography
+            variant="caption"
+            sx={{
+              color: 'text.secondary',
+              fontWeight: 600,
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+              display: 'block',
+              mb: 0.5,
+              fontSize: '0.6875rem',
+            }}
+          >
+            Summary
+          </Typography>
+          <Typography variant="body2" sx={{ lineHeight: 1.6, color: 'text.primary' }}>
+            {study.summary}
+          </Typography>
+        </Box>
+      )}
       {study.presentation.map((block, i) => (
         <BlockRenderer key={i} block={block} />
       ))}
