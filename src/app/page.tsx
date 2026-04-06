@@ -10,7 +10,7 @@ import ChatPanel from '@/components/ChatPanel';
 import AvatarStage from '@/components/AvatarStage';
 import EmailGate from '@/components/EmailGate';
 import CaseStudyPanel from '@/components/CaseStudyPanel';
-import { caseStudies, aboutRay } from '@/lib/case-studies';
+import { caseStudies, aboutRay, processInfo } from '@/lib/case-studies';
 import { getChatList, saveChat, loadChat, generateTitle, type ChatSummary } from '@/lib/chat-history';
 import { STORAGE_KEY_USER_EMAIL, STORAGE_KEY_HISTORY, STORAGE_KEY_SESSION_ID } from '@/lib/constants';
 import { generateSessionId } from '@/lib/session-utils';
@@ -304,9 +304,11 @@ export default function Home() {
           {(() => {
             const activeStudy = activeCaseStudy === 'about-ray'
               ? aboutRay
-              : activeCaseStudy
-                ? caseStudies.find((s) => s.key === activeCaseStudy)
-                : null;
+              : activeCaseStudy === 'process'
+                ? processInfo
+                : activeCaseStudy
+                  ? caseStudies.find((s) => s.key === activeCaseStudy)
+                  : null;
             return activeStudy ? (
               <CaseStudyPanel
                 study={activeStudy}
