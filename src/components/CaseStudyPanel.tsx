@@ -112,7 +112,7 @@ export default function CaseStudyPanel({
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Typography
             variant="subtitle2"
-            sx={{ fontWeight: 700, fontSize: '0.875rem', lineHeight: 1.3 }}
+            sx={{ fontWeight: 700, fontSize: '20px', lineHeight: 1.3 }}
           >
             {study.title}
           </Typography>
