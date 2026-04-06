@@ -82,6 +82,7 @@ export default function CaseStudyPanel({
   const isTabs = variant === 'tabs';
   const [activeTab, setActiveTab] = useState(study.highlights[0]?.key ?? '');
   const [caseView, setCaseView] = useState<'notes' | 'architecture'>('notes');
+  const [expandedKey, setExpandedKey] = useState<string | null>(null);
 
   const activeHighlight = isTabs
     ? study.highlights.find((h) => h.key === activeTab)
@@ -223,59 +224,70 @@ export default function CaseStudyPanel({
             {study.highlights.map((highlight) => {
               const visited = visitedHighlights.has(highlight.key);
               const prompt = `Tell me about the ${highlight.title.toLowerCase()} in the ${study.title} project.`;
+              const isExpanded = expandedKey === highlight.key;
 
               return (
-                <Box
-                  key={highlight.key}
-                  component="button"
-                  onClick={() => onHighlightClick(prompt)}
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                    px: 1.5,
-                    py: 1,
-                    borderRadius: '8px',
-                    fontSize: '0.8125rem',
-                    color: visited ? 'text.disabled' : 'text.secondary',
-                    textAlign: 'left',
-                    border: 'none',
-                    bgcolor: 'transparent',
-                    cursor: 'pointer',
-                    width: '100%',
-                    fontFamily: 'inherit',
-                    '&:hover': { bgcolor: 'action.hover', color: 'text.primary' },
-                    '&:hover .play-icon': { opacity: 1 },
-                  }}
-                >
-                  {visited && (
-                    <CheckCircleOutlineIcon
-                      sx={{ fontSize: 16, color: 'text.disabled', flexShrink: 0 }}
-                    />
-                  )}
-                  <Box component="span" sx={{ flex: 1 }}>
-                    {highlight.title}
-                  </Box>
+                <Box key={highlight.key}>
                   <Box
-                    component="span"
-                    className="play-icon"
+                    onClick={() => setExpandedKey(isExpanded ? null : highlight.key)}
                     sx={{
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center',
-                      width: 28,
-                      height: 28,
-                      borderRadius: '50%',
-                      bgcolor: 'transparent',
-                      color: 'text.secondary',
-                      flexShrink: 0,
-                      opacity: 0,
-                      transition: 'all 0.2s ease',
-                      '&:hover': { bgcolor: 'primary.main', color: '#fff' },
+                      gap: 1,
+                      px: 1.5,
+                      py: 1,
+                      borderRadius: '8px',
+                      fontSize: '0.8125rem',
+                      color: visited ? 'text.disabled' : 'text.secondary',
+                      textAlign: 'left',
+                      bgcolor: isExpanded ? 'action.hover' : 'transparent',
+                      cursor: 'pointer',
+                      width: '100%',
+                      '&:hover': { bgcolor: 'action.hover', color: 'text.primary' },
+                      '&:hover .play-icon': { opacity: 1 },
                     }}
                   >
-                    <PlayArrowIcon sx={{ fontSize: 16 }} />
+                    {visited && (
+                      <CheckCircleOutlineIcon
+                        sx={{ fontSize: 16, color: 'text.disabled', flexShrink: 0 }}
+                      />
+                    )}
+                    <Box component="span" sx={{ flex: 1 }}>
+                      {highlight.title}
+                    </Box>
+                    <Box
+                      component="button"
+                      aria-label="Ask Raybot about this"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onHighlightClick(prompt);
+                      }}
+                      className="play-icon"
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 28,
+                        height: 28,
+                        borderRadius: '50%',
+                        bgcolor: 'transparent',
+                        color: 'text.secondary',
+                        border: 'none',
+                        cursor: 'pointer',
+                        flexShrink: 0,
+                        opacity: 0,
+                        transition: 'all 0.2s ease',
+                        '&:hover': { bgcolor: 'primary.main', color: '#fff' },
+                      }}
+                    >
+                      <PlayArrowIcon sx={{ fontSize: 16 }} />
+                    </Box>
                   </Box>
+                  {isExpanded && (
+                    <Box sx={{ px: 1.5, py: 1, fontSize: '0.8125rem', color: 'text.secondary', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
+                      {highlight.content || 'Notes coming soon.'}
+                    </Box>
+                  )}
                 </Box>
               );
             })}
