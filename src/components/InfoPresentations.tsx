@@ -72,6 +72,8 @@ export function AboutRayPresentation() {
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
           {[
             'Applied AI Architecture',
+            'Experience Design',
+            'Service Design',
             'Enterprise SaaS',
             'Healthcare Workflows',
             'Finance & AP Automation',
