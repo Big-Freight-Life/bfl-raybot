@@ -9,6 +9,8 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Image from 'next/image';
 import { caseStudies } from '@/lib/case-studies';
 import { SIDEBAR_WIDTH_COLLAPSED, SIDEBAR_WIDTH_EXPANDED } from '@/lib/constants';
@@ -162,6 +164,7 @@ function SidebarItemButton({ isActive, onClick, children, icon }: SidebarItemBut
 
 // Shared sidebar content used by both desktop sidebar and mobile drawer
 function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, activeItem, activeChatId, chatList = [], isNewChatActive, onMobileClose }: IconSidebarProps & { onMobileClose?: () => void }) {
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
   const handleNavigate = (action: string) => {
     onNavigate?.(action);
     onMobileClose?.();
@@ -282,30 +285,71 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
       {open && chatList.length > 0 && (
         <Box sx={{ px: 1.5, mt: 3, flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, overflowY: 'auto', scrollbarWidth: 'thin', flex: 1 }}>
-            {groupChatsByDate(chatList).map((group) => (
-              <Box key={group.label}>
-                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 0.5, px: 0.5 }}>
-                  {group.label}
-                </Typography>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
-                  {group.chats.map((chat) => {
-                    const isActive = activeChatId === chat.id && !activeItem;
-                    return (
-                      <SidebarItemButton
-                        key={chat.id}
-                        isActive={isActive}
-                        onClick={() => handleLoadChat(chat.id)}
-                        icon={<ChatBubbleOutlineIcon sx={{ fontSize: 14, flexShrink: 0, opacity: 0.6, mt: 0.25 }} />}
-                      >
-                        <Box component="span" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          {chat.title}
-                        </Box>
-                      </SidebarItemButton>
-                    );
-                  })}
+            {groupChatsByDate(chatList).map((group) => {
+              const isExpanded = expandedGroups[group.label] ?? false;
+              return (
+                <Box key={group.label}>
+                  <Box
+                    component="button"
+                    onClick={() =>
+                      setExpandedGroups((prev) => ({ ...prev, [group.label]: !isExpanded }))
+                    }
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 0.25,
+                      width: '100%',
+                      border: 'none',
+                      bgcolor: 'transparent',
+                      cursor: 'pointer',
+                      px: 0.5,
+                      py: 0.25,
+                      mb: 0.5,
+                      borderRadius: '4px',
+                      textAlign: 'left',
+                      fontFamily: 'inherit',
+                      '&:hover': { bgcolor: 'action.hover' },
+                    }}
+                  >
+                    {isExpanded ? (
+                      <ExpandLessIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                    ) : (
+                      <ExpandMoreIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                    )}
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: 'text.secondary',
+                        fontWeight: 600,
+                        letterSpacing: '0.05em',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {group.label}
+                    </Typography>
+                  </Box>
+                  {isExpanded && (
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                      {group.chats.map((chat) => {
+                        const isActive = activeChatId === chat.id && !activeItem;
+                        return (
+                          <SidebarItemButton
+                            key={chat.id}
+                            isActive={isActive}
+                            onClick={() => handleLoadChat(chat.id)}
+                            icon={<ChatBubbleOutlineIcon sx={{ fontSize: 14, flexShrink: 0, opacity: 0.6, mt: 0.25 }} />}
+                          >
+                            <Box component="span" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {chat.title}
+                            </Box>
+                          </SidebarItemButton>
+                        );
+                      })}
+                    </Box>
+                  )}
                 </Box>
-              </Box>
-            ))}
+              );
+            })}
           </Box>
         </Box>
       )}

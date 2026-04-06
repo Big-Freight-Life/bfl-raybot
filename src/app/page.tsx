@@ -10,7 +10,7 @@ import ChatPanel from '@/components/ChatPanel';
 import AvatarStage from '@/components/AvatarStage';
 import EmailGate from '@/components/EmailGate';
 import CaseStudyPanel from '@/components/CaseStudyPanel';
-import { caseStudies, aboutRay } from '@/lib/case-studies';
+import { caseStudies, aboutRay, processInfo, contactInfo } from '@/lib/case-studies';
 import { getChatList, saveChat, loadChat, generateTitle, type ChatSummary } from '@/lib/chat-history';
 import { STORAGE_KEY_USER_EMAIL, STORAGE_KEY_HISTORY, STORAGE_KEY_SESSION_ID } from '@/lib/constants';
 import { generateSessionId } from '@/lib/session-utils';
@@ -97,9 +97,9 @@ export default function Home() {
       return;
     }
 
-    if (action === 'about-ray') {
-      if (activeCaseStudy === 'about-ray') return;
-      setActiveCaseStudy('about-ray');
+    if (action === 'about-ray' || action === 'process' || action === 'contact') {
+      if (activeCaseStudy === action) return;
+      setActiveCaseStudy(action);
       setActiveNavItem(action);
       setVisitedHighlights(new Set());
       return;
@@ -107,13 +107,6 @@ export default function Home() {
 
     setActiveCaseStudy(null);
     setActiveNavItem(action);
-
-    const prompts: Record<string, string> = {
-      'process': 'Tell me about the Big Freight Life process — how do you work with clients?',
-      'contact': 'I would like to get in touch — how can I contact Big Freight Life or schedule a call?',
-    };
-    const msg = prompts[action];
-    if (msg) setTriggerMessage(msg);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeCaseStudy]);
 
@@ -308,13 +301,18 @@ export default function Home() {
           {(() => {
             const activeStudy = activeCaseStudy === 'about-ray'
               ? aboutRay
-              : activeCaseStudy
-                ? caseStudies.find((s) => s.key === activeCaseStudy)
-                : null;
+              : activeCaseStudy === 'process'
+                ? processInfo
+                : activeCaseStudy === 'contact'
+                  ? contactInfo
+                  : activeCaseStudy
+                    ? caseStudies.find((s) => s.key === activeCaseStudy)
+                    : null;
+            const isTabsVariant = activeCaseStudy === 'about-ray' || activeCaseStudy === 'process' || activeCaseStudy === 'contact';
             return activeStudy ? (
               <CaseStudyPanel
                 study={activeStudy}
-                variant={activeCaseStudy === 'about-ray' ? 'tabs' : 'default'}
+                variant={isTabsVariant ? 'tabs' : 'default'}
                 onHighlightClick={(prompt) => {
                   handleHighlightClick(prompt);
                   const highlight = activeStudy.highlights.find((h) =>

@@ -21,6 +21,64 @@ export interface CaseStudy {
   date?: string;
 }
 
+export const processInfo: CaseStudy = {
+  title: 'The Process',
+  key: 'process',
+  summary: 'How Big Freight Life works with clients — diagnosis to delivery.',
+  highlights: [
+    {
+      title: 'Diagnose',
+      key: 'diagnose',
+      content:
+        'Every engagement starts with diagnosis. Before recommending tools, frameworks, or features, we map what is actually happening:\n\n• Where decisions are made and who makes them\n• How data flows between systems and teams\n• Where ownership is unclear or duplicated\n• Which workflows depend on tribal knowledge\n\nThe goal is to surface structural issues before solutions get prescribed. Most failed implementations are not technology problems — they are misalignment problems.',
+    },
+    {
+      title: 'Design',
+      key: 'design',
+      content:
+        'Design is behavior, not decoration. We model how the system should think before drawing how it should look:\n\n• Workflow modeling — the real path users take, not the happy path\n• Decision boundaries — what the system decides vs. what humans decide\n• Data contracts — canonical schemas that survive change\n• Integration points — how this system meets the ones around it\n\nDeliverables: workflow diagrams, system maps, interaction prototypes, and a shared model that engineering, product, and operations can all reason about.',
+    },
+    {
+      title: 'Build',
+      key: 'build',
+      content:
+        'Build phases ship in tight, demonstrable increments. We work alongside in-house teams rather than over the wall:\n\n• Reference implementations that prove the model works\n• AI-assisted development to compress cycle time\n• Continuous review against the original diagnosis\n• Documentation that lives with the code\n\nThe output is not just working software — it is a system the client team can own, extend, and explain.',
+    },
+    {
+      title: 'Hand Off',
+      key: 'hand-off',
+      content:
+        'A successful engagement ends with the client team in control. Hand off includes:\n\n• Architecture decision records and the reasoning behind them\n• Runbooks for the operational edges\n• Training on the structural model, not just the codebase\n• A clear escalation path for the unknowns that always show up later\n\nBig Freight Life stays available, but the goal is autonomy — not dependency.',
+    },
+  ],
+};
+
+export const contactInfo: CaseStudy = {
+  title: 'Contact Us',
+  key: 'contact',
+  summary: 'How to get in touch with Big Freight Life.',
+  highlights: [
+    {
+      title: 'Email',
+      key: 'email',
+      content:
+        'The fastest way to start a conversation is email. Send a short note describing what you are working on, the constraints you are navigating, and what a good outcome would look like.\n\nWe respond to every inbound message — typically within one business day. If your message includes a clear problem statement, the first reply will usually include initial framing or questions, not a sales pitch.',
+    },
+    {
+      title: 'Schedule a Call',
+      key: 'schedule',
+      content:
+        'For deeper conversations, book a 30-minute working session directly. The agenda is yours:\n\n• Talk through a system you are designing or rebuilding\n• Review an existing architecture and where it is straining\n• Explore whether a Big Freight Life engagement is the right fit\n• Get a second opinion on a decision in motion\n\nNo prep required. Bring whatever artifacts you have — diagrams, docs, screenshots, or just the question on your mind.',
+    },
+    {
+      title: 'What to Expect',
+      key: 'expect',
+      content:
+        'First conversations are diagnostic, not transactional. We will not pitch a solution before understanding the situation.\n\nIf there is a fit, the next step is usually a short paid discovery — a structured diagnosis with concrete deliverables, not an open-ended retainer. If there is not a fit, we will say so and, where possible, point you to someone who is.',
+    },
+  ],
+};
+
 export const aboutRay: CaseStudy = {
   title: 'More About Ray',
   key: 'about-ray',
