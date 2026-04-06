@@ -137,7 +137,7 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderTop: 1, borderColor: 'divider', bgcolor: 'background.paper', px: 2, pt: 2, pb: 1 }}>
-      <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1, maxWidth: 768, width: '100%' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, maxWidth: 768, width: '100%' }}>
       <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', border: 1, borderColor: 'divider', borderRadius: '12px', px: 1.5, py: 0.5, bgcolor: 'background.default', '&:focus-within': { borderColor: 'primary.main' } }}>
         {speechSupported && (
           <Tooltip title={isListening ? 'Stop listening' : 'Dictate'}>
@@ -165,13 +165,13 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
       {isProcessing ? (
         <Tooltip title="Stop generating">
           <IconButton size="small" onClick={onStop}
-            sx={{ bgcolor: 'text.secondary', color: '#fff', mb: 0.5, '&:hover': { bgcolor: 'text.primary' } }}>
+            sx={{ bgcolor: 'text.secondary', color: '#fff', '&:hover': { bgcolor: 'text.primary' } }}>
             <StopIcon sx={{ fontSize: 18 }} />
           </IconButton>
         </Tooltip>
       ) : text.trim() ? (
         <IconButton size="small" onClick={handleSubmit} disabled={disabled}
-          sx={{ bgcolor: 'primary.main', color: '#fff', mb: 0.5, '&:hover': { bgcolor: 'primary.dark' }, '&.Mui-disabled': { bgcolor: 'action.disabledBackground', color: 'action.disabled' } }}>
+          sx={{ bgcolor: 'primary.main', color: '#fff', '&:hover': { bgcolor: 'primary.dark' }, '&.Mui-disabled': { bgcolor: 'action.disabledBackground', color: 'action.disabled' } }}>
           <SendIcon sx={{ fontSize: 18 }} />
         </IconButton>
       ) : null}
