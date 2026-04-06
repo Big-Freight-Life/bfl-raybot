@@ -7,8 +7,8 @@ import StopIcon from '@mui/icons-material/Stop';
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import ClearIcon from '@mui/icons-material/Clear';
-import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import GraphicEqIcon from '@mui/icons-material/GraphicEq';
+import GraphicEqOutlinedIcon from '@mui/icons-material/GraphicEq';
 import { keyframes } from '@emotion/react';
 const micPulse = keyframes`
   0%, 100% { transform: scale(1); }
@@ -158,7 +158,7 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
         )}
         <Tooltip title={voiceMuted ? 'Unmute voice' : 'Mute voice'}>
           <IconButton size="small" onClick={onToggleVoice} sx={{ color: voiceMuted ? 'text.secondary' : 'primary.main' }}>
-            {voiceMuted ? <VolumeOffIcon sx={{ fontSize: 20 }} /> : <VolumeUpIcon sx={{ fontSize: 20 }} />}
+            {voiceMuted ? <GraphicEqOutlinedIcon sx={{ fontSize: 24 }} /> : <GraphicEqIcon sx={{ fontSize: 24 }} />}
           </IconButton>
         </Tooltip>
       </Box>
