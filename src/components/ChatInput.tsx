@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material';
+import { Box, IconButton, Tooltip, Typography } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import StopIcon from '@mui/icons-material/Stop';
 import MicIcon from '@mui/icons-material/Mic';
@@ -156,6 +156,11 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
             <ClearIcon sx={{ fontSize: 18 }} />
           </IconButton>
         )}
+        <Tooltip title={voiceMuted ? 'Unmute voice' : 'Mute voice'}>
+          <IconButton size="small" onClick={onToggleVoice} sx={{ color: voiceMuted ? 'text.secondary' : 'primary.main' }}>
+            {voiceMuted ? <VolumeOffIcon sx={{ fontSize: 20 }} /> : <GraphicEqIcon sx={{ fontSize: 20 }} />}
+          </IconButton>
+        </Tooltip>
       </Box>
       {isProcessing ? (
         <Tooltip title="Stop generating">
@@ -169,29 +174,7 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
           sx={{ bgcolor: 'primary.main', color: '#fff', mb: 0.5, '&:hover': { bgcolor: 'primary.dark' }, '&.Mui-disabled': { bgcolor: 'action.disabledBackground', color: 'action.disabled' } }}>
           <SendIcon sx={{ fontSize: 18 }} />
         </IconButton>
-      ) : (
-        <Button
-          variant="outlined"
-          size="small"
-          onClick={onToggleVoice}
-          startIcon={voiceMuted ? <VolumeOffIcon sx={{ fontSize: 18 }} /> : <GraphicEqIcon sx={{ fontSize: 18 }} />}
-          sx={{
-            mb: 0.5,
-            textTransform: 'none',
-            fontSize: '0.8rem',
-            borderRadius: '20px',
-            px: 1.5,
-            py: 0.5,
-            minWidth: 'auto',
-            whiteSpace: 'nowrap',
-            borderColor: voiceMuted ? 'divider' : 'primary.main',
-            color: voiceMuted ? 'text.secondary' : 'primary.main',
-            '&:hover': { borderColor: 'primary.main', bgcolor: 'transparent' },
-          }}
-        >
-          Voice
-        </Button>
-      )}
+      ) : null}
       </Box>
       <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', color: 'text.secondary', mt: 0.5, fontSize: '0.7rem' }}>
         Raybot can make mistakes. <Box component="a" href="https://bfl.design/contact" target="_blank" rel="noopener noreferrer" sx={{ color: 'text.secondary', textDecoration: 'underline' }}>Contact us</Box> for important stuff.
