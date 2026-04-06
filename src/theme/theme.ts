@@ -1,7 +1,7 @@
 'use client';
 
 import { createTheme } from '@mui/material/styles';
-import { colors, typography } from './tokens';
+import { colors, darkColors, typography } from './tokens';
 
 export const lightTheme = createTheme({
   palette: {
@@ -24,7 +24,7 @@ export const lightTheme = createTheme({
 export const darkTheme = createTheme({
   palette: {
     mode: 'dark',
-    primary: { main: colors.primary.light, dark: colors.primary.main, light: colors.primary.light, contrastText: '#000' },
+    primary: { main: darkColors.primary.main, dark: darkColors.primary.dark, light: darkColors.primary.light, contrastText: '#fff' },
     background: { default: '#0a0a0a', paper: '#141414' },
     text: { primary: '#e5e5e5', secondary: '#a3a3a3' },
     divider: '#2a2a2a',
@@ -33,7 +33,7 @@ export const darkTheme = createTheme({
   components: {
     MuiButton: {
       styleOverrides: {
-        containedPrimary: { color: '#000000', '&:hover': { color: '#000000' } },
+        containedPrimary: { color: '#ffffff', '&:hover': { color: '#ffffff' } },
       },
     },
     MuiPaper: {

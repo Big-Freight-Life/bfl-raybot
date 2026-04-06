@@ -1,5 +1,5 @@
 export const colors = {
-  primary: { main: '#14B8A6', dark: '#0D9488', light: '#2DD4BF' },
+  primary: { main: '#117680', dark: '#0e5f67', light: '#14B8A6' },
   gray: {
     50: '#f9fafb', 100: '#f3f4f6', 200: '#e5e7eb', 300: '#d1d5db',
     400: '#9ca3af', 500: '#6b7280', 600: '#4b5563', 700: '#374151',
@@ -15,8 +15,9 @@ export const colors = {
 } as const;
 
 export const darkColors = {
+  primary: { main: '#1a9aa6', dark: '#117680', light: '#2DD4BF' },
   chat: {
-    userBubble: 'rgba(45, 212, 191, 0.10)',
+    userBubble: 'rgba(26, 154, 166, 0.12)',
     botBubble: '#1a1a1a',
     botText: '#e5e5e5',
   },
