@@ -89,7 +89,7 @@ export default function CaseStudyPanel({
   return (
     <Box
       sx={{
-        width: isTabs ? 360 : 280,
+        width: 360,
         flexShrink: 0,
         display: { xs: 'none', md: 'flex' },
         flexDirection: 'column',
