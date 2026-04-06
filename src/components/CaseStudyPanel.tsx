@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Box, Typography, IconButton, Tooltip, Radio, RadioGroup, FormControlLabel } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import type { CaseStudy } from '@/lib/case-studies';
 import { softwareTools, agentSkills } from '@/lib/toolbox';
@@ -225,6 +226,7 @@ export default function CaseStudyPanel({
                     width: '100%',
                     fontFamily: 'inherit',
                     '&:hover': { bgcolor: 'action.hover', color: 'text.primary' },
+                    '&:hover .play-icon': { opacity: 1 },
                   }}
                 >
                   {visited && (
@@ -235,6 +237,10 @@ export default function CaseStudyPanel({
                   <Box component="span" sx={{ flex: 1 }}>
                     {highlight.title}
                   </Box>
+                  <PlayArrowIcon
+                    className="play-icon"
+                    sx={{ fontSize: 18, flexShrink: 0, opacity: 0, transition: 'opacity 0.2s ease', color: 'text.secondary' }}
+                  />
                 </Box>
               );
             })}
