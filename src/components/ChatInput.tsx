@@ -9,7 +9,7 @@ import MicOffIcon from '@mui/icons-material/MicOff';
 import ClearIcon from '@mui/icons-material/Clear';
 import GraphicEqIcon from '@mui/icons-material/GraphicEq';
 import { keyframes } from '@emotion/react';
-import VoiceWaveBorder from './VoiceWaveBorder';
+import VoiceWaveLine from './VoiceWaveBorder';
 
 const micPulse = keyframes`
   0%, 100% { transform: scale(1); }
@@ -43,7 +43,6 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const inputBoxRef = useRef<HTMLDivElement>(null);
-  const [boxSize, setBoxSize] = useState({ width: 0, height: 0 });
   // I2: Track restart timeout and mounted state for cleanup
   const restartTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mountedRef = useRef(true);
@@ -53,20 +52,6 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
   useEffect(() => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     setSpeechSupported(!!SR);
-  }, []);
-
-  // Measure input box for wave border
-  useEffect(() => {
-    const el = inputBoxRef.current;
-    if (!el) return;
-    const observer = new ResizeObserver((entries) => {
-      const entry = entries[0];
-      if (entry) {
-        setBoxSize({ width: entry.contentBoxSize[0].inlineSize + 26, height: entry.contentBoxSize[0].blockSize + 10 });
-      }
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
   }, []);
 
   // I2: Cleanup on unmount — stop recognition and clear restart timeout
@@ -165,18 +150,18 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
           display: 'flex',
           alignItems: 'center',
           position: 'relative',
-          border: voiceActive ? 'none' : 1,
+          border: 1,
           borderColor: 'divider',
           borderRadius: '12px',
           px: 1.5,
           py: 0.5,
           bgcolor: 'background.default',
-          '&:focus-within': voiceActive ? {} : { borderColor: 'primary.main' },
+          '&:focus-within': { borderColor: 'primary.main' },
         }}
       >
-        {/* Wave border overlay when voice mode is active */}
-        {voiceActive && boxSize.width > 0 && (
-          <VoiceWaveBorder isSpeaking={isSpeaking} width={boxSize.width} height={boxSize.height} />
+        {/* Voice wave line inside box when voice mode is active */}
+        {voiceActive && (
+          <VoiceWaveLine isSpeaking={isSpeaking} />
         )}
 
         {/* Mic button — hidden when voice mode is active */}
@@ -203,12 +188,12 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
               size="small"
               onClick={onToggleVoice}
               sx={{
-                color: voiceMuted ? 'text.secondary' : '#fff',
-                bgcolor: voiceMuted ? 'action.hover' : 'primary.main',
-                '&:hover': { bgcolor: voiceMuted ? 'action.selected' : 'primary.dark' },
+                color: 'text.secondary',
+                bgcolor: 'action.hover',
+                '&:hover': { bgcolor: 'action.selected' },
               }}
             >
-              <GraphicEqIcon sx={{ fontSize: 24 }} />
+              {voiceMuted ? <GraphicEqIcon sx={{ fontSize: 24 }} /> : <StopIcon sx={{ fontSize: 20 }} />}
             </IconButton>
           </Tooltip>
         )}
