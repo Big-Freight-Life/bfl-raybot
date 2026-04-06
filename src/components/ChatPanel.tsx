@@ -38,7 +38,7 @@ export default function ChatPanel({ sessionId, sessionTimestamp, onDiagramDetect
 
   const { loadHistory, saveHistory } = useChatHistory();
 
-  const { playTTS, stopAudio, audioRef } = useAudioPlayer({
+  const { playTTS, stopAudio, isSpeaking, audioRef } = useAudioPlayer({
     voiceMuted,
     digitalTwinMode,
     onSpeakingChange,
@@ -162,7 +162,7 @@ export default function ChatPanel({ sessionId, sessionTimestamp, onDiagramDetect
       {!digitalTwinMode && (
         <ChatInput
           onSend={sendMessage} disabled={isProcessing} isProcessing={isProcessing} onStop={stopResponse}
-          voiceMuted={voiceMuted}
+          voiceMuted={voiceMuted} isSpeaking={isSpeaking}
           onToggleVoice={() => { setVoiceMuted(!voiceMuted); if (audioRef.current && !voiceMuted) audioRef.current.pause(); }}
           digitalTwinMode={digitalTwinMode}
           onListeningChange={onListeningChange}

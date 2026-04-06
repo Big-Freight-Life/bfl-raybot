@@ -8,8 +8,9 @@ import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import ClearIcon from '@mui/icons-material/Clear';
 import GraphicEqIcon from '@mui/icons-material/GraphicEq';
-import GraphicEqOutlinedIcon from '@mui/icons-material/GraphicEq';
 import { keyframes } from '@emotion/react';
+import VoiceWaveBorder from './VoiceWaveBorder';
+
 const micPulse = keyframes`
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.15); }
@@ -28,25 +29,44 @@ interface ChatInputProps {
   onStop?: () => void;
   voiceMuted: boolean;
   onToggleVoice: () => void;
+  isSpeaking?: boolean;
   digitalTwinMode?: boolean;
   onListeningChange?: (listening: boolean) => void;
   onToggleDigitalTwin?: () => void;
   onMicActivated?: () => void;
 }
 
-export default function ChatInput({ onSend, disabled, isProcessing, onStop, voiceMuted, onToggleVoice, digitalTwinMode, onListeningChange, onToggleDigitalTwin, onMicActivated }: ChatInputProps) {
+export default function ChatInput({ onSend, disabled, isProcessing, onStop, voiceMuted, onToggleVoice, isSpeaking = false, digitalTwinMode, onListeningChange, onToggleDigitalTwin, onMicActivated }: ChatInputProps) {
   const [text, setText] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const inputBoxRef = useRef<HTMLDivElement>(null);
+  const [boxSize, setBoxSize] = useState({ width: 0, height: 0 });
   // I2: Track restart timeout and mounted state for cleanup
   const restartTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mountedRef = useRef(true);
 
+  const voiceActive = !voiceMuted;
+
   useEffect(() => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     setSpeechSupported(!!SR);
+  }, []);
+
+  // Measure input box for wave border
+  useEffect(() => {
+    const el = inputBoxRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) {
+        setBoxSize({ width: entry.contentBoxSize[0].inlineSize + 26, height: entry.contentBoxSize[0].blockSize + 10 });
+      }
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
   // I2: Cleanup on unmount — stop recognition and clear restart timeout
@@ -138,8 +158,29 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', borderTop: 1, borderColor: 'divider', bgcolor: 'background.paper', px: 2, pt: 2, pb: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, maxWidth: 768, width: '100%' }}>
-      <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', border: 1, borderColor: 'divider', borderRadius: '12px', px: 1.5, py: 0.5, bgcolor: 'background.default', '&:focus-within': { borderColor: 'primary.main' } }}>
-        {speechSupported && (
+      <Box
+        ref={inputBoxRef}
+        sx={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          position: 'relative',
+          border: voiceActive ? 'none' : 1,
+          borderColor: 'divider',
+          borderRadius: '12px',
+          px: 1.5,
+          py: 0.5,
+          bgcolor: 'background.default',
+          '&:focus-within': voiceActive ? {} : { borderColor: 'primary.main' },
+        }}
+      >
+        {/* Wave border overlay when voice mode is active */}
+        {voiceActive && boxSize.width > 0 && (
+          <VoiceWaveBorder isSpeaking={isSpeaking} width={boxSize.width} height={boxSize.height} />
+        )}
+
+        {/* Mic button — hidden when voice mode is active */}
+        {speechSupported && !voiceActive && (
           <Tooltip title={isListening ? 'Stop listening' : 'Dictate'}>
             <IconButton size="small" onClick={toggleMic} sx={{ color: isListening ? 'primary.main' : 'text.secondary', mr: 0.5, animation: isListening ? `${micPulse} 1.5s ease-in-out infinite` : 'none' }}>
               {isListening ? <MicOffIcon sx={{ fontSize: 20 }} /> : <MicIcon sx={{ fontSize: 20 }} />}
@@ -148,7 +189,7 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
         )}
         <Box
           component="textarea" ref={textareaRef} id="chat-input" name="message" value={text} onChange={handleInput} onKeyDown={handleKeyDown}
-          placeholder='Try "design an agent workflow"' rows={1} disabled={disabled}
+          placeholder={voiceActive ? '' : 'Try "design an agent workflow"'} rows={1} disabled={disabled}
           sx={{ flex: 1, border: 'none', outline: 'none', resize: 'none', fontFamily: 'inherit', fontSize: '0.875rem', lineHeight: 1.5, bgcolor: 'transparent', color: 'text.primary', py: 1, '&::placeholder': { color: 'text.secondary', opacity: 0.6 } }}
         />
         {text && (
@@ -167,7 +208,7 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
                 '&:hover': { bgcolor: voiceMuted ? 'action.selected' : 'primary.dark' },
               }}
             >
-              {voiceMuted ? <GraphicEqOutlinedIcon sx={{ fontSize: 24 }} /> : <GraphicEqIcon sx={{ fontSize: 24 }} />}
+              <GraphicEqIcon sx={{ fontSize: 24 }} />
             </IconButton>
           </Tooltip>
         )}
