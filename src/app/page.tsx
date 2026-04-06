@@ -13,7 +13,7 @@ import CaseStudyPanel from '@/components/CaseStudyPanel';
 import { caseStudies, aboutRay } from '@/lib/case-studies';
 import { getChatList, saveChat, loadChat, generateTitle, type ChatSummary } from '@/lib/chat-history';
 import { STORAGE_KEY_USER_EMAIL, STORAGE_KEY_HISTORY, STORAGE_KEY_SESSION_ID } from '@/lib/constants';
-import { generateSessionId, getOrCreateSessionId } from '@/lib/session-utils';
+import { generateSessionId } from '@/lib/session-utils';
 import type { Message } from '@/types/chat';
 
 export default function Home() {
@@ -48,7 +48,10 @@ export default function Home() {
       setVerified(false);
     }
     setChatList(getChatList());
-    const sid = getOrCreateSessionId();
+    // Always start with a fresh chat on initial load
+    sessionStorage.removeItem(STORAGE_KEY_HISTORY);
+    const sid = generateSessionId();
+    sessionStorage.setItem(STORAGE_KEY_SESSION_ID, sid);
     setSessionId(sid);
     setActiveChatId(sid);
   }, []);
@@ -83,13 +86,14 @@ export default function Home() {
     if (action.startsWith('case-study:')) {
       const key = action.replace('case-study:', '');
       if (key === activeCaseStudy) return;
+      const study = caseStudies.find((s) => s.key === key);
+      if (!study) return;
+      // Start a new chat for the case study
+      handleNewChat();
       setActiveCaseStudy(key);
       setActiveNavItem(action);
       setVisitedHighlights(new Set());
-      const study = caseStudies.find((s) => s.key === key);
-      if (study) {
-        setTriggerCaseStudy(key);
-      }
+      setTriggerCaseStudy(key);
       return;
     }
 
@@ -110,6 +114,7 @@ export default function Home() {
     };
     const msg = prompts[action];
     if (msg) setTriggerMessage(msg);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeCaseStudy]);
 
   const handleHighlightClick = useCallback((prompt: string) => {
