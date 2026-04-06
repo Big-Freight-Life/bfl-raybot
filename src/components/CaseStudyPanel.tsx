@@ -25,6 +25,7 @@ function ToolboxTabContent({ onItemClick }: { onItemClick: (prompt: string) => v
     <Box sx={{ flex: 1, overflowY: 'auto', scrollbarWidth: 'thin' }}>
       <Box sx={{ px: 2.5, py: 2, borderBottom: 1, borderColor: 'divider' }}>
         <RadioGroup
+          row
           value={category}
           onChange={(e) => setCategory(e.target.value as 'tools' | 'skills')}
         >
