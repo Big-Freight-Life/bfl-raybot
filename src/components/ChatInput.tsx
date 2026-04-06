@@ -156,11 +156,21 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
             <ClearIcon sx={{ fontSize: 18 }} />
           </IconButton>
         )}
-        <Tooltip title={voiceMuted ? 'Unmute voice' : 'Mute voice'}>
-          <IconButton size="small" onClick={onToggleVoice} sx={{ color: voiceMuted ? 'text.secondary' : 'primary.main' }}>
-            {voiceMuted ? <GraphicEqOutlinedIcon sx={{ fontSize: 24 }} /> : <GraphicEqIcon sx={{ fontSize: 24 }} />}
-          </IconButton>
-        </Tooltip>
+        {!text && (
+          <Tooltip title={voiceMuted ? 'Unmute voice' : 'Mute voice'}>
+            <IconButton
+              size="small"
+              onClick={onToggleVoice}
+              sx={{
+                color: voiceMuted ? 'text.secondary' : '#fff',
+                bgcolor: voiceMuted ? 'action.hover' : 'primary.main',
+                '&:hover': { bgcolor: voiceMuted ? 'action.selected' : 'primary.dark' },
+              }}
+            >
+              {voiceMuted ? <GraphicEqOutlinedIcon sx={{ fontSize: 24 }} /> : <GraphicEqIcon sx={{ fontSize: 24 }} />}
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
       {isProcessing ? (
         <Tooltip title="Stop generating">
