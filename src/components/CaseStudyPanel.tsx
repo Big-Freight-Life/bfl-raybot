@@ -116,12 +116,6 @@ export default function CaseStudyPanel({
           >
             {study.title}
           </Typography>
-          <Typography
-            variant="caption"
-            sx={{ color: 'text.secondary', display: 'block', mt: 0.5, lineHeight: 1.4 }}
-          >
-            {study.summary}
-          </Typography>
         </Box>
         <Tooltip title="Close panel">
           <IconButton
