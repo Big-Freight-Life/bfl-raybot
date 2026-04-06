@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Box, Typography, IconButton, Tooltip, Radio, RadioGroup, FormControlLabel } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { Box, Typography, Radio, RadioGroup, FormControlLabel } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -130,15 +129,6 @@ export default function CaseStudyPanel({
             </Typography>
           )}
         </Box>
-        <Tooltip title="Close panel">
-          <IconButton
-            size="small"
-            onClick={onClose}
-            sx={{ color: 'text.secondary', ml: 1, mt: -0.5 }}
-          >
-            <CloseIcon sx={{ fontSize: 18 }} />
-          </IconButton>
-        </Tooltip>
       </Box>
 
       {/* Tabs variant — horizontal tab bar + content */}
