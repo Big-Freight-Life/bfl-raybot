@@ -7,7 +7,6 @@ import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import DesignServicesOutlinedIcon from '@mui/icons-material/DesignServicesOutlined';
 import BuildOutlinedIcon from '@mui/icons-material/BuildOutlined';
@@ -48,27 +47,6 @@ export function AboutRayPresentation() {
             Big Freight Life
           </Typography>
         </Box>
-      </Box>
-
-      {/* Currently */}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1,
-          px: 1.5,
-          py: 1,
-          borderRadius: '999px',
-          bgcolor: 'rgba(45,212,191,0.08)',
-          border: 1,
-          borderColor: 'rgba(45,212,191,0.25)',
-          alignSelf: 'flex-start',
-        }}
-      >
-        <FiberManualRecordIcon sx={{ fontSize: 10, color: 'primary.main' }} />
-        <Typography variant="caption" sx={{ color: 'text.primary', fontSize: '0.75rem', fontWeight: 500 }}>
-          Currently building Big Freight Life — applied AI architecture for enterprise systems
-        </Typography>
       </Box>
 
       {/* Bio */}
@@ -184,6 +162,17 @@ export function AboutRayPresentation() {
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           {[
+            {
+              company: 'Big Freight Life',
+              project: 'Big Freight Life',
+              role: 'Founder · Applied AI Architect',
+              date: 'Present',
+              description:
+                'Currently building Big Freight Life — applied AI architecture for enterprise systems.',
+              outcomes: [],
+              initial: 'B',
+              color: '#0d4f56',
+            },
             {
               company: 'Hyland Software',
               project: 'Hyland OnBase Integration',

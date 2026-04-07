@@ -221,9 +221,9 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
       {/* Nav items */}
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: open ? 'flex-start' : 'center', py: 1, gap: 0.5, px: open ? 1 : 0 }}>
         <NavButton
-          tooltip="About Ray"
+          tooltip="Meet Ray Butler"
           icon={<PersonOutlineIcon sx={{ fontSize: 20 }} />}
-          label="About Ray"
+          label="Meet Ray Butler"
           open={open}
           isActive={activeItem === 'about-ray'}
           onClick={() => handleNavigate('about-ray')}
