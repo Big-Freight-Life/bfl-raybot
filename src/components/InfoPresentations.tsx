@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Box, Typography, Button, Snackbar, Alert } from '@mui/material';
+import { Box, Typography, Button, Snackbar, Alert, Dialog, IconButton } from '@mui/material';
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import CloseIcon from '@mui/icons-material/Close';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
@@ -18,7 +20,10 @@ import HandshakeOutlinedIcon from '@mui/icons-material/HandshakeOutlined';
 
 /* ─── About Ray ─── */
 
+const RAY_INTRO_VIDEO_ID = 'dQw4w9WgXcQ'; // dummy — replace with real 39s intro
+
 export function AboutRayPresentation() {
+  const [introOpen, setIntroOpen] = useState(false);
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       {/* Profile header */}
@@ -152,6 +157,20 @@ export function AboutRayPresentation() {
 
       {/* CTAs */}
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+        <Button
+          onClick={() => setIntroOpen(true)}
+          variant="contained"
+          startIcon={<PlayCircleOutlineIcon />}
+          sx={{
+            textTransform: 'none',
+            bgcolor: 'primary.main',
+            color: '#fff',
+            boxShadow: 'none',
+            '&:hover': { bgcolor: 'primary.dark', boxShadow: 'none' },
+          }}
+        >
+          Watch Intro
+        </Button>
         <Button
           component="a"
           href="https://www.linkedin.com/in/braybutler/"
@@ -312,6 +331,57 @@ export function AboutRayPresentation() {
           })}
         </Box>
       </Box>
+
+      {/* Watch Intro lightbox */}
+      <Dialog
+        open={introOpen}
+        onClose={() => setIntroOpen(false)}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            bgcolor: '#000',
+            borderRadius: '12px',
+            overflow: 'hidden',
+            position: 'relative',
+          },
+        }}
+      >
+        <IconButton
+          onClick={() => setIntroOpen(false)}
+          aria-label="Close video"
+          sx={{
+            position: 'absolute',
+            top: 8,
+            right: 8,
+            zIndex: 2,
+            color: '#fff',
+            bgcolor: 'rgba(0,0,0,0.5)',
+            '&:hover': { bgcolor: 'rgba(0,0,0,0.75)' },
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <Box sx={{ position: 'relative', width: '100%', pt: '56.25%' }}>
+          {introOpen && (
+            <Box
+              component="iframe"
+              src={`https://www.youtube.com/embed/${RAY_INTRO_VIDEO_ID}?autoplay=1&rel=0&modestbranding=1`}
+              title="Ray Butler intro"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                border: 0,
+              }}
+            />
+          )}
+        </Box>
+      </Dialog>
     </Box>
   );
 }
