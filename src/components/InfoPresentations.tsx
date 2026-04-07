@@ -22,22 +22,29 @@ export function AboutRayPresentation() {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       {/* Profile header */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5 }}>
-        <Box
-          sx={{
-            width: 88,
-            height: 88,
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #117680 0%, #2dd4bf 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-            fontSize: '2rem',
-            fontWeight: 700,
-            flexShrink: 0,
-          }}
-        >
-          RB
+        <Box sx={{ width: 88, height: 88, flexShrink: 0 }} aria-label="HTML5 badge">
+          <svg viewBox="0 0 64 72" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            {/* Shield outer */}
+            <path d="M2 0 L62 0 L56.6 60.6 L32 72 L7.4 60.6 Z" fill="#e34f26" />
+            <path d="M32 4 L32 67.6 L52.2 58.2 L56.8 4 Z" fill="#ef652a" />
+            {/* Letter "5" */}
+            <text
+              x="32"
+              y="44"
+              textAnchor="middle"
+              fontFamily="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif"
+              fontSize="32"
+              fontWeight="700"
+              fill="#ffffff"
+            >
+              5
+            </text>
+            {/* Bottom checker band */}
+            <rect x="8" y="50" width="48" height="6" fill="#ebebeb" />
+            <rect x="32" y="50" width="24" height="6" fill="#ffffff" />
+            <rect x="8" y="56" width="48" height="4" fill="#1f6feb" />
+            <rect x="32" y="56" width="24" height="4" fill="#3b82f6" />
+          </svg>
         </Box>
         <Box sx={{ minWidth: 0 }}>
           <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1.2, color: 'text.primary' }}>
