@@ -139,6 +139,15 @@ export default function Home() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeCaseStudy]);
 
+  useEffect(() => {
+    const onNavigate = (e: Event) => {
+      const detail = (e as CustomEvent<{ action: string }>).detail;
+      if (detail?.action) handleNavigate(detail.action);
+    };
+    window.addEventListener('raybot:navigate', onNavigate);
+    return () => window.removeEventListener('raybot:navigate', onNavigate);
+  }, [handleNavigate]);
+
   const handleHighlightClick = useCallback((prompt: string) => {
     setTriggerMessage(prompt);
   }, []);

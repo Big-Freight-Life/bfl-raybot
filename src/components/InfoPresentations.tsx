@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Box, Typography, Button, Snackbar, Alert } from '@mui/material';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import VerifiedIcon from '@mui/icons-material/Verified';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -53,9 +54,48 @@ export function AboutRayPresentation() {
           <Typography sx={{ fontSize: '0.875rem', color: 'primary.main', fontWeight: 500, mt: 0.25 }}>
             Designer · Builder · Founder
           </Typography>
-          <Typography sx={{ fontSize: '0.8125rem', color: 'text.secondary', mt: 0.25 }}>
-            Big Freight Life
-          </Typography>
+          {(() => {
+            const rayLevel = computeResult(RAY_PROFILE).level.level;
+            if (rayLevel >= 4) {
+              return (
+                <Box
+                  component="button"
+                  type="button"
+                  onClick={() => {
+                    if (typeof window !== 'undefined') {
+                      window.dispatchEvent(new CustomEvent('raybot:navigate', { detail: { action: 'aw-score' } }));
+                    }
+                  }}
+                  sx={{
+                    mt: 0.5,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                    px: 1,
+                    py: 0.375,
+                    borderRadius: '999px',
+                    border: 1,
+                    borderColor: 'primary.main',
+                    bgcolor: 'rgba(17,118,128,0.08)',
+                    color: 'primary.main',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    '&:hover': { bgcolor: 'rgba(17,118,128,0.16)' },
+                  }}
+                >
+                  <VerifiedIcon sx={{ fontSize: '0.95rem' }} />
+                  Verified AI Practitioner
+                </Box>
+              );
+            }
+            return (
+              <Typography sx={{ fontSize: '0.8125rem', color: 'text.secondary', mt: 0.25 }}>
+                Big Freight Life
+              </Typography>
+            );
+          })()}
         </Box>
       </Box>
 
