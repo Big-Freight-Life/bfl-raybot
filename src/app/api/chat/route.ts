@@ -42,6 +42,8 @@ export async function POST(request: NextRequest) {
     const messages: ChatMessage[] = body.messages ?? [];
     const rawSessionId = body.sessionId;
     const sessionId: string = validateSessionId(rawSessionId) ? rawSessionId : 'unknown';
+    const rawAwContext = typeof body.awContext === 'string' ? body.awContext : null;
+    const awContext = rawAwContext ? sanitizeMessage(rawAwContext).slice(0, 600) : null;
 
     if (!messages.length || !messages[messages.length - 1]?.content) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
@@ -51,7 +53,15 @@ export async function POST(request: NextRequest) {
     const sanitized = messages.map((m) => ({ ...m, content: sanitizeMessage(m.content) }));
     const userMessage = sanitized[sanitized.length - 1].content;
 
-    const trimmed = sanitized.slice(-MAX_MESSAGES_HISTORY);
+    let trimmed = sanitized.slice(-MAX_MESSAGES_HISTORY);
+    if (awContext) {
+      // Inject AW score context as a model turn at the start so Gemini sees it as known background
+      trimmed = [
+        { role: 'user', content: `[Background] ${awContext}` },
+        { role: 'model', content: 'Got it — I\'ll keep your AW Score in mind as we talk.' },
+        ...trimmed,
+      ];
+    }
 
     // Dedup check: return cached response for identical recent questions
     const dedupHash = buildDedupHash(trimmed);

@@ -1,7 +1,27 @@
 import { useState, useRef, useCallback } from 'react';
 import { extractFirstMermaid } from '@/lib/mermaid-utils';
 import { LEAD_FORM_TRIGGER } from '@/lib/constants';
+import { AW_STORAGE_KEY, AW_DIMENSIONS, computeResult } from '@/lib/aw-score';
 import type { Message } from '@/types/chat';
+
+function readAWScoreContext(): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(AW_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { scores?: Record<string, number>; submitted?: boolean };
+    if (!parsed?.submitted || !parsed?.scores) return null;
+    const result = computeResult(parsed.scores);
+    const lines = AW_DIMENSIONS.map((d) => `${d.label}: ${parsed.scores![d.key]}`);
+    return [
+      `Visitor's AW Score: ${result.average.toFixed(1)} — Level ${result.level.level} (${result.level.label})`,
+      ...lines,
+      `Weakest dimension: ${result.weakest.label}`,
+    ].join('\n');
+  } catch {
+    return null;
+  }
+}
 
 interface UseChatOptions {
   sessionId: string;
@@ -39,10 +59,11 @@ export function useChat({ sessionId, onDiagramDetected, saveHistory, playTTS }: 
     abortRef.current = controller;
 
     try {
+      const awContext = readAWScoreContext();
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages, sessionId }),
+        body: JSON.stringify({ messages: apiMessages, sessionId, awContext }),
         signal: controller.signal,
       });
 

@@ -147,7 +147,7 @@ export default function ChatPanel({ sessionId, sessionTimestamp, onDiagramDetect
           const isInfoCard =
             msg.caseStudyKey === 'about-ray' ||
             msg.caseStudyKey === 'process' ||
-            msg.caseStudyKey === 'contact';
+            msg.caseStudyKey === 'aw-score';
           const showDivider =
             !isInfoCard &&
             msgTs != null &&

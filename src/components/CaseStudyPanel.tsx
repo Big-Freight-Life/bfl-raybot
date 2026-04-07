@@ -123,11 +123,11 @@ export default function CaseStudyPanel({
               ? study.title
               : study.key === 'process'
                 ? 'More About Process'
-                : study.key === 'contact'
-                  ? 'More About Contact'
+                : study.key === 'aw-score'
+                  ? 'About the AW Score'
                   : 'More About Project'}
           </Typography>
-          {!isTabs && study.key !== 'process' && study.key !== 'contact' && (
+          {!isTabs && study.key !== 'process' && study.key !== 'aw-score' && (
             <Typography
               variant="caption"
               sx={{ color: 'text.secondary', display: 'block', mt: 0.5, lineHeight: 1.4 }}
@@ -199,7 +199,7 @@ export default function CaseStudyPanel({
       ) : (
         /* Default variant — vertical list */
         <Box sx={{ px: 1.5, py: 1.5 }}>
-          {study.key !== 'process' && study.key !== 'contact' && (
+          {study.key !== 'process' && study.key !== 'aw-score' && (
             <RadioGroup
               row
               value={caseView}
@@ -218,7 +218,7 @@ export default function CaseStudyPanel({
               />
             </RadioGroup>
           )}
-          {study.key !== 'process' && study.key !== 'contact' && caseView === 'architecture' ? (
+          {study.key !== 'process' && study.key !== 'aw-score' && caseView === 'architecture' ? (
             <Box sx={{ px: 1, py: 2, textAlign: 'center' }}>
               <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.8125rem', lineHeight: 1.6, textAlign: 'left', whiteSpace: 'pre-wrap' }}>
                 {study.architecture || 'Architecture notes coming soon.'}
@@ -265,7 +265,7 @@ export default function CaseStudyPanel({
                     <Box component="span" sx={{ flex: 1 }}>
                       {highlight.title}
                     </Box>
-                    {study.key !== 'contact' && (
+                    {study.key !== 'aw-score' && (
                       <Box
                         component="button"
                         aria-label="Ask Raybot about this"

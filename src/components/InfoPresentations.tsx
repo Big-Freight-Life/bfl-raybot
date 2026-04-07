@@ -1,9 +1,12 @@
 'use client';
 
-import { Box, Typography, Button } from '@mui/material';
-import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
+import { useEffect, useMemo, useState } from 'react';
+import { Box, Typography, Button, Snackbar, Alert } from '@mui/material';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import IosShareIcon from '@mui/icons-material/IosShare';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { AW_DIMENSIONS, RAY_PROFILE, AW_STORAGE_KEY, computeResult, encodeScores, decodeScores } from '@/lib/aw-score';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
@@ -546,159 +549,330 @@ export function ProcessPresentation() {
   );
 }
 
-/* ─── Contact ─── */
+/* ─── AW Score (Augmented Worker) ─── */
 
-export function ContactPresentation() {
+export function AWScorePresentation() {
+  const [scores, setScores] = useState<Record<string, number>>(() =>
+    Object.fromEntries(AW_DIMENSIONS.map((d) => [d.key, 0]))
+  );
+  const [submitted, setSubmitted] = useState(false);
+  const [toast, setToast] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
+  const [emailing, setEmailing] = useState(false);
+
+  // Hydrate from URL or localStorage on mount
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    const fromUrl = url.searchParams.get('aw');
+    if (fromUrl) {
+      const decoded = decodeScores(fromUrl);
+      if (decoded) {
+        setScores(decoded);
+        setSubmitted(true);
+        return;
+      }
+    }
+    try {
+      const saved = localStorage.getItem(AW_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved) as { scores: Record<string, number>; submitted: boolean };
+        if (parsed?.scores) {
+          setScores(parsed.scores);
+          setSubmitted(Boolean(parsed.submitted));
+        }
+      }
+    } catch {}
+  }, []);
+
+  const result = useMemo(() => computeResult(scores), [scores]);
+  const allAnswered = AW_DIMENSIONS.every((d) => scores[d.key] > 0);
+
+  const handleSubmit = () => {
+    setSubmitted(true);
+    try {
+      localStorage.setItem(AW_STORAGE_KEY, JSON.stringify({ scores, submitted: true, ts: Date.now() }));
+    } catch {}
+    // Update URL with encoded score so it’s shareable
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('aw', encodeScores(scores));
+      window.history.replaceState({}, '', url.toString());
+    } catch {}
+  };
+
+  const handleReset = () => {
+    setSubmitted(false);
+    setScores(Object.fromEntries(AW_DIMENSIONS.map((d) => [d.key, 0])));
+    try {
+      localStorage.removeItem(AW_STORAGE_KEY);
+      const url = new URL(window.location.href);
+      url.searchParams.delete('aw');
+      window.history.replaceState({}, '', url.toString());
+    } catch {}
+  };
+
+  const handleShare = async () => {
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('aw', encodeScores(scores));
+      await navigator.clipboard.writeText(url.toString());
+      setToast({ open: true, message: 'Shareable link copied to clipboard', severity: 'success' });
+    } catch {
+      setToast({ open: true, message: 'Could not copy link', severity: 'error' });
+    }
+  };
+
+  const handleEmail = async () => {
+    setEmailing(true);
+    try {
+      const userEmail =
+        typeof window !== 'undefined' ? sessionStorage.getItem('raybot_user_email') ?? '' : '';
+      const message = [
+        `AW Score: ${result.average.toFixed(1)} — Level ${result.level.level} (${result.level.label})`,
+        '',
+        ...AW_DIMENSIONS.map((d) => `${d.label}: ${scores[d.key]} (Ray ${RAY_PROFILE[d.key]})`),
+        '',
+        `Weakest dimension: ${result.weakest.label}`,
+        `Next step: ${result.level.next}`,
+      ].join('\n');
+      const res = await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: 'AW Score Result',
+          email: userEmail || 'anonymous@bfl.design',
+          message,
+          source: 'aw-score',
+        }),
+      });
+      if (!res.ok) throw new Error('Failed');
+      setToast({ open: true, message: 'Score sent — Ray will see it', severity: 'success' });
+    } catch {
+      setToast({ open: true, message: 'Could not send. Try again later.', severity: 'error' });
+    } finally {
+      setEmailing(false);
+    }
+  };
+
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      {/* Header */}
       <Box>
-        <Box
-          component="img"
-          src="/images/logo-teal.png"
-          alt="Big Freight Life"
-          sx={{ width: 48, height: 48, display: 'block', mb: 1.5 }}
-        />
         <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1.2, color: 'text.primary', mb: 0.5 }}>
-          Get in touch
+          The AW Score
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6 }}>
-          We respond to every inbound message — typically within one business day.
+          A self-assessment of how augmented you actually are — not how much you know about AI, but how
+          deeply it has rewired your work. Six dimensions, six levels. Ray scores {result.average === 0 ? '—' : ''}
+          <Box component="span" sx={{ color: 'primary.main', fontWeight: 600 }}>
+            {' '}
+            Level 5 — Augmented
+          </Box>
+          .
         </Typography>
       </Box>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-        {/* Address card */}
+      {/* Result card (after submission) */}
+      {submitted && (
         <Box
           sx={{
-            display: 'flex',
-            gap: 2,
-            p: 2,
+            p: 2.5,
             borderRadius: '12px',
             border: 1,
-            borderColor: 'divider',
-            bgcolor: 'action.hover',
+            borderColor: 'primary.main',
+            bgcolor: 'rgba(17,118,128,0.06)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1,
           }}
         >
-          <Box
-            sx={{
-              width: 36,
-              height: 36,
-              borderRadius: '8px',
-              bgcolor: 'background.paper',
-              color: 'primary.main',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}
-          >
-            <LocationOnOutlinedIcon sx={{ fontSize: 20 }} />
+          <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 1 }}>
+            <Box>
+              <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '0.6875rem' }}>
+                Your Score
+              </Typography>
+              <Typography sx={{ fontSize: '1.75rem', fontWeight: 700, color: 'primary.main', lineHeight: 1.1 }}>
+                {result.average.toFixed(1)}
+                <Box component="span" sx={{ fontSize: '0.875rem', color: 'text.secondary', fontWeight: 500 }}>
+                  {' '}/ 5.0
+                </Box>
+              </Typography>
+            </Box>
+            <Box sx={{ textAlign: 'right' }}>
+              <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '0.6875rem' }}>
+                Level {result.level.level}
+              </Typography>
+              <Typography sx={{ fontSize: '1.125rem', fontWeight: 600, color: 'text.primary' }}>
+                {result.level.label}
+              </Typography>
+            </Box>
           </Box>
-          <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography
-              variant="caption"
-              sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '0.6875rem', display: 'block', mb: 0.5 }}
-            >
-              Address
+          <Typography variant="body2" sx={{ color: 'text.primary', lineHeight: 1.65, mt: 0.5 }}>
+            {result.level.description}
+          </Typography>
+          <Box sx={{ mt: 1, p: 1.5, bgcolor: 'background.paper', borderRadius: '8px', border: 1, borderColor: 'divider' }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '0.6875rem', display: 'block', mb: 0.5 }}>
+              Next step — focus on {result.weakest.label}
             </Typography>
-            <Typography variant="body2" sx={{ color: 'text.primary', lineHeight: 1.6 }}>
-              Big Freight Life LLC
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'text.primary', lineHeight: 1.6 }}>
-              1351 N Buckner Blvd #180397
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'text.primary', lineHeight: 1.6 }}>
-              Dallas, TX 75218
+            <Typography variant="body2" sx={{ color: 'text.primary', lineHeight: 1.6, fontSize: '0.8125rem' }}>
+              {result.level.next}
             </Typography>
           </Box>
         </Box>
+      )}
 
-        {/* Email card */}
-        <Box
-          component="a"
-          href="mailto:hello@bflux.co"
-          sx={{
-            display: 'flex',
-            gap: 2,
-            p: 2,
-            borderRadius: '12px',
-            border: 1,
-            borderColor: 'divider',
-            bgcolor: 'action.hover',
-            textDecoration: 'none',
-            color: 'inherit',
-            transition: 'all 0.15s ease',
-            '&:hover': { borderColor: 'primary.main', bgcolor: 'rgba(17,118,128,0.06)' },
-          }}
-        >
-          <Box
-            sx={{
-              width: 36,
-              height: 36,
-              borderRadius: '8px',
-              bgcolor: 'background.paper',
-              color: 'primary.main',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}
-          >
-            <EmailOutlinedIcon sx={{ fontSize: 20 }} />
-          </Box>
-          <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography
-              variant="caption"
-              sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '0.6875rem', display: 'block', mb: 0.5 }}
-            >
-              Email
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'primary.main', lineHeight: 1.6, fontWeight: 500 }}>
-              hello@bflux.co
-            </Typography>
-          </Box>
-        </Box>
-
-        {/* Hours card */}
-        <Box
-          sx={{
-            display: 'flex',
-            gap: 2,
-            p: 2,
-            borderRadius: '12px',
-            border: 1,
-            borderColor: 'divider',
-            bgcolor: 'action.hover',
-          }}
-        >
-          <Box
-            sx={{
-              width: 36,
-              height: 36,
-              borderRadius: '8px',
-              bgcolor: 'background.paper',
-              color: 'primary.main',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}
-          >
-            <AccessTimeOutlinedIcon sx={{ fontSize: 20 }} />
-          </Box>
-          <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography
-              variant="caption"
-              sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '0.6875rem', display: 'block', mb: 0.5 }}
-            >
-              Business Hours
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'text.primary', lineHeight: 1.6 }}>
-              Monday – Friday, 9am – 6pm CT
-            </Typography>
-          </Box>
-        </Box>
+      {/* Dimension scoring */}
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {AW_DIMENSIONS.map((d) => {
+          const value = scores[d.key];
+          const rayValue = RAY_PROFILE[d.key];
+          return (
+            <Box key={d.key}>
+              <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 1, mb: 0.25 }}>
+                <Typography sx={{ fontSize: '0.9375rem', fontWeight: 600, color: 'text.primary' }}>
+                  {d.label}
+                </Typography>
+                <Typography sx={{ fontSize: '0.6875rem', color: 'text.secondary' }}>
+                  Ray scores {rayValue}
+                </Typography>
+              </Box>
+              <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.8125rem', lineHeight: 1.5, mb: 1 }}>
+                {d.question}
+              </Typography>
+              {/* 0..5 buttons */}
+              <Box sx={{ display: 'flex', gap: 0.5 }}>
+                {[0, 1, 2, 3, 4, 5].map((n) => {
+                  const selected = value === n;
+                  const isRay = rayValue === n;
+                  return (
+                    <Box
+                      key={n}
+                      component="button"
+                      onClick={() => setScores((prev) => ({ ...prev, [d.key]: n }))}
+                      sx={{
+                        flex: 1,
+                        py: 1,
+                        borderRadius: '8px',
+                        border: 1,
+                        borderColor: selected ? 'primary.main' : 'divider',
+                        bgcolor: selected ? 'primary.main' : 'transparent',
+                        color: selected ? '#fff' : 'text.secondary',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        position: 'relative',
+                        fontFamily: 'inherit',
+                        transition: 'all 0.15s ease',
+                        '&:hover': {
+                          borderColor: 'primary.main',
+                          color: selected ? '#fff' : 'primary.main',
+                        },
+                      }}
+                    >
+                      {n}
+                      {isRay && (
+                        <Box
+                          sx={{
+                            position: 'absolute',
+                            top: -4,
+                            right: -4,
+                            width: 8,
+                            height: 8,
+                            borderRadius: '50%',
+                            bgcolor: 'primary.main',
+                            border: 2,
+                            borderColor: 'background.paper',
+                          }}
+                        />
+                      )}
+                    </Box>
+                  );
+                })}
+              </Box>
+              {value > 0 && (
+                <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.75rem', lineHeight: 1.5, mt: 0.75, fontStyle: 'italic' }}>
+                  {d.levelLabels[value - 1]}
+                </Typography>
+              )}
+            </Box>
+          );
+        })}
       </Box>
+
+      {/* Actions */}
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+        {!submitted ? (
+          <Button
+            onClick={handleSubmit}
+            disabled={!allAnswered}
+            variant="contained"
+            startIcon={<CheckCircleIcon />}
+            sx={{
+              textTransform: 'none',
+              bgcolor: 'primary.main',
+              color: '#fff',
+              boxShadow: 'none',
+              '&:hover': { bgcolor: 'primary.dark', boxShadow: 'none' },
+            }}
+          >
+            Score me
+          </Button>
+        ) : (
+          <>
+            <Button
+              onClick={handleEmail}
+              disabled={emailing}
+              variant="contained"
+              startIcon={<EmailOutlinedIcon />}
+              sx={{
+                textTransform: 'none',
+                bgcolor: 'primary.main',
+                color: '#fff',
+                boxShadow: 'none',
+                '&:hover': { bgcolor: 'primary.dark', boxShadow: 'none' },
+              }}
+            >
+              {emailing ? 'Sending…' : 'Email my score'}
+            </Button>
+            <Button
+              onClick={handleShare}
+              variant="outlined"
+              startIcon={<IosShareIcon />}
+              sx={{
+                textTransform: 'none',
+                borderColor: 'primary.main',
+                color: 'primary.main',
+                '&:hover': { borderColor: 'primary.dark', bgcolor: 'rgba(17,118,128,0.04)' },
+              }}
+            >
+              Share link
+            </Button>
+            <Button
+              onClick={handleReset}
+              variant="text"
+              startIcon={<RestartAltIcon />}
+              sx={{ textTransform: 'none', color: 'text.secondary' }}
+            >
+              Reset
+            </Button>
+          </>
+        )}
+      </Box>
+
+      <Snackbar
+        open={toast.open}
+        autoHideDuration={3000}
+        onClose={() => setToast((t) => ({ ...t, open: false }))}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity={toast.severity} variant="filled" sx={{ fontSize: '0.8125rem' }}>
+          {toast.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

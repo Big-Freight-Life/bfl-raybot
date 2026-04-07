@@ -6,7 +6,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -238,12 +238,12 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
           onClick={() => handleNavigate('process')}
         />
         <NavButton
-          tooltip="Contact Us"
-          icon={<MailOutlineIcon sx={{ fontSize: 20 }} />}
-          label="Contact Us"
+          tooltip="AW Score"
+          icon={<InsightsOutlinedIcon sx={{ fontSize: 20 }} />}
+          label="AW Score"
           open={open}
-          isActive={activeItem === 'contact'}
-          onClick={() => handleNavigate('contact')}
+          isActive={activeItem === 'aw-score'}
+          onClick={() => handleNavigate('aw-score')}
         />
       </Box>
 

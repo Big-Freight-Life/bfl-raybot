@@ -80,34 +80,41 @@ export const processInfo: CaseStudy = {
   ],
 };
 
-export const contactInfo: CaseStudy = {
-  title: 'Contact Us',
-  key: 'contact',
-  summary: 'Get in touch with Big Freight Life.',
-  presentation: [
-    { type: 'heading', level: 2, text: 'Address' },
-    { type: 'paragraph', text: 'Big Freight Life LLC\n1351 N Buckner Blvd #180397\nDallas, TX 75218' },
-    { type: 'heading', level: 2, text: 'Email' },
-    { type: 'paragraph', text: 'hello@bflux.co' },
-    { type: 'heading', level: 2, text: 'Business Hours' },
-    { type: 'paragraph', text: 'Monday – Friday, 9am – 6pm CT' },
-  ],
+export const awScoreInfo: CaseStudy = {
+  title: 'AW Score',
+  key: 'aw-score',
+  summary:
+    'A self-assessment of how integrated AI is across your work — the Augmented Worker score.',
   highlights: [
     {
-      title: 'Address',
-      key: 'address',
+      title: 'How it works',
+      key: 'how',
       content:
-        'Big Freight Life LLC\n1351 N Buckner Blvd #180397\nDallas, TX 75218',
+        'The AW Score measures how augmented you actually are — not how much you know about AI, but how deeply it has rewired your work.\n\nYou rate yourself on six dimensions, each on a 0–5 scale. The average maps to one of six maturity levels, from Unaware to Augmented. Ray Butler is shown as the benchmark profile so you can see the gap clearly.\n\nThe goal is not the score itself. The goal is the next step the score reveals.',
     },
     {
-      title: 'Email',
-      key: 'email',
-      content: 'hello@bflux.co',
+      title: 'Dimensions',
+      key: 'dimensions',
+      content:
+        'Six dimensions, each scored 0–5:\n\n• Tools — what you actually reach for in a normal day\n• Workflow — how embedded AI is in how you work\n• Output — has AI changed what you can ship?\n• Architecture — are you building AI-native systems, or bolting AI on?\n• Decisions — does AI inform strategic choices, not just task help?\n• Team — is your team augmented, or just you?\n\nA balanced profile is rare. Most people are 4s in two dimensions and 1s in another two — the score makes that visible.',
     },
     {
-      title: 'Business Hours',
-      key: 'hours',
-      content: 'Monday – Friday, 9am – 6pm CT',
+      title: 'Levels',
+      key: 'levels',
+      content:
+        'Level 0 — Unaware: AI is not part of how you work.\nLevel 1 — Curious: You’ve poked at it. It hasn’t stuck.\nLevel 2 — Experimenting: Real usage, no integration.\nLevel 3 — Adopting: AI is load-bearing for parts of your work.\nLevel 4 — Integrated: AI shapes how your work is structured.\nLevel 5 — Augmented: AI is a force multiplier on output and decisions.\n\nThe meaningful jumps are 2→3 (from "using AI" to "working with AI") and 4→5 (from individual augmentation to systemic augmentation).',
+    },
+    {
+      title: 'Ray’s profile',
+      key: 'ray',
+      content:
+        'Ray scores 5 on Tools, Workflow, Output, and Architecture, and 4 on Decisions and Team. A real profile, not a perfect one.\n\nThe Decisions gap reflects that strategic framing is still mostly human work. The Team gap reflects that team augmentation compounds slower than individual augmentation — and is the harder problem.',
+    },
+    {
+      title: 'Why it matters',
+      key: 'why',
+      content:
+        'Most "AI strategy" conversations are stuck at Level 1–2 because the score is invisible. People talk about adoption like it’s binary, when it’s a 0–5 in six dimensions.\n\nThe AW Score makes the gap legible. Once a team can see where they actually are, the conversation shifts from "should we use AI?" to "what would Level 4 look like for us?"\n\nThat is where Big Freight Life works.',
     },
   ],
 };
@@ -340,6 +347,6 @@ export const caseStudies: CaseStudy[] = [
 export function findCaseStudyByKey(key: string): CaseStudy | undefined {
   if (key === 'about-ray') return aboutRay;
   if (key === 'process') return processInfo;
-  if (key === 'contact') return contactInfo;
+  if (key === 'aw-score') return awScoreInfo;
   return caseStudies.find((s) => s.key === key);
 }

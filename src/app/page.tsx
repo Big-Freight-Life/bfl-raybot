@@ -13,7 +13,7 @@ import ChatPanel from '@/components/ChatPanel';
 import AvatarStage from '@/components/AvatarStage';
 import EmailGate from '@/components/EmailGate';
 import CaseStudyPanel from '@/components/CaseStudyPanel';
-import { caseStudies, aboutRay, processInfo, contactInfo } from '@/lib/case-studies';
+import { caseStudies, aboutRay, processInfo, awScoreInfo } from '@/lib/case-studies';
 import { getChatList, saveChat, loadChat, generateTitle, type ChatSummary } from '@/lib/chat-history';
 import { STORAGE_KEY_USER_EMAIL, STORAGE_KEY_HISTORY, STORAGE_KEY_SESSION_ID } from '@/lib/constants';
 import { generateSessionId } from '@/lib/session-utils';
@@ -123,7 +123,7 @@ export default function Home() {
       return;
     }
 
-    if (action === 'about-ray' || action === 'process' || action === 'contact') {
+    if (action === 'about-ray' || action === 'process' || action === 'aw-score') {
       if (activeCaseStudy === action) return;
       // Start a new chat and trigger the case study, same as case studies
       handleNewChat();
@@ -401,15 +401,15 @@ export default function Home() {
               ? aboutRay
               : activeCaseStudy === 'process'
                 ? processInfo
-                : activeCaseStudy === 'contact'
-                  ? contactInfo
+                : activeCaseStudy === 'aw-score'
+                  ? awScoreInfo
                   : activeCaseStudy
                     ? caseStudies.find((s) => s.key === activeCaseStudy)
                     : null;
             return activeStudy ? (
               <CaseStudyPanel
                 study={activeStudy}
-                variant={activeCaseStudy === 'about-ray' ? 'tabs' : 'default'}
+                variant={activeCaseStudy === 'about-ray' || activeCaseStudy === 'aw-score' ? 'tabs' : 'default'}
                 onHighlightClick={(prompt) => {
                   handleHighlightClick(prompt);
                   const highlight = activeStudy.highlights.find((h) =>
