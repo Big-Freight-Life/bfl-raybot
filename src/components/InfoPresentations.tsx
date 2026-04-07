@@ -6,6 +6,8 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import DesignServicesOutlinedIcon from '@mui/icons-material/DesignServicesOutlined';
 import BuildOutlinedIcon from '@mui/icons-material/BuildOutlined';
@@ -46,6 +48,27 @@ export function AboutRayPresentation() {
             Big Freight Life
           </Typography>
         </Box>
+      </Box>
+
+      {/* Currently */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          px: 1.5,
+          py: 1,
+          borderRadius: '999px',
+          bgcolor: 'rgba(45,212,191,0.08)',
+          border: 1,
+          borderColor: 'rgba(45,212,191,0.25)',
+          alignSelf: 'flex-start',
+        }}
+      >
+        <FiberManualRecordIcon sx={{ fontSize: 10, color: 'primary.main' }} />
+        <Typography variant="caption" sx={{ color: 'text.primary', fontSize: '0.75rem', fontWeight: 500 }}>
+          Currently building Big Freight Life — applied AI architecture for enterprise systems
+        </Typography>
       </Box>
 
       {/* Bio */}
@@ -132,6 +155,23 @@ export function AboutRayPresentation() {
         >
           Email Ray
         </Button>
+        <Button
+          component="a"
+          href="/resume.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="contained"
+          startIcon={<FileDownloadOutlinedIcon />}
+          sx={{
+            textTransform: 'none',
+            bgcolor: 'primary.main',
+            color: '#fff',
+            boxShadow: 'none',
+            '&:hover': { bgcolor: 'primary.dark', boxShadow: 'none' },
+          }}
+        >
+          Download Resume
+        </Button>
       </Box>
 
       {/* Project history */}
@@ -151,6 +191,11 @@ export function AboutRayPresentation() {
               date: '2024',
               description:
                 'Federated integration layer that made OnBase the source of truth for millions of documents across ERP, HR, and finance systems — replacing fragile point-to-point integrations with a canonical schema and AI-assisted metadata extraction.',
+              outcomes: [
+                'Document processing latency: hours → minutes',
+                'Integration maintenance cost down ~60%',
+                'Audit queries: days → seconds',
+              ],
               initial: 'H',
               color: '#0e5f67',
             },
@@ -161,6 +206,11 @@ export function AboutRayPresentation() {
               date: '2023',
               description:
                 'Bidirectional sync layer bringing Hyland documents into Workday workflows for HR, finance, and approval routing — surfacing supporting documents directly inside the Workday UI to eliminate context switching.',
+              outcomes: [
+                'HR case resolution time cut nearly in half',
+                'Finance approval cycles: days → hours',
+                'Eliminated context switching for Workday users',
+              ],
               initial: 'H',
               color: '#117680',
             },
@@ -171,6 +221,11 @@ export function AboutRayPresentation() {
               date: '2022',
               description:
                 'Three-phase migration pipeline moving years of legacy CRM customization, undocumented workflows, and inconsistent data into Salesforce with zero downtime and 99.9% data integrity.',
+              outcomes: [
+                'Zero-downtime cutover',
+                '99.9% data integrity across validated fields',
+                'Legacy maintenance burden eliminated',
+              ],
               initial: 'S',
               color: '#1a9aa6',
             },
@@ -210,6 +265,25 @@ export function AboutRayPresentation() {
                   <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.65, mt: 1 }}>
                     {item.description}
                   </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.4, mt: 1 }}>
+                    {item.outcomes.map((outcome) => (
+                      <Box key={outcome} sx={{ display: 'flex', alignItems: 'flex-start', gap: 0.75 }}>
+                        <Box
+                          sx={{
+                            width: 4,
+                            height: 4,
+                            borderRadius: '50%',
+                            bgcolor: 'primary.main',
+                            mt: '8px',
+                            flexShrink: 0,
+                          }}
+                        />
+                        <Typography variant="body2" sx={{ color: 'text.primary', lineHeight: 1.5, fontSize: '0.8125rem' }}>
+                          {outcome}
+                        </Typography>
+                      </Box>
+                    ))}
+                  </Box>
                 </Box>
               </Box>
             );
