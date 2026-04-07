@@ -603,6 +603,8 @@ export function AWScorePresentation() {
     Object.fromEntries(AW_DIMENSIONS.map((d) => [d.key, 0]))
   );
   const [submitted, setSubmitted] = useState(false);
+  const [quizOpen, setQuizOpen] = useState(false);
+  const rayResult = useMemo(() => computeResult(RAY_PROFILE), []);
   const [toast, setToast] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
     open: false,
     message: '',
@@ -713,15 +715,137 @@ export function AWScorePresentation() {
           The AW Score
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6 }}>
-          A self-assessment of how augmented you actually are — not how much you know about AI, but how
-          deeply it has rewired your work. Six dimensions, six levels. Ray scores {result.average === 0 ? '—' : ''}
-          <Box component="span" sx={{ color: 'primary.main', fontWeight: 600 }}>
-            {' '}
-            Level 5 — Augmented
-          </Box>
-          .
+          A measure of how augmented you actually are — not how much you know about AI, but how deeply
+          it has rewired your work. Six dimensions, six levels.
         </Typography>
       </Box>
+
+      {/* Ray's verified results card */}
+      <Box
+        sx={{
+          p: 2.5,
+          borderRadius: '12px',
+          border: 1,
+          borderColor: 'primary.main',
+          bgcolor: 'rgba(17,118,128,0.06)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1.5,
+        }}
+      >
+        <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, alignSelf: 'flex-start', px: 1, py: 0.375, borderRadius: '999px', border: 1, borderColor: 'primary.main', bgcolor: 'background.paper', color: 'primary.main', fontSize: '0.6875rem', fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+          <VerifiedIcon sx={{ fontSize: '0.85rem' }} />
+          Verified AI Practitioner
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 1 }}>
+          <Box>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '0.6875rem' }}>
+              Ray&apos;s Score
+            </Typography>
+            <Typography sx={{ fontSize: '1.75rem', fontWeight: 700, color: 'primary.main', lineHeight: 1.1 }}>
+              {rayResult.average.toFixed(1)}
+              <Box component="span" sx={{ fontSize: '0.875rem', color: 'text.secondary', fontWeight: 500 }}>
+                {' '}/ 5.0
+              </Box>
+            </Typography>
+          </Box>
+          <Box sx={{ textAlign: 'right' }}>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '0.6875rem' }}>
+              Level {rayResult.level.level}
+            </Typography>
+            <Typography sx={{ fontSize: '1.125rem', fontWeight: 600, color: 'text.primary' }}>
+              {rayResult.level.label}
+            </Typography>
+          </Box>
+        </Box>
+        <Typography variant="body2" sx={{ color: 'text.primary', lineHeight: 1.65 }}>
+          {rayResult.level.description}
+        </Typography>
+        {/* Per-dimension breakdown */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mt: 0.5 }}>
+          {AW_DIMENSIONS.map((d) => {
+            const v = RAY_PROFILE[d.key];
+            return (
+              <Box key={d.key} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography sx={{ fontSize: '0.75rem', color: 'text.secondary', minWidth: 92, flexShrink: 0 }}>
+                  {d.label}
+                </Typography>
+                <Box sx={{ flex: 1, display: 'flex', gap: 0.25 }}>
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <Box
+                      key={n}
+                      sx={{
+                        flex: 1,
+                        height: 6,
+                        borderRadius: '2px',
+                        bgcolor: n <= v ? 'primary.main' : 'action.hover',
+                      }}
+                    />
+                  ))}
+                </Box>
+                <Typography sx={{ fontSize: '0.75rem', fontWeight: 600, color: 'text.primary', minWidth: 14, textAlign: 'right' }}>
+                  {v}
+                </Typography>
+              </Box>
+            );
+          })}
+        </Box>
+      </Box>
+
+      {/* What verification means */}
+      <Box>
+        <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 1, fontSize: '0.6875rem' }}>
+          How Verification Works
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
+          <Typography variant="body2" sx={{ color: 'text.primary', lineHeight: 1.65 }}>
+            The AW Score rates six dimensions of how AI shows up in your work — Tools, Workflow, Output,
+            Architecture, Decisions, and Team — each on a 0–5 scale. The average maps to one of six levels.
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.primary', lineHeight: 1.65 }}>
+            <Box component="span" sx={{ fontWeight: 600 }}>Verified AI Practitioner</Box> is awarded at
+            <Box component="span" sx={{ fontWeight: 600 }}> level 4 (Integrated)</Box> and above. At that
+            point AI isn&apos;t just a tool you reach for — it shapes how the work itself is structured.
+            You design tasks around AI capabilities, you ship things that wouldn&apos;t exist without it,
+            and you can model how AI behaves in real conditions, not just demo conditions.
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.65, fontSize: '0.8125rem' }}>
+            This is a self-assessment framework, not a certification. The score is meaningful because the
+            criteria are concrete and observable — not because a third party signed off.
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* CTA to take the assessment */}
+      {!quizOpen && (
+        <Box>
+          <Button
+            onClick={() => setQuizOpen(true)}
+            variant="contained"
+            startIcon={<CheckCircleIcon />}
+            sx={{
+              textTransform: 'none',
+              bgcolor: 'primary.main',
+              color: '#fff',
+              boxShadow: 'none',
+              '&:hover': { bgcolor: 'primary.dark', boxShadow: 'none' },
+            }}
+          >
+            Score yourself
+          </Button>
+        </Box>
+      )}
+
+      {quizOpen && (
+        <Box sx={{ pt: 1, borderTop: 1, borderColor: 'divider' }}>
+          <Typography sx={{ fontSize: '1rem', fontWeight: 700, color: 'text.primary', mt: 2, mb: 0.5 }}>
+            Score Yourself
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6, mb: 2 }}>
+            Rate each dimension honestly. Ray&apos;s scores are marked with a dot for reference.
+          </Typography>
+        </Box>
+      )}
 
       {/* Result card (after submission) */}
       {submitted && (
@@ -773,6 +897,7 @@ export function AWScorePresentation() {
       )}
 
       {/* Dimension scoring */}
+      {quizOpen && (
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {AW_DIMENSIONS.map((d) => {
           const value = scores[d.key];
@@ -849,8 +974,10 @@ export function AWScorePresentation() {
           );
         })}
       </Box>
+      )}
 
       {/* Actions */}
+      {quizOpen && (
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
         {!submitted ? (
           <Button
@@ -909,6 +1036,7 @@ export function AWScorePresentation() {
           </>
         )}
       </Box>
+      )}
 
       <Snackbar
         open={toast.open}
