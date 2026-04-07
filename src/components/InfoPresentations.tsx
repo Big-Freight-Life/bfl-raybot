@@ -11,40 +11,11 @@ import DesignServicesOutlinedIcon from '@mui/icons-material/DesignServicesOutlin
 import BuildOutlinedIcon from '@mui/icons-material/BuildOutlined';
 import HandshakeOutlinedIcon from '@mui/icons-material/HandshakeOutlined';
 
-function formatTimestamp(ts?: number): string {
-  return new Date(ts ?? Date.now()).toLocaleDateString(undefined, {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
-
-function DateLabel({ timestamp }: { timestamp?: number }) {
-  return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', mb: 0.5 }}>
-      <Box
-        sx={{
-          px: 1.5,
-          py: 0.5,
-          borderRadius: '999px',
-          bgcolor: 'action.hover',
-          fontSize: '0.75rem',
-          color: 'text.secondary',
-        }}
-      >
-        {formatTimestamp(timestamp)}
-      </Box>
-    </Box>
-  );
-}
-
 /* ─── About Ray ─── */
 
-export function AboutRayPresentation({ timestamp }: { timestamp?: number }) {
+export function AboutRayPresentation() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      <DateLabel timestamp={timestamp} />
       {/* Profile header */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5 }}>
         <Box
@@ -199,10 +170,9 @@ const processSteps = [
   },
 ];
 
-export function ProcessPresentation({ timestamp }: { timestamp?: number }) {
+export function ProcessPresentation() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      <DateLabel timestamp={timestamp} />
       <Box>
         <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1.2, color: 'text.primary', mb: 1 }}>
           The Process
@@ -280,10 +250,9 @@ export function ProcessPresentation({ timestamp }: { timestamp?: number }) {
 
 /* ─── Contact ─── */
 
-export function ContactPresentation({ timestamp }: { timestamp?: number }) {
+export function ContactPresentation() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-      <DateLabel timestamp={timestamp} />
       <Box>
         <Box
           component="img"
