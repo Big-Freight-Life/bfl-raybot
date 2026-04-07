@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from 'react';
 import { Box, Divider, Drawer, IconButton, Tooltip, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
@@ -345,9 +346,28 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
         </Box>
       )}
 
-      {/* Copyright — bottom left, only when sidebar is expanded */}
+      {/* bfl.design link + Copyright — bottom left, only when sidebar is expanded */}
       {open && (
-        <Box sx={{ mt: 'auto', px: 2, py: 1.5, flexShrink: 0 }}>
+        <Box sx={{ mt: 'auto', px: 2, py: 1.5, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+          <Box
+            component="a"
+            href="https://bfl.design"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 0.5,
+              color: 'text.secondary',
+              fontSize: '0.8125rem',
+              textDecoration: 'none',
+              alignSelf: 'flex-start',
+              '&:hover': { color: 'text.primary' },
+            }}
+          >
+            bfl.design
+            <OpenInNewIcon sx={{ fontSize: 14 }} />
+          </Box>
           <Typography
             variant="caption"
             sx={{ color: 'text.disabled', fontSize: '0.6875rem', lineHeight: 1.4 }}

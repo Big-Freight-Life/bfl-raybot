@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { Box, Typography, Button, IconButton, Tooltip, Snackbar, Alert } from '@mui/material';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { Box, Typography, IconButton, Tooltip, Snackbar, Alert } from '@mui/material';
 import ShareIcon from '@mui/icons-material/Share';
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import IconSidebar from '@/components/IconSidebar';
@@ -236,17 +235,6 @@ export default function Home() {
                 <ShareIcon sx={{ fontSize: 18 }} />
               </IconButton>
             </Tooltip>
-            <Button
-              component="a"
-              href="https://bfl.design"
-              target="_blank"
-              rel="noopener noreferrer"
-              size="small"
-              endIcon={<OpenInNewIcon sx={{ fontSize: '14px !important' }} />}
-              sx={{ textTransform: 'none', color: 'text.secondary', fontSize: '0.8125rem' }}
-            >
-              bfl.design
-            </Button>
           </Box>
         </Box>
 
