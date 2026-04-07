@@ -326,40 +326,44 @@ const resumeSkills = [
 export function ResumePresentation() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      {/* Header */}
-      <Box>
-        <Typography sx={{ fontSize: '1.25rem', fontWeight: 700, color: 'text.primary', lineHeight: 1.2 }}>
-          Ray Butler
-        </Typography>
-        <Typography sx={{ fontSize: '0.8125rem', color: 'primary.main', fontWeight: 500, mt: 0.25 }}>
-          Designer · Builder · Founder
-        </Typography>
-        <Typography sx={{ fontSize: '0.75rem', color: 'text.secondary', mt: 0.5 }}>
-          Dallas, TX · hello@bflux.co
-        </Typography>
-      </Box>
-
-      {/* Summary */}
-      <Box>
-        <Typography
-          variant="caption"
-          sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 1, fontSize: '0.6875rem' }}
+      {/* Sticky Download button */}
+      <Box
+        sx={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 2,
+          bgcolor: 'background.paper',
+          py: 1,
+          mt: -1,
+          mx: -2.5,
+          px: 2.5,
+          borderBottom: 1,
+          borderColor: 'divider',
+        }}
+      >
+        <Button
+          component="a"
+          href="/resume.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="outlined"
+          size="small"
+          fullWidth
+          startIcon={<FileDownloadOutlinedIcon />}
+          sx={{
+            textTransform: 'none',
+            borderColor: 'primary.main',
+            color: 'primary.main',
+            fontSize: '0.75rem',
+            '&:hover': { borderColor: 'primary.dark', bgcolor: 'rgba(17,118,128,0.04)' },
+          }}
         >
-          Summary
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.primary', lineHeight: 1.65, fontSize: '0.8125rem' }}>
-          Design Technologist working at the intersection of experience design, engineering, and system architecture. Focused on Applied AI Architecture — structuring enterprise systems so AI operates clearly, predictably, and within real-world conditions.
-        </Typography>
+          Download PDF
+        </Button>
       </Box>
 
       {/* Experience */}
       <Box>
-        <Typography
-          variant="caption"
-          sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 1.5, fontSize: '0.6875rem' }}
-        >
-          Experience
-        </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {resumeEntries.map((entry, i) => (
             <Box
@@ -427,27 +431,6 @@ export function ResumePresentation() {
         </Box>
       </Box>
 
-      {/* Download */}
-      <Box>
-        <Button
-          component="a"
-          href="/resume.pdf"
-          target="_blank"
-          rel="noopener noreferrer"
-          variant="outlined"
-          size="small"
-          startIcon={<FileDownloadOutlinedIcon />}
-          sx={{
-            textTransform: 'none',
-            borderColor: 'primary.main',
-            color: 'primary.main',
-            fontSize: '0.75rem',
-            '&:hover': { borderColor: 'primary.dark', bgcolor: 'rgba(17,118,128,0.04)' },
-          }}
-        >
-          Download PDF
-        </Button>
-      </Box>
     </Box>
   );
 }
