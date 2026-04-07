@@ -133,6 +133,89 @@ export function AboutRayPresentation() {
           Email Ray
         </Button>
       </Box>
+
+      {/* Project history */}
+      <Box>
+        <Typography
+          variant="caption"
+          sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 1.5, fontSize: '0.6875rem' }}
+        >
+          Project History
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          {[
+            {
+              company: 'Hyland Software',
+              project: 'Hyland OnBase Integration',
+              role: 'Lead Design Technologist',
+              date: '2024',
+              description:
+                'Federated integration layer that made OnBase the source of truth for millions of documents across ERP, HR, and finance systems — replacing fragile point-to-point integrations with a canonical schema and AI-assisted metadata extraction.',
+              initial: 'H',
+              color: '#0e5f67',
+            },
+            {
+              company: 'Hyland Software',
+              project: 'Hyland for Workday',
+              role: 'Design Technologist',
+              date: '2023',
+              description:
+                'Bidirectional sync layer bringing Hyland documents into Workday workflows for HR, finance, and approval routing — surfacing supporting documents directly inside the Workday UI to eliminate context switching.',
+              initial: 'H',
+              color: '#117680',
+            },
+            {
+              company: 'Enterprise Client',
+              project: 'Salesforce Migration',
+              role: 'Solutions Architect',
+              date: '2022',
+              description:
+                'Three-phase migration pipeline moving years of legacy CRM customization, undocumented workflows, and inconsistent data into Salesforce with zero downtime and 99.9% data integrity.',
+              initial: 'S',
+              color: '#1a9aa6',
+            },
+          ].map((item, i, arr) => {
+            const isLast = i === arr.length - 1;
+            return (
+              <Box key={i} sx={{ display: 'flex', gap: 1.75 }}>
+                {/* Company logo placeholder */}
+                <Box
+                  sx={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: '8px',
+                    bgcolor: item.color,
+                    color: '#fff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.125rem',
+                    fontWeight: 700,
+                    flexShrink: 0,
+                  }}
+                >
+                  {item.initial}
+                </Box>
+                {/* Details */}
+                <Box sx={{ flex: 1, minWidth: 0, borderBottom: isLast ? 0 : 1, borderColor: 'divider', pb: isLast ? 0 : 2, mb: isLast ? 0 : 2 }}>
+                  <Typography sx={{ fontSize: '0.9375rem', fontWeight: 600, color: 'text.primary', lineHeight: 1.3 }}>
+                    {item.project}
+                  </Typography>
+                  <Typography sx={{ fontSize: '0.8125rem', color: 'text.primary', mt: 0.25 }}>
+                    {item.role} · {item.company}
+                  </Typography>
+                  <Typography sx={{ fontSize: '0.75rem', color: 'text.secondary', mt: 0.25 }}>
+                    {item.date}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.65, mt: 1 }}>
+                    {item.description}
+                  </Typography>
+                </Box>
+              </Box>
+            );
+          })}
+        </Box>
+      </Box>
     </Box>
   );
 }
