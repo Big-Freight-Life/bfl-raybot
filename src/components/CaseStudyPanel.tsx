@@ -8,6 +8,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import type { CaseStudy } from '@/lib/case-studies';
 import { softwareTools, agentSkills } from '@/lib/toolbox';
+import { ResumePresentation } from './InfoPresentations';
 
 interface CaseStudyPanelProps {
   study: CaseStudy;
@@ -180,6 +181,10 @@ export default function CaseStudyPanel({
           {/* Tab content */}
           {activeTab === 'toolbox' ? (
             <ToolboxTabContent onItemClick={onHighlightClick} />
+          ) : study.key === 'about-ray' && activeTab === 'experience' ? (
+            <Box sx={{ flex: 1, overflowY: 'auto', px: 2.5, py: 2, scrollbarWidth: 'thin' }}>
+              <ResumePresentation />
+            </Box>
           ) : activeHighlight?.content ? (
             <Box sx={{ flex: 1, overflowY: 'auto', px: 2.5, py: 2, scrollbarWidth: 'thin' }}>
               <Typography

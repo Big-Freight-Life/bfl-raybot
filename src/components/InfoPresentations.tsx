@@ -133,23 +133,6 @@ export function AboutRayPresentation() {
         >
           Email Ray
         </Button>
-        <Button
-          component="a"
-          href="/resume.pdf"
-          target="_blank"
-          rel="noopener noreferrer"
-          variant="contained"
-          startIcon={<FileDownloadOutlinedIcon />}
-          sx={{
-            textTransform: 'none',
-            bgcolor: 'primary.main',
-            color: '#fff',
-            boxShadow: 'none',
-            '&:hover': { bgcolor: 'primary.dark', boxShadow: 'none' },
-          }}
-        >
-          Download Resume
-        </Button>
       </Box>
 
       {/* Project history */}
@@ -278,6 +261,192 @@ export function AboutRayPresentation() {
             );
           })}
         </Box>
+      </Box>
+    </Box>
+  );
+}
+
+/* ─── Resume (Experience tab on About Ray panel) ─── */
+
+const resumeEntries = [
+  {
+    company: 'Big Freight Life',
+    role: 'Founder · Applied AI Architect',
+    date: '2024 — Present',
+    location: 'Dallas, TX',
+    bullets: [
+      'Founded an applied AI architecture practice focused on enterprise systems where AI must operate clearly, predictably, and within real-world constraints.',
+      'Engagements span workflow modeling, decision boundaries, data contracts, and integration architecture for Fortune 500 customers.',
+    ],
+  },
+  {
+    company: 'Hyland Software',
+    role: 'Lead Design Technologist — OnBase Integration',
+    date: '2023 — 2024',
+    location: 'Remote',
+    bullets: [
+      'Led the federated integration layer that made Hyland OnBase the source of truth for millions of documents across ERP, HR, and finance systems.',
+      'Replaced fragile point-to-point integrations with a canonical schema and AI-assisted metadata extraction.',
+      'Reduced document processing latency from hours to minutes; cut integration maintenance cost ~60%; audit queries went from days to seconds.',
+    ],
+  },
+  {
+    company: 'Hyland Software',
+    role: 'Design Technologist — Hyland for Workday',
+    date: '2022 — 2023',
+    location: 'Remote',
+    bullets: [
+      'Built the bidirectional sync layer bringing Hyland documents into Workday workflows for HR, finance, and approval routing.',
+      'Surfaced supporting documents directly inside the Workday UI to eliminate context switching.',
+      'Cut HR case resolution time nearly in half; finance approval cycles moved from days to hours.',
+    ],
+  },
+  {
+    company: 'Enterprise Client',
+    role: 'Solutions Architect — Salesforce Migration',
+    date: '2021 — 2022',
+    location: 'Remote',
+    bullets: [
+      'Designed and shipped a three-phase migration pipeline moving years of legacy CRM customization, undocumented workflows, and inconsistent data into Salesforce.',
+      'Delivered a zero-downtime cutover with 99.9% data integrity across validated fields.',
+      'Eliminated the legacy maintenance burden that had blocked the customer for years.',
+    ],
+  },
+];
+
+const resumeSkills = [
+  { label: 'Frontend', items: 'React, Next.js, TypeScript, MUI, Tailwind' },
+  { label: 'AI / ML', items: 'Gemini, Claude, OpenAI, LangChain, prompt engineering, RAG' },
+  { label: 'Cloud', items: 'Vercel, AWS, Google Cloud' },
+  { label: 'Data', items: 'PostgreSQL, Redis, Vercel KV, Upstash' },
+  { label: 'Design', items: 'Figma, system design, workflow modeling' },
+  { label: 'Integration', items: 'Salesforce, Hyland OnBase, Workday, Mermaid.js' },
+];
+
+export function ResumePresentation() {
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      {/* Header */}
+      <Box>
+        <Typography sx={{ fontSize: '1.25rem', fontWeight: 700, color: 'text.primary', lineHeight: 1.2 }}>
+          Ray Butler
+        </Typography>
+        <Typography sx={{ fontSize: '0.8125rem', color: 'primary.main', fontWeight: 500, mt: 0.25 }}>
+          Designer · Builder · Founder
+        </Typography>
+        <Typography sx={{ fontSize: '0.75rem', color: 'text.secondary', mt: 0.5 }}>
+          Dallas, TX · hello@bflux.co
+        </Typography>
+      </Box>
+
+      {/* Summary */}
+      <Box>
+        <Typography
+          variant="caption"
+          sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 1, fontSize: '0.6875rem' }}
+        >
+          Summary
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'text.primary', lineHeight: 1.65, fontSize: '0.8125rem' }}>
+          Design Technologist working at the intersection of experience design, engineering, and system architecture. Focused on Applied AI Architecture — structuring enterprise systems so AI operates clearly, predictably, and within real-world conditions.
+        </Typography>
+      </Box>
+
+      {/* Experience */}
+      <Box>
+        <Typography
+          variant="caption"
+          sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 1.5, fontSize: '0.6875rem' }}
+        >
+          Experience
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {resumeEntries.map((entry, i) => (
+            <Box
+              key={i}
+              sx={{
+                pb: i === resumeEntries.length - 1 ? 0 : 2,
+                borderBottom: i === resumeEntries.length - 1 ? 0 : 1,
+                borderColor: 'divider',
+              }}
+            >
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 1 }}>
+                <Typography sx={{ fontSize: '0.875rem', fontWeight: 600, color: 'text.primary', lineHeight: 1.3 }}>
+                  {entry.role}
+                </Typography>
+                <Typography sx={{ fontSize: '0.6875rem', color: 'text.secondary', flexShrink: 0 }}>
+                  {entry.date}
+                </Typography>
+              </Box>
+              <Typography sx={{ fontSize: '0.75rem', color: 'text.secondary', mt: 0.25 }}>
+                {entry.company} · {entry.location}
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mt: 1 }}>
+                {entry.bullets.map((b) => (
+                  <Box key={b} sx={{ display: 'flex', gap: 0.75, alignItems: 'flex-start' }}>
+                    <Box
+                      sx={{
+                        width: 4,
+                        height: 4,
+                        borderRadius: '50%',
+                        bgcolor: 'primary.main',
+                        mt: '7px',
+                        flexShrink: 0,
+                      }}
+                    />
+                    <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.55, fontSize: '0.75rem' }}>
+                      {b}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          ))}
+        </Box>
+      </Box>
+
+      {/* Skills */}
+      <Box>
+        <Typography
+          variant="caption"
+          sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 1, fontSize: '0.6875rem' }}
+        >
+          Skills
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+          {resumeSkills.map((s) => (
+            <Box key={s.label} sx={{ display: 'flex', gap: 1 }}>
+              <Typography sx={{ fontSize: '0.75rem', fontWeight: 600, color: 'text.primary', minWidth: 88, flexShrink: 0 }}>
+                {s.label}
+              </Typography>
+              <Typography sx={{ fontSize: '0.75rem', color: 'text.secondary', lineHeight: 1.5 }}>
+                {s.items}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+      </Box>
+
+      {/* Download */}
+      <Box>
+        <Button
+          component="a"
+          href="/resume.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="outlined"
+          size="small"
+          startIcon={<FileDownloadOutlinedIcon />}
+          sx={{
+            textTransform: 'none',
+            borderColor: 'primary.main',
+            color: 'primary.main',
+            fontSize: '0.75rem',
+            '&:hover': { borderColor: 'primary.dark', bgcolor: 'rgba(17,118,128,0.04)' },
+          }}
+        >
+          Download PDF
+        </Button>
       </Box>
     </Box>
   );

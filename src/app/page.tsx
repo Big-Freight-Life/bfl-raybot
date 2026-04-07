@@ -6,6 +6,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import HubOutlinedIcon from '@mui/icons-material/HubOutlined';
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import IconSidebar from '@/components/IconSidebar';
 import ChatPanel from '@/components/ChatPanel';
@@ -313,6 +314,17 @@ export default function Home() {
                   <EditNoteIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>Edit template</ListItemText>
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  setUserMenuAnchor(null);
+                  // TODO: open connector picker
+                }}
+              >
+                <ListItemIcon>
+                  <HubOutlinedIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Select connectors</ListItemText>
               </MenuItem>
               <MenuItem onClick={handleClearHistory}>
                 <ListItemIcon>
