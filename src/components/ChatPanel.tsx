@@ -144,7 +144,12 @@ export default function ChatPanel({ sessionId, sessionTimestamp, onDiagramDetect
           // Determine if we need a date divider before this message
           const msgTs = msg.timestamp ?? sessionTimestamp;
           const prevTs = i > 0 ? (messages[i - 1].timestamp ?? sessionTimestamp) : null;
+          const isInfoCard =
+            msg.caseStudyKey === 'about-ray' ||
+            msg.caseStudyKey === 'process' ||
+            msg.caseStudyKey === 'contact';
           const showDivider =
+            !isInfoCard &&
             msgTs != null &&
             (i === 0 || (prevTs != null && new Date(msgTs).toDateString() !== new Date(prevTs).toDateString()));
           return (
