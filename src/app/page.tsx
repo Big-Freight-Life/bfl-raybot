@@ -48,12 +48,15 @@ export default function Home() {
       setVerified(false);
     }
     setChatList(getChatList());
-    // Always start with a fresh chat on initial load
+    // Always start with a fresh chat on initial load, defaulting to About Ray
     sessionStorage.removeItem(STORAGE_KEY_HISTORY);
     const sid = generateSessionId();
     sessionStorage.setItem(STORAGE_KEY_SESSION_ID, sid);
     setSessionId(sid);
     setActiveChatId(sid);
+    setActiveCaseStudy('about-ray');
+    setActiveNavItem('about-ray');
+    setTriggerCaseStudy('about-ray');
   }, []);
 
   const handleVerified = useCallback((email: string) => {

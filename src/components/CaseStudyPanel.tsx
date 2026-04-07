@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Box, Typography, Radio, RadioGroup, FormControlLabel } from '@mui/material';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -222,6 +223,7 @@ export default function CaseStudyPanel({
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
             {study.highlights.map((highlight) => {
               const visited = visitedHighlights.has(highlight.key);
+              const prompt = `Tell me about the ${highlight.title.toLowerCase()} in the ${study.title} project.`;
               const isExpanded = expandedKey === highlight.key;
 
               return (
@@ -258,6 +260,35 @@ export default function CaseStudyPanel({
                     <Box component="span" sx={{ flex: 1 }}>
                       {highlight.title}
                     </Box>
+                    {study.key !== 'contact' && (
+                      <Box
+                        component="button"
+                        aria-label="Ask Raybot about this"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onHighlightClick(prompt);
+                        }}
+                        className="play-icon"
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: 28,
+                          height: 28,
+                          borderRadius: '50%',
+                          bgcolor: 'transparent',
+                          color: 'text.secondary',
+                          border: 'none',
+                          cursor: 'pointer',
+                          flexShrink: 0,
+                          opacity: 0,
+                          transition: 'all 0.2s ease',
+                          '&:hover': { bgcolor: 'primary.main', color: '#fff' },
+                        }}
+                      >
+                        <PlayArrowIcon sx={{ fontSize: 16 }} />
+                      </Box>
+                    )}
                   </Box>
                   {isExpanded && (
                     <Box sx={{ px: 1.5, py: 1, fontSize: '0.8125rem', color: 'text.secondary', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>

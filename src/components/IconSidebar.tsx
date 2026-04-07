@@ -3,7 +3,6 @@
 import { useState, type ReactNode } from 'react';
 import { Box, Divider, Drawer, IconButton, Tooltip, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import EditNoteIcon from '@mui/icons-material/EditNote';
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
@@ -222,12 +221,12 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
       {/* Nav items */}
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: open ? 'flex-start' : 'center', py: 1, gap: 0.5, px: open ? 1 : 0 }}>
         <NavButton
-          tooltip="New chat"
-          icon={<EditNoteIcon sx={{ fontSize: 20 }} />}
-          label="New chat"
+          tooltip="About Ray"
+          icon={<PersonOutlineIcon sx={{ fontSize: 20 }} />}
+          label="About Ray"
           open={open}
-          isActive={isNewChatActive}
-          onClick={handleNewChat}
+          isActive={activeItem === 'about-ray'}
+          onClick={() => handleNavigate('about-ray')}
         />
         <NavButton
           tooltip="Process"
@@ -236,14 +235,6 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
           open={open}
           isActive={activeItem === 'process'}
           onClick={() => handleNavigate('process')}
-        />
-        <NavButton
-          tooltip="About Ray"
-          icon={<PersonOutlineIcon sx={{ fontSize: 20 }} />}
-          label="About Ray"
-          open={open}
-          isActive={activeItem === 'about-ray'}
-          onClick={() => handleNavigate('about-ray')}
         />
         <NavButton
           tooltip="Contact Us"
