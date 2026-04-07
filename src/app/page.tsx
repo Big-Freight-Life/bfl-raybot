@@ -1,8 +1,11 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { Box, Typography, IconButton, Tooltip, Snackbar, Alert } from '@mui/material';
+import { Box, Typography, IconButton, Tooltip, Snackbar, Alert, Menu, MenuItem, ListItemIcon, ListItemText, Divider } from '@mui/material';
 import ShareIcon from '@mui/icons-material/Share';
+import LogoutIcon from '@mui/icons-material/Logout';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import IconSidebar from '@/components/IconSidebar';
 import ChatPanel from '@/components/ChatPanel';
@@ -36,7 +39,27 @@ export default function Home() {
   const [chatKey, setChatKey] = useState(0); // forces ChatPanel remount
   const [sessionId, setSessionId] = useState('');
   const [sessionTimestamp, setSessionTimestamp] = useState<number>(Date.now());
+  const [userMenuAnchor, setUserMenuAnchor] = useState<HTMLElement | null>(null);
   const messagesRef = useRef<Message[]>([]);
+
+  const handleSignOut = useCallback(() => {
+    setUserMenuAnchor(null);
+    try {
+      sessionStorage.clear();
+    } catch {}
+    window.location.reload();
+  }, []);
+
+  const handleClearHistory = useCallback(() => {
+    setUserMenuAnchor(null);
+    if (!window.confirm('Clear all chat history? This cannot be undone.')) return;
+    try {
+      Object.keys(localStorage)
+        .filter((k) => k.startsWith('raybot_'))
+        .forEach((k) => localStorage.removeItem(k));
+    } catch {}
+    window.location.reload();
+  }, []);
 
   useEffect(() => {
     const email = sessionStorage.getItem(STORAGE_KEY_USER_EMAIL);
@@ -235,6 +258,75 @@ export default function Home() {
                 <ShareIcon sx={{ fontSize: 18 }} />
               </IconButton>
             </Tooltip>
+            <Divider orientation="vertical" flexItem sx={{ my: 1 }} />
+            <Tooltip title={userEmail || 'Account'}>
+              <IconButton
+                size="small"
+                onClick={(e) => setUserMenuAnchor(e.currentTarget)}
+                sx={{ p: 0.25 }}
+              >
+                <Box
+                  sx={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: '50%',
+                    bgcolor: 'primary.main',
+                    color: 'background.paper',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.8125rem',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  {userEmail.trim().charAt(0) || '?'}
+                </Box>
+              </IconButton>
+            </Tooltip>
+            <Menu
+              anchorEl={userMenuAnchor}
+              open={Boolean(userMenuAnchor)}
+              onClose={() => setUserMenuAnchor(null)}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              slotProps={{ paper: { sx: { minWidth: 220 } } }}
+            >
+              {userEmail && (
+                <Box sx={{ px: 2, py: 1 }}>
+                  <Typography variant="caption" sx={{ color: 'text.disabled', display: 'block' }}>
+                    Signed in as
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {userEmail}
+                  </Typography>
+                </Box>
+              )}
+              {userEmail && <Divider />}
+              <MenuItem
+                onClick={() => {
+                  setUserMenuAnchor(null);
+                  // TODO: open template editor
+                }}
+              >
+                <ListItemIcon>
+                  <EditNoteIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Edit template</ListItemText>
+              </MenuItem>
+              <MenuItem onClick={handleClearHistory}>
+                <ListItemIcon>
+                  <DeleteOutlineIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Clear chat history</ListItemText>
+              </MenuItem>
+              <MenuItem onClick={handleSignOut}>
+                <ListItemIcon>
+                  <LogoutIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Sign out</ListItemText>
+              </MenuItem>
+            </Menu>
           </Box>
         </Box>
 
