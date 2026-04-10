@@ -57,7 +57,7 @@ export function AboutRayPresentation() {
             Ray Butler
           </Typography>
           <Typography sx={{ fontSize: '0.875rem', color: 'primary.main', fontWeight: 500, mt: 0.25 }}>
-            Designer · Builder · Founder
+            Gen AI Architect
           </Typography>
           {(() => {
             const rayLevel = computeResult(RAY_PROFILE).level.level;
