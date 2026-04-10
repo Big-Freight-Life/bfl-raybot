@@ -16,7 +16,7 @@ export default function Header() {
     >
       <Toolbar sx={{ minHeight: 56, px: { xs: 2, md: 3 } }}>
         <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1rem', flex: 1 }}>
-          <Box component="span" sx={{ color: 'primary.main' }}>ray</Box>bot
+          <Box component="span" sx={{ color: 'primary.main' }}>ray</Box>butler
         </Typography>
         <Tooltip title={mode === 'light' ? 'Dark mode' : 'Light mode'}>
           <IconButton size="small" onClick={toggleMode} sx={{ color: 'text.secondary', mr: 1 }}>
