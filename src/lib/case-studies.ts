@@ -152,12 +152,6 @@ export const aboutRay: CaseStudy = {
   ],
   highlights: [
     {
-      title: 'Experience',
-      key: 'experience',
-      content:
-        'Ray Butler is a Design Technologist with deep expertise in enterprise SaaS, healthcare workflows, finance and AP automation, and government systems.\n\nHe operates at the intersection of experience design, product strategy, and AI systems — focusing on how systems actually behave, not just how they are described.\n\nHis work spans complex organizations where decisions, ownership, workflows, and data must align to produce reliable outcomes at scale.',
-    },
-    {
       title: 'Toolbox',
       key: 'toolbox',
       content:
@@ -168,6 +162,12 @@ export const aboutRay: CaseStudy = {
       key: 'methodologies',
       content:
         'Ray approaches every engagement through a systems-thinking lens:\n\n• Diagnosis first — understand what is actually happening before proposing solutions\n• Design is behavior — interfaces and workflows define how systems think, not just how they look\n• AI as output — AI is the result of a well-structured system, not the starting point\n• Structural alignment — most failures come from misalignment between decisions, ownership, and data\n• Enterprise awareness — every solution must account for scale, governance, and operational impact',
+    },
+    {
+      title: 'Resume',
+      key: 'experience',
+      content:
+        'Ray Butler is a Design Technologist with deep expertise in enterprise SaaS, healthcare workflows, finance and AP automation, and government systems.\n\nHe operates at the intersection of experience design, product strategy, and AI systems — focusing on how systems actually behave, not just how they are described.\n\nHis work spans complex organizations where decisions, ownership, workflows, and data must align to produce reliable outcomes at scale.',
     },
   ],
 };
