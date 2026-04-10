@@ -182,11 +182,8 @@ export default function ChatPanel({ sessionId, sessionTimestamp, onDiagramDetect
             <LeadCaptureForm />
           </Box>
         )}
-        <div ref={messagesEndRef} />
-      </Box>
-      {/* Disclaimer banner */}
-      {showDisclaimer && !digitalTwinMode && (
-        <Box sx={{ maxWidth: 768, mx: 'auto', width: '100%', px: { xs: 2, md: 3 } }}>
+        {/* Disclaimer banner — inside scroll area */}
+        {showDisclaimer && !digitalTwinMode && (
           <Box
             sx={{
               display: 'flex',
@@ -215,8 +212,9 @@ export default function ChatPanel({ sessionId, sessionTimestamp, onDiagramDetect
               <CloseIcon sx={{ fontSize: 18 }} />
             </IconButton>
           </Box>
-        </Box>
-      )}
+        )}
+        <div ref={messagesEndRef} />
+      </Box>
       {!digitalTwinMode && (
         <ChatInput
           onSend={sendMessage} disabled={isProcessing} isProcessing={isProcessing} onStop={stopResponse}

@@ -54,12 +54,18 @@ export default function ChatInput({ onSend, disabled, isProcessing, onStop, voic
     setSpeechSupported(!!SR);
   }, []);
 
-  // Refocus textarea when voice mode is turned off
+  // Refocus textarea when voice mode is turned off or processing finishes
   useEffect(() => {
     if (!voiceActive && textareaRef.current) {
       textareaRef.current.focus();
     }
   }, [voiceActive]);
+
+  useEffect(() => {
+    if (!isProcessing && !voiceActive && textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [isProcessing, voiceActive]);
 
   // I2: Cleanup on unmount — stop recognition and clear restart timeout
   useEffect(() => {

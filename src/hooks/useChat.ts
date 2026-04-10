@@ -68,8 +68,10 @@ export function useChat({ sessionId, onDiagramDetected, saveHistory, playTTS }: 
       });
 
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || 'Request failed');
+        const text = await res.text();
+        let errorMsg = 'Request failed';
+        try { errorMsg = JSON.parse(text).error || errorMsg; } catch { /* non-JSON response */ }
+        throw new Error(errorMsg);
       }
 
       const reader = res.body?.getReader();

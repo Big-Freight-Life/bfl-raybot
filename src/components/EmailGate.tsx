@@ -24,7 +24,9 @@ export default function EmailGate({ onVerified }: EmailGateProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data: { error?: string };
+      try { data = JSON.parse(text); } catch { throw new Error('Server error — please try again'); }
       if (!res.ok) throw new Error(data.error || 'Validation failed');
 
       sessionStorage.setItem('raybot_user_email', email);

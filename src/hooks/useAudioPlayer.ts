@@ -48,7 +48,9 @@ export function useAudioPlayer({ voiceMuted, digitalTwinMode, onSpeakingChange }
         onSpeakingChange?.(false);
         return;
       }
-      const { audio } = await res.json();
+      const rawText = await res.text();
+      let audio: string;
+      try { audio = JSON.parse(rawText).audio; } catch { setIsSpeaking(false); onSpeakingChange?.(false); return; }
       const audioBlob = Uint8Array.from(atob(audio), (c) => c.charCodeAt(0));
       const blob = new Blob([audioBlob], { type: 'audio/mpeg' });
       const url = URL.createObjectURL(blob);
