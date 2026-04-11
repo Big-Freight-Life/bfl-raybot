@@ -147,7 +147,7 @@ function BlockRenderer({ block }: { block: PresentationBlock }) {
               width: '100%',
               aspectRatio: '16 / 9',
               borderRadius: '12px',
-              background: `linear-gradient(135deg, ${block.color || '#117680'} 0%, ${block.color || '#117680'}88 100%)`,
+              background: `linear-gradient(135deg, ${block.color || '#C2703E'} 0%, ${block.color || '#C2703E'}88 100%)`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

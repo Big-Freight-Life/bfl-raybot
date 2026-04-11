@@ -34,8 +34,11 @@ export const GEMINI_TEMPERATURE = 0.7;
 // ─── UI / Theme ───
 export const SIDEBAR_WIDTH_COLLAPSED = 52;
 export const SIDEBAR_WIDTH_EXPANDED = 260;
-export const TEAL = '#117680';
-export const TEAL_BG = `${TEAL}0F`; // 6% opacity for active backgrounds
+export const BRAND_ACCENT = '#C2703E';
+export const BRAND_ACCENT_BG = `${BRAND_ACCENT}0F`; // 6% opacity for active backgrounds
+/** @deprecated Use BRAND_ACCENT instead */
+export const TEAL = BRAND_ACCENT;
+export const TEAL_BG = BRAND_ACCENT_BG;
 
 // ─── Lead Form Trigger ───
 export const LEAD_FORM_TRIGGER = /send me an email|book a call/i;

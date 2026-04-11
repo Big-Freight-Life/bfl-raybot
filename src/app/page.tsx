@@ -236,8 +236,8 @@ export default function Home() {
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         {/* Top bar */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, height: 49, borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}>
-          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.25rem', letterSpacing: '0.04em' }}>
-            <Box component="span" sx={{ color: 'primary.main' }}>ray</Box>Butler
+          <Typography variant="h6" sx={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: '1.25rem', letterSpacing: '-0.02em' }}>
+            <Box component="span" sx={{ color: 'secondary.main' }}>ray</Box>butler
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Button

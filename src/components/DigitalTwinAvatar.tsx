@@ -59,7 +59,7 @@ export default function DigitalTwinAvatar({ isSpeaking, isListening }: DigitalTw
               inset: -8,
               borderRadius: '50%',
               border: '2px solid',
-              borderColor: '#14B8A6',
+              borderColor: '#D4875A',
               animation: `${avatarPulse} 2s ease-in-out infinite`,
             }}
           />
@@ -72,7 +72,7 @@ export default function DigitalTwinAvatar({ isSpeaking, isListening }: DigitalTw
               inset: -12,
               borderRadius: '50%',
               border: '3px solid',
-              borderColor: '#117680',
+              borderColor: '#C2703E',
               animation: `${avatarSpeak} 0.8s ease-in-out infinite`,
             }}
           />
@@ -83,11 +83,11 @@ export default function DigitalTwinAvatar({ isSpeaking, isListening }: DigitalTw
             width: 120,
             height: 120,
             borderRadius: '50%',
-            background: 'linear-gradient(135deg, #117680, #14B8A6)',
+            background: 'linear-gradient(135deg, #C2703E, #D4875A)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: isSpeaking ? '0 0 30px rgba(20,184,166,0.3)' : '0 0 15px rgba(20,184,166,0.15)',
+            boxShadow: isSpeaking ? '0 0 30px rgba(194,112,62,0.3)' : '0 0 15px rgba(194,112,62,0.15)',
             transition: 'box-shadow 0.3s ease',
           }}
         >

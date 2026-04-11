@@ -238,7 +238,7 @@ export function AboutRayPresentation() {
                 'Audit queries: days → seconds',
               ],
               initial: 'H',
-              color: '#0e5f67',
+              color: '#A35C30',
             },
             {
               company: 'Hyland Software',
@@ -253,7 +253,7 @@ export function AboutRayPresentation() {
                 'Eliminated context switching for Workday users',
               ],
               initial: 'H',
-              color: '#117680',
+              color: '#C2703E',
             },
             {
               company: 'Enterprise Client',
@@ -268,7 +268,7 @@ export function AboutRayPresentation() {
                 'Legacy maintenance burden eliminated',
               ],
               initial: 'S',
-              color: '#1a9aa6',
+              color: '#D4875A',
             },
           ].map((item, i, arr) => {
             const isLast = i === arr.length - 1;

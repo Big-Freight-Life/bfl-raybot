@@ -13,7 +13,6 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Image from 'next/image';
 import { caseStudies } from '@/lib/case-studies';
 import { SIDEBAR_WIDTH_COLLAPSED, SIDEBAR_WIDTH_EXPANDED } from '@/lib/constants';
 import type { ChatSummary } from '@/lib/chat-history';
@@ -197,14 +196,24 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
       >
         {open ? (
           <>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Image
-                src="/images/logo-teal.png"
-                alt="Big Freight Life"
-                width={20}
-                height={20}
-                style={{ display: 'block' }}
-              />
+            <Box
+              sx={{
+                width: 24,
+                height: 24,
+                bgcolor: 'text.primary',
+                borderRadius: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'background.default',
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: '0.6875rem',
+                fontWeight: 700,
+                letterSpacing: '-0.03em',
+                flexShrink: 0,
+              }}
+            >
+              rb
             </Box>
             <Tooltip title="Close sidebar">
               <IconButton size="small" onClick={onMobileClose || onToggle} sx={{ color: 'text.secondary' }}>

@@ -26,7 +26,7 @@ export const processInfo: CaseStudy = {
   key: 'process',
   summary: 'How Big Freight Life works with clients — diagnosis to delivery.',
   presentation: [
-    { type: 'image', alt: 'The Big Freight Life process', caption: 'Diagnose · Design · Build · Hand Off', color: '#0e5f67' },
+    { type: 'image', alt: 'The Big Freight Life process', caption: 'Diagnose · Design · Build · Hand Off', color: '#A35C30' },
     { type: 'heading', level: 2, text: 'Diagnose' },
     { type: 'paragraph', text: 'Every engagement starts with diagnosis. Before recommending tools, frameworks, or features, we map what is actually happening — where decisions are made, how data flows, where ownership is unclear, and which workflows depend on tribal knowledge.' },
     { type: 'paragraph', text: 'The goal is to surface structural issues before solutions get prescribed. Most failed implementations are not technology problems — they are misalignment problems.' },
@@ -124,7 +124,7 @@ export const aboutRay: CaseStudy = {
   key: 'about-ray',
   summary: 'Design Technologist building systems that encode good decisions.',
   presentation: [
-    { type: 'image', alt: 'About Ray Butler', caption: 'Design Technologist', color: '#0e5f67' },
+    { type: 'image', alt: 'About Ray Butler', caption: 'Design Technologist', color: '#A35C30' },
     { type: 'heading', level: 2, text: 'Experience' },
     { type: 'paragraph', text: 'Ray Butler is a Design Technologist with deep expertise in enterprise SaaS, healthcare workflows, finance and AP automation, and government systems.' },
     { type: 'paragraph', text: 'He operates at the intersection of experience design, product strategy, and AI systems — focusing on how systems actually behave, not just how they are described.' },
@@ -214,7 +214,7 @@ export const caseStudies: CaseStudy[] = [
     architecture:
       'A federated integration layer sits between Hyland OnBase and downstream enterprise systems (ERP, HR, finance). Document events in OnBase trigger webhook notifications that are routed through a message broker, normalized into a canonical schema, and distributed to consuming systems.\n\nMetadata extraction runs through a rules engine with optional AI fallback for unstructured documents. Audit logs are centralized in a dedicated observability pipeline so compliance teams can trace every document touch across systems.\n\nKey components: OnBase event webhooks, Kafka-based message broker, canonical document schema, rules-based metadata engine, AI fallback service, audit log aggregator.',
     presentation: [
-      { type: 'image', alt: 'System architecture overview', caption: 'Federated integration layer', color: '#0e5f67' },
+      { type: 'image', alt: 'System architecture overview', caption: 'Federated integration layer', color: '#A35C30' },
       { type: 'heading', level: 2, text: 'The Challenge' },
       { type: 'paragraph', text: 'A Fortune 500 customer needed OnBase to become the source of truth for millions of documents flowing between ERP, HR, and finance systems. Existing integrations were fragile, event-driven logic was duplicated across teams, and compliance required every document touch be auditable.' },
       { type: 'heading', level: 2, text: 'What We Built' },
@@ -224,7 +224,7 @@ export const caseStudies: CaseStudy[] = [
         'Rules-based metadata engine with AI fallback for unstructured content',
         'Centralized audit log pipeline for compliance traceability',
       ]},
-      { type: 'image', alt: 'Metadata extraction pipeline', caption: 'Rules + AI fallback extraction', color: '#117680' },
+      { type: 'image', alt: 'Metadata extraction pipeline', caption: 'Rules + AI fallback extraction', color: '#C2703E' },
       { type: 'heading', level: 2, text: 'Results' },
       { type: 'paragraph', text: 'Document processing latency dropped from hours to minutes. Integration maintenance cost fell by approximately 60% after consolidating duplicated logic into a single canonical layer. Audit queries that used to take days now resolve in seconds.' },
     ],
@@ -270,7 +270,7 @@ export const caseStudies: CaseStudy[] = [
     architecture:
       'A bidirectional sync layer connects Workday business objects (workers, positions, requisitions) to Hyland document repositories. When a Workday transaction occurs, the sync layer resolves the related document set from Hyland and attaches it to the Workday record via a custom tab integration.\n\nDocument generation flows the other direction: Workday triggers produce templated documents in Hyland, which are then indexed and made available back to Workday workflows for approval routing.\n\nKey components: Workday web services client, Hyland content services API, bidirectional sync engine, document template service, custom tab UI integration, approval routing adapter.',
     presentation: [
-      { type: 'image', alt: 'Workday + Hyland integration', caption: 'Bidirectional sync architecture', color: '#0e5f67' },
+      { type: 'image', alt: 'Workday + Hyland integration', caption: 'Bidirectional sync architecture', color: '#A35C30' },
       { type: 'heading', level: 2, text: 'The Challenge' },
       { type: 'paragraph', text: 'HR and finance teams were manually attaching supporting documents to Workday records — offer letters, invoices, signed agreements — creating a disjointed experience and compliance gaps. Workday had no native content repository and Hyland had no native Workday UI.' },
       { type: 'heading', level: 2, text: 'What We Built' },
@@ -280,7 +280,7 @@ export const caseStudies: CaseStudy[] = [
         'Document template service for generated approval documents',
         'AI classification on document ingestion for auto-routing',
       ]},
-      { type: 'image', alt: 'Custom tab UI', caption: 'Documents surfaced where users already work', color: '#117680' },
+      { type: 'image', alt: 'Custom tab UI', caption: 'Documents surfaced where users already work', color: '#C2703E' },
       { type: 'heading', level: 2, text: 'Results' },
       { type: 'paragraph', text: 'HR case resolution time cut nearly in half. Workday users no longer leave the platform to find supporting documents. Finance approval cycles moved from days to hours for documents with generated templates.' },
     ],
@@ -326,7 +326,7 @@ export const caseStudies: CaseStudy[] = [
     architecture:
       'A staged migration pipeline moved data from a legacy CRM into Salesforce in three phases: extract, transform, and load-validate. Extraction used change-data-capture to snapshot the source in a read-only replica. Transformation applied field-level mapping rules and deduplication logic in a dedicated staging environment.\n\nThe load phase ran in parallel batches with automatic rollback on record-level failures. Post-load validation cross-checked counts, foreign key integrity, and workflow state across both systems. Workflows and automations were re-implemented natively in Salesforce Flow to preserve business logic.\n\nKey components: CDC extractor, staging database, transformation rule engine, batch loader with rollback, validation harness, Salesforce Flow migration.',
     presentation: [
-      { type: 'image', alt: 'Migration pipeline diagram', caption: 'Three-phase migration pipeline', color: '#0e5f67' },
+      { type: 'image', alt: 'Migration pipeline diagram', caption: 'Three-phase migration pipeline', color: '#A35C30' },
       { type: 'heading', level: 2, text: 'The Challenge' },
       { type: 'paragraph', text: 'A legacy CRM had years of customization, undocumented workflows, and inconsistent data. Leadership wanted to move to Salesforce without losing business logic or breaking downstream reports. The risk was high — any missed workflow meant a broken revenue process.' },
       { type: 'heading', level: 2, text: 'What We Built' },
@@ -337,7 +337,7 @@ export const caseStudies: CaseStudy[] = [
         'Post-load validation harness for cross-system integrity',
         'Workflows re-implemented natively in Salesforce Flow',
       ]},
-      { type: 'image', alt: 'AI-assisted data profiling', caption: 'AI profiling identified undocumented patterns', color: '#117680' },
+      { type: 'image', alt: 'AI-assisted data profiling', caption: 'AI profiling identified undocumented patterns', color: '#C2703E' },
       { type: 'heading', level: 2, text: 'Results' },
       { type: 'paragraph', text: 'Zero-downtime cutover. 99.9% data integrity across validated fields. Legacy maintenance burden eliminated. Sales and marketing teams had a modern platform for the first time, with workflows that actually reflected current business practice.' },
     ],

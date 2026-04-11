@@ -66,8 +66,8 @@ export default function EmailGate({ onVerified }: EmailGateProps) {
           textAlign: 'center',
         }}
       >
-        <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>
-          <Box component="span" sx={{ color: 'primary.main' }}>ray</Box>bot
+        <Typography variant="h5" sx={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, letterSpacing: '-0.02em', mb: 0.5 }}>
+          <Box component="span" sx={{ color: 'secondary.main' }}>ray</Box>bot
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
           Enter your email to start chatting with Raybot.
