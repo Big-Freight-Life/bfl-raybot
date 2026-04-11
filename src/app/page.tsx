@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { Box, Typography, IconButton, Tooltip, Snackbar, Alert, Menu, MenuItem, ListItemIcon, ListItemText, Divider } from '@mui/material';
+import { Box, Typography, IconButton, Button, Tooltip, Snackbar, Alert, Menu, MenuItem, ListItemIcon, ListItemText, Divider } from '@mui/material';
 import ShareIcon from '@mui/icons-material/Share';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
@@ -11,10 +11,9 @@ import IconSidebar from '@/components/IconSidebar';
 import ChatPanel from '@/components/ChatPanel';
 import AvatarStage from '@/components/AvatarStage';
 import EmailGate from '@/components/EmailGate';
-import CaseStudyPanel from '@/components/CaseStudyPanel';
-import { AboutRayPresentation, ProcessPresentation, AWScorePresentation } from '@/components/InfoPresentations';
+import { AboutRayPresentation, ProcessPresentation, AWScorePresentation, ToolboxPresentation, MethodologiesPresentation, ResumePresentation } from '@/components/InfoPresentations';
 import CaseStudyPresentation from '@/components/CaseStudyPresentation';
-import { caseStudies, aboutRay, processInfo, awScoreInfo } from '@/lib/case-studies';
+import { caseStudies } from '@/lib/case-studies';
 import { getChatList, saveChat, loadChat, generateTitle, type ChatSummary } from '@/lib/chat-history';
 import { STORAGE_KEY_USER_EMAIL, STORAGE_KEY_HISTORY, STORAGE_KEY_SESSION_ID } from '@/lib/constants';
 import { generateSessionId } from '@/lib/session-utils';
@@ -34,7 +33,7 @@ export default function Home() {
   const [triggerCaseStudy, setTriggerCaseStudy] = useState<string | null>(null);
   const [activeCaseStudy, setActiveCaseStudy] = useState<string | null>(null);
   const [activeNavItem, setActiveNavItem] = useState<string | null>(null);
-  const [visitedHighlights, setVisitedHighlights] = useState<Set<string>>(new Set());
+
   const [chatList, setChatList] = useState<ChatSummary[]>([]);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [loadedMessages, setLoadedMessages] = useState<Message[] | null>(null);
@@ -42,9 +41,7 @@ export default function Home() {
   const [sessionId, setSessionId] = useState('');
   const [sessionTimestamp, setSessionTimestamp] = useState<number>(Date.now());
   const [userMenuAnchor, setUserMenuAnchor] = useState<HTMLElement | null>(null);
-  const [splitPercent, setSplitPercent] = useState(65); // top panel takes this % of space
-  const splitContainerRef = useRef<HTMLDivElement>(null);
-  const isDraggingRef = useRef(false);
+
   const messagesRef = useRef<Message[]>([]);
 
   const handleSignOut = useCallback(() => {
@@ -121,16 +118,14 @@ export default function Home() {
       handleNewChat();
       setActiveCaseStudy(key);
       setActiveNavItem(action);
-      setVisitedHighlights(new Set());
       return;
     }
 
-    if (action === 'about-ray' || action === 'process' || action === 'aw-score') {
+    if (action === 'about-ray' || action === 'process' || action === 'aw-score' || action === 'toolbox' || action === 'methodologies' || action === 'resume') {
       if (activeCaseStudy === action) return;
       handleNewChat();
       setActiveCaseStudy(action);
       setActiveNavItem(action);
-      setVisitedHighlights(new Set());
       return;
     }
 
@@ -148,13 +143,6 @@ export default function Home() {
     return () => window.removeEventListener('raybot:navigate', onNavigate);
   }, [handleNavigate]);
 
-  const handleHighlightClick = useCallback((prompt: string) => {
-    setTriggerMessage(prompt);
-  }, []);
-
-  const handleHighlightVisit = useCallback((key: string) => {
-    setVisitedHighlights((prev) => new Set(prev).add(key));
-  }, []);
 
   const saveCurrentChat = useCallback(() => {
     const currentMessages = messagesRef.current;
@@ -211,27 +199,6 @@ export default function Home() {
     saveCurrentChat();
   }, [saveCurrentChat]);
 
-  const handleDragStart = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    isDraggingRef.current = true;
-    const onMove = (ev: MouseEvent) => {
-      if (!isDraggingRef.current || !splitContainerRef.current) return;
-      const rect = splitContainerRef.current.getBoundingClientRect();
-      const pct = ((ev.clientY - rect.top) / rect.height) * 100;
-      setSplitPercent(Math.min(80, Math.max(20, pct)));
-    };
-    const onUp = () => {
-      isDraggingRef.current = false;
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseup', onUp);
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-    };
-    document.body.style.cursor = 'row-resize';
-    document.body.style.userSelect = 'none';
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseup', onUp);
-  }, []);
 
   const shareTranscript = useCallback(() => {
     try {
@@ -269,22 +236,26 @@ export default function Home() {
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         {/* Top bar */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, height: 49, borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}>
-          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.25rem' }}>
-            <Box component="span" sx={{ color: 'primary.main' }}>ray</Box>bot
+          <Typography variant="h6" sx={{ fontWeight: 400, fontSize: '1.5rem', letterSpacing: '0.08em', textTransform: 'lowercase' }}>
+            <Box component="span" sx={{ color: 'primary.main', fontWeight: 600 }}>ray</Box><Box component="span" sx={{ color: 'text.secondary', fontWeight: 300 }}>butler</Box>
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Tooltip title={digitalTwinMode ? 'Switch to chat' : 'Connect Agent'}>
-              <IconButton
-                size="small"
-                onClick={toggleDigitalTwin}
-                sx={{
-                  color: digitalTwinMode ? 'primary.main' : 'text.secondary',
-                  bgcolor: digitalTwinMode ? 'action.selected' : 'transparent',
-                }}
-              >
-                <HubOutlinedIcon sx={{ fontSize: 20 }} />
-              </IconButton>
-            </Tooltip>
+            <Button
+              variant="text"
+              size="small"
+              startIcon={<HubOutlinedIcon sx={{ fontSize: 18 }} />}
+              onClick={toggleDigitalTwin}
+              sx={{
+                color: digitalTwinMode ? 'primary.main' : 'text.secondary',
+                fontSize: '0.8125rem',
+                fontWeight: 500,
+                textTransform: 'none',
+                px: 1.5,
+                '&:hover': { color: 'primary.main', bgcolor: 'action.hover' },
+              }}
+            >
+              Connect Agent
+            </Button>
             <Tooltip title="Email transcript">
               <IconButton size="small" onClick={shareTranscript} sx={{ color: 'text.secondary' }}>
                 <ShareIcon sx={{ fontSize: 18 }} />
@@ -397,102 +368,71 @@ export default function Home() {
             />
           </Box>
 
-          {/* Chat column — split when a page is active */}
-          <Box
-            ref={splitContainerRef}
-            sx={{
-              flex: digitalTwinMode ? 'none' : 1,
-              width: digitalTwinMode ? 320 : 'auto',
-              display: 'flex',
-              flexDirection: 'column',
-              minWidth: 0,
-              borderLeft: digitalTwinMode ? 1 : 0,
-              borderColor: 'divider',
-              transition: 'flex 0.4s cubic-bezier(0.4, 0, 0.2, 1), width 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-left 0.4s ease',
-              overflow: 'hidden',
-            }}
-          >
-            {/* Inline page presentation (top half when active) */}
-            {activeCaseStudy && (
-              <>
-                <Box sx={{ height: `${splitPercent}%`, overflowY: 'auto', px: { xs: 2, md: 3 }, py: 2, maxWidth: 768, mx: 'auto', width: '100%', scrollbarWidth: 'thin' }}>
-                  {activeCaseStudy === 'about-ray' ? (
-                    <AboutRayPresentation />
-                  ) : activeCaseStudy === 'process' ? (
-                    <ProcessPresentation />
-                  ) : activeCaseStudy === 'aw-score' ? (
-                    <AWScorePresentation />
-                  ) : (() => {
-                    const study = caseStudies.find((s) => s.key === activeCaseStudy);
-                    return study ? <CaseStudyPresentation study={study} /> : null;
-                  })()}
-                </Box>
-                {/* Drag handle */}
-                <Box
-                  onMouseDown={handleDragStart}
-                  sx={{
-                    height: 6,
-                    flexShrink: 0,
-                    cursor: 'row-resize',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    bgcolor: 'divider',
-                    '&:hover': { bgcolor: 'primary.main' },
-                    transition: 'background-color 0.15s ease',
-                  }}
-                >
-                  <Box sx={{ width: 32, height: 2, borderRadius: 1, bgcolor: 'background.paper', opacity: 0.6 }} />
-                </Box>
-              </>
-            )}
-
-            {/* Chat panel (bottom half, or full when no page) */}
-            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0 }}>
-              <ChatPanel
-                key={chatKey}
-                sessionId={sessionId}
-                sessionTimestamp={sessionTimestamp}
-                digitalTwinMode={digitalTwinMode}
-                onSpeakingChange={setIsSpeaking}
-                onListeningChange={setIsListening}
-                onToggleDigitalTwin={toggleDigitalTwin}
-                onMicActivated={handleMicActivated}
-                triggerMessage={triggerMessage}
-                triggerCaseStudy={triggerCaseStudy}
-                onTriggerHandled={() => { setTriggerMessage(null); setTriggerCaseStudy(null); }}
-                onMessagesChange={handleMessagesChange}
-              />
+          {/* Center column — full page content */}
+          <Box sx={{
+            flex: digitalTwinMode ? 'none' : 1,
+            width: digitalTwinMode ? 0 : 'auto',
+            display: digitalTwinMode ? 'none' : 'flex',
+            flexDirection: 'column',
+            minWidth: 0,
+            overflow: 'hidden',
+          }}>
+            <Box sx={{
+              flex: 1,
+              overflowY: 'auto',
+              px: { xs: 2, md: 3 },
+              pt: 2,
+              pb: '80px',
+              maxWidth: 768,
+              mx: 'auto',
+              width: '100%',
+              scrollbarWidth: 'thin',
+            }}>
+              {activeCaseStudy === 'about-ray' ? (
+                <AboutRayPresentation />
+              ) : activeCaseStudy === 'process' ? (
+                <ProcessPresentation />
+              ) : activeCaseStudy === 'aw-score' ? (
+                <AWScorePresentation />
+              ) : activeCaseStudy === 'toolbox' ? (
+                <ToolboxPresentation />
+              ) : activeCaseStudy === 'methodologies' ? (
+                <MethodologiesPresentation />
+              ) : activeCaseStudy === 'resume' ? (
+                <ResumePresentation />
+              ) : (() => {
+                const study = caseStudies.find((s) => s.key === activeCaseStudy);
+                return study ? <CaseStudyPresentation study={study} /> : null;
+              })()}
             </Box>
           </Box>
 
-          {/* Right sidebar panel */}
-          {(() => {
-            const activeStudy = activeCaseStudy === 'about-ray'
-              ? aboutRay
-              : activeCaseStudy === 'process'
-                ? processInfo
-                : activeCaseStudy === 'aw-score'
-                  ? awScoreInfo
-                  : activeCaseStudy
-                    ? caseStudies.find((s) => s.key === activeCaseStudy)
-                    : null;
-            return activeStudy ? (
-              <CaseStudyPanel
-                study={activeStudy}
-                variant={activeCaseStudy === 'about-ray' || activeCaseStudy === 'aw-score' ? 'tabs' : 'default'}
-                onHighlightClick={(prompt) => {
-                  handleHighlightClick(prompt);
-                  const highlight = activeStudy.highlights.find((h) =>
-                    prompt.includes(h.title.toLowerCase())
-                  );
-                  if (highlight) handleHighlightVisit(highlight.key);
-                }}
-                onClose={() => setActiveCaseStudy(null)}
-                visitedHighlights={visitedHighlights}
-              />
-            ) : null;
-          })()}
+          {/* Right panel — chat */}
+          <Box sx={{
+            width: digitalTwinMode ? 320 : 360,
+            flexShrink: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            borderLeft: 1,
+            borderColor: 'divider',
+            overflow: 'hidden',
+            transition: digitalTwinMode ? 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1)' : undefined,
+          }}>
+            <ChatPanel
+              key={chatKey}
+              sessionId={sessionId}
+              sessionTimestamp={sessionTimestamp}
+              digitalTwinMode={digitalTwinMode}
+              onSpeakingChange={setIsSpeaking}
+              onListeningChange={setIsListening}
+              onToggleDigitalTwin={toggleDigitalTwin}
+              onMicActivated={handleMicActivated}
+              triggerMessage={triggerMessage}
+              triggerCaseStudy={triggerCaseStudy}
+              onTriggerHandled={() => { setTriggerMessage(null); setTriggerCaseStudy(null); }}
+              onMessagesChange={handleMessagesChange}
+            />
+          </Box>
 
         </Box>
       </Box>

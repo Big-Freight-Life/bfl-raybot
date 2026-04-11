@@ -1121,3 +1121,137 @@ export function AWScorePresentation() {
     </Box>
   );
 }
+
+/* ─── Toolbox ─── */
+
+import { softwareTools, agentSkills } from '@/lib/toolbox';
+import { Radio, RadioGroup, FormControlLabel } from '@mui/material';
+
+const toolDescriptions: Record<string, string> = {
+  'react-nextjs': 'Frontend frameworks for production web applications',
+  typescript: 'Typed JavaScript for scalable, maintainable codebases',
+  figma: 'Design and prototyping for UI/UX workflows',
+  vercel: 'Deployment platform and edge infrastructure',
+  'mui-design-systems': 'Component libraries and design system architecture',
+  'postgres-redis': 'Relational and in-memory data stores',
+  mermaidjs: 'Diagram rendering for workflows and system models',
+  'salesforce-integrations': 'CRM and enterprise system integrations',
+  'ux-audit': 'Evaluate interfaces and identify usability issues',
+  'product-strategy': 'Define roadmaps and prioritize features',
+  'system-architecture': 'Design scalable technical systems',
+  'user-research': 'Synthesize interviews, surveys, and behavioral data',
+  'competitive-analysis': 'Evaluate market positioning and feature gaps',
+  'workflow-design': 'Map and optimize business processes',
+  'ai-agent-builder': 'Design multi-step agent architectures and tool chains',
+  'design-system': 'Create and maintain consistent component libraries',
+  'prompt-engineering': 'Craft system prompts and optimize model output',
+  'data-modeling': 'Structure schemas and data flows for products',
+  'stakeholder-brief': 'Translate technical work into executive-ready summaries',
+  'content-strategy': 'Plan messaging, copy, and information architecture',
+};
+
+export function ToolboxPresentation() {
+  const [category, setCategory] = useState<'software' | 'agents'>('software');
+  const items = category === 'software' ? softwareTools : agentSkills;
+
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      <Box>
+        <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, color: 'text.primary' }}>
+          Toolbox
+        </Typography>
+        <Typography sx={{ fontSize: '0.875rem', color: 'text.secondary', mt: 0.5, lineHeight: 1.5 }}>
+          Ray works across the full stack of modern product and AI development. The toolbox is secondary to the thinking — tools change, but the ability to choose the right one for the job does not.
+        </Typography>
+      </Box>
+
+      <RadioGroup
+        row
+        value={category}
+        onChange={(e) => setCategory(e.target.value as 'software' | 'agents')}
+      >
+        <FormControlLabel value="software" control={<Radio size="small" />} label="Software Tools" />
+        <FormControlLabel value="agents" control={<Radio size="small" />} label="Agent Skills" />
+      </RadioGroup>
+
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: 2,
+        }}
+      >
+        {items.map((item) => (
+          <Box
+            key={item.key}
+            sx={{
+              border: '1px solid',
+              borderColor: 'divider',
+              borderRadius: '12px',
+              p: 2,
+              cursor: 'pointer',
+              transition: 'background-color 0.15s',
+              '&:hover': {
+                bgcolor: 'action.hover',
+              },
+            }}
+          >
+            <Typography sx={{ fontWeight: 600, fontSize: '0.9375rem', color: 'text.primary' }}>
+              {item.title}
+            </Typography>
+            <Typography sx={{ fontSize: '0.8125rem', color: 'text.secondary', mt: 0.5, lineHeight: 1.4 }}>
+              {toolDescriptions[item.key] ?? ''}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+}
+
+/* ─── Methodologies ─── */
+
+const methodologies = [
+  { title: 'Diagnosis First', description: 'Understand what is actually happening before proposing solutions. Most failed implementations are misalignment problems, not technology problems.' },
+  { title: 'Design is Behavior', description: 'Interfaces and workflows define how systems think, not just how they look. Model behavior before drawing screens.' },
+  { title: 'AI as Output', description: 'AI is the result of a well-structured system, not the starting point. Structure the data, decisions, and workflows first.' },
+  { title: 'Structural Alignment', description: 'Most failures come from misalignment between decisions, ownership, and data — not from bad technology choices.' },
+  { title: 'Enterprise Awareness', description: 'Every solution must account for scale, governance, and operational impact. What works for a team of 5 rarely works for an org of 5,000.' },
+];
+
+export function MethodologiesPresentation() {
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      <Box>
+        <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, color: 'text.primary' }}>
+          Methodologies
+        </Typography>
+        <Typography sx={{ fontSize: '0.875rem', color: 'text.secondary', mt: 0.5, lineHeight: 1.5 }}>
+          Ray approaches every engagement through a systems-thinking lens.
+        </Typography>
+      </Box>
+
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {methodologies.map((m) => (
+          <Box
+            key={m.title}
+            sx={{
+              borderLeft: '3px solid',
+              borderLeftColor: 'primary.main',
+              borderRadius: '8px',
+              p: 2,
+              pl: 2.5,
+            }}
+          >
+            <Typography sx={{ fontWeight: 600, fontSize: '0.9375rem', color: 'text.primary' }}>
+              {m.title}
+            </Typography>
+            <Typography sx={{ fontSize: '0.8125rem', color: 'text.secondary', mt: 0.5, lineHeight: 1.5 }}>
+              {m.description}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+}

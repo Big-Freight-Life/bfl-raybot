@@ -7,6 +7,8 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
+import BuildOutlinedIcon from '@mui/icons-material/BuildOutlined';
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import ViewSidebarOutlinedIcon from '@mui/icons-material/ViewSidebarOutlined';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -244,6 +246,42 @@ function SidebarContent({ open, onToggle, onNavigate, onNewChat, onLoadChat, act
           open={open}
           isActive={activeItem === 'aw-score'}
           onClick={() => handleNavigate('aw-score')}
+        />
+      </Box>
+
+      {/* Explore section */}
+      {open && (
+        <Box sx={{ px: 1.5, mt: 1 }}>
+          <Divider sx={{ mb: 1.5 }} />
+          <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', display: 'block', mb: 1, px: 0.5 }}>
+            Explore
+          </Typography>
+        </Box>
+      )}
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: open ? 'flex-start' : 'center', gap: 0.5, px: open ? 1 : 0, ...(open ? {} : { mt: 0.5 }) }}>
+        <NavButton
+          tooltip="Toolbox"
+          icon={<BuildOutlinedIcon sx={{ fontSize: 20 }} />}
+          label="Toolbox"
+          open={open}
+          isActive={activeItem === 'toolbox'}
+          onClick={() => handleNavigate('toolbox')}
+        />
+        <NavButton
+          tooltip="Methodologies"
+          icon={<AccountTreeOutlinedIcon sx={{ fontSize: 20 }} />}
+          label="Methodologies"
+          open={open}
+          isActive={activeItem === 'methodologies'}
+          onClick={() => handleNavigate('methodologies')}
+        />
+        <NavButton
+          tooltip="Resume"
+          icon={<DescriptionOutlinedIcon sx={{ fontSize: 20 }} />}
+          label="Resume"
+          open={open}
+          isActive={activeItem === 'resume'}
+          onClick={() => handleNavigate('resume')}
         />
       </Box>
 
