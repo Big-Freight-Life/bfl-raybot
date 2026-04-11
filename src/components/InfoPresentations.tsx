@@ -56,7 +56,7 @@ export function AboutRayPresentation() {
           <Typography sx={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1.2, color: 'text.primary' }}>
             Ray Butler
           </Typography>
-          <Typography sx={{ fontSize: '0.875rem', color: 'primary.main', fontWeight: 500, mt: 0.25 }}>
+          <Typography sx={{ fontSize: '0.875rem', color: 'secondary.main', fontWeight: 500, mt: 0.25 }}>
             Gen AI Architect
           </Typography>
           {(() => {
@@ -80,14 +80,14 @@ export function AboutRayPresentation() {
                     py: 0.375,
                     borderRadius: '999px',
                     border: 1,
-                    borderColor: 'primary.main',
-                    bgcolor: 'rgba(17,118,128,0.08)',
-                    color: 'primary.main',
+                    borderColor: 'secondary.main',
+                    bgcolor: 'rgba(194,112,62,0.08)',
+                    color: 'secondary.main',
                     fontSize: '0.75rem',
                     fontWeight: 600,
                     cursor: 'pointer',
                     fontFamily: 'inherit',
-                    '&:hover': { bgcolor: 'rgba(17,118,128,0.16)' },
+                    '&:hover': { bgcolor: 'rgba(194,112,62,0.16)' },
                   }}
                 >
                   <VerifiedIcon sx={{ fontSize: '0.95rem' }} />
@@ -183,7 +183,7 @@ export function AboutRayPresentation() {
             textTransform: 'none',
             borderColor: 'primary.main',
             color: 'primary.main',
-            '&:hover': { borderColor: 'primary.dark', bgcolor: 'rgba(17,118,128,0.04)' },
+            '&:hover': { borderColor: 'primary.dark', bgcolor: 'rgba(0,122,255,0.04)' },
           }}
         >
           Connect on LinkedIn
@@ -197,7 +197,7 @@ export function AboutRayPresentation() {
             textTransform: 'none',
             borderColor: 'primary.main',
             color: 'primary.main',
-            '&:hover': { borderColor: 'primary.dark', bgcolor: 'rgba(17,118,128,0.04)' },
+            '&:hover': { borderColor: 'primary.dark', bgcolor: 'rgba(0,122,255,0.04)' },
           }}
         >
           Email Ray
@@ -280,8 +280,8 @@ export function AboutRayPresentation() {
                     width: 44,
                     height: 44,
                     borderRadius: '8px',
-                    bgcolor: 'rgba(45,212,191,0.18)',
-                    color: 'primary.main',
+                    bgcolor: 'rgba(194,112,62,0.10)',
+                    color: 'secondary.main',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -314,7 +314,7 @@ export function AboutRayPresentation() {
                             width: 4,
                             height: 4,
                             borderRadius: '50%',
-                            bgcolor: 'primary.main',
+                            bgcolor: 'secondary.main',
                             mt: '8px',
                             flexShrink: 0,
                           }}
@@ -475,7 +475,7 @@ export function ResumePresentation() {
             borderColor: 'primary.main',
             color: 'primary.main',
             fontSize: '0.75rem',
-            '&:hover': { borderColor: 'primary.dark', bgcolor: 'rgba(17,118,128,0.04)' },
+            '&:hover': { borderColor: 'primary.dark', bgcolor: 'rgba(0,122,255,0.04)' },
           }}
         >
           Download PDF
@@ -513,7 +513,7 @@ export function ResumePresentation() {
                         width: 4,
                         height: 4,
                         borderRadius: '50%',
-                        bgcolor: 'primary.main',
+                        bgcolor: 'secondary.main',
                         mt: '7px',
                         flexShrink: 0,
                       }}
@@ -613,7 +613,7 @@ export function ProcessPresentation() {
                     width: 40,
                     height: 40,
                     borderRadius: '10px',
-                    bgcolor: 'primary.main',
+                    bgcolor: 'secondary.main',
                     color: '#fff',
                     display: 'flex',
                     alignItems: 'center',
@@ -641,7 +641,7 @@ export function ProcessPresentation() {
                 <Typography
                   variant="caption"
                   sx={{
-                    color: 'primary.main',
+                    color: 'secondary.main',
                     fontWeight: 600,
                     letterSpacing: '0.05em',
                     textTransform: 'uppercase',
@@ -796,14 +796,14 @@ export function AWScorePresentation() {
           p: 2.5,
           borderRadius: '12px',
           border: 1,
-          borderColor: 'primary.main',
-          bgcolor: 'rgba(17,118,128,0.06)',
+          borderColor: 'secondary.main',
+          bgcolor: 'rgba(194,112,62,0.06)',
           display: 'flex',
           flexDirection: 'column',
           gap: 1.5,
         }}
       >
-        <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, alignSelf: 'flex-start', px: 1, py: 0.375, borderRadius: '999px', border: 1, borderColor: 'primary.main', bgcolor: 'background.paper', color: 'primary.main', fontSize: '0.6875rem', fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+        <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, alignSelf: 'flex-start', px: 1, py: 0.375, borderRadius: '999px', border: 1, borderColor: 'secondary.main', bgcolor: 'background.paper', color: 'secondary.main', fontSize: '0.6875rem', fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
           <VerifiedIcon sx={{ fontSize: '0.85rem' }} />
           Verified AI Practitioner
         </Box>
@@ -812,7 +812,7 @@ export function AWScorePresentation() {
             <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '0.6875rem' }}>
               Ray&apos;s Score
             </Typography>
-            <Typography sx={{ fontSize: '1.75rem', fontWeight: 700, color: 'primary.main', lineHeight: 1.1 }}>
+            <Typography sx={{ fontSize: '1.75rem', fontWeight: 700, color: 'secondary.main', lineHeight: 1.1 }}>
               {rayResult.average.toFixed(1)}
               <Box component="span" sx={{ fontSize: '0.875rem', color: 'text.secondary', fontWeight: 500 }}>
                 {' '}/ 5.0
@@ -848,7 +848,7 @@ export function AWScorePresentation() {
                         flex: 1,
                         height: 6,
                         borderRadius: '2px',
-                        bgcolor: n <= v ? 'primary.main' : 'action.hover',
+                        bgcolor: n <= v ? 'secondary.main' : 'action.hover',
                       }}
                     />
                   ))}
@@ -924,8 +924,8 @@ export function AWScorePresentation() {
             p: 2.5,
             borderRadius: '12px',
             border: 1,
-            borderColor: 'primary.main',
-            bgcolor: 'rgba(17,118,128,0.06)',
+            borderColor: 'secondary.main',
+            bgcolor: 'rgba(194,112,62,0.06)',
             display: 'flex',
             flexDirection: 'column',
             gap: 1,
@@ -936,7 +936,7 @@ export function AWScorePresentation() {
               <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '0.6875rem' }}>
                 Your Score
               </Typography>
-              <Typography sx={{ fontSize: '1.75rem', fontWeight: 700, color: 'primary.main', lineHeight: 1.1 }}>
+              <Typography sx={{ fontSize: '1.75rem', fontWeight: 700, color: 'secondary.main', lineHeight: 1.1 }}>
                 {result.average.toFixed(1)}
                 <Box component="span" sx={{ fontSize: '0.875rem', color: 'text.secondary', fontWeight: 500 }}>
                   {' '}/ 5.0
@@ -1090,7 +1090,7 @@ export function AWScorePresentation() {
                 textTransform: 'none',
                 borderColor: 'primary.main',
                 color: 'primary.main',
-                '&:hover': { borderColor: 'primary.dark', bgcolor: 'rgba(17,118,128,0.04)' },
+                '&:hover': { borderColor: 'primary.dark', bgcolor: 'rgba(0,122,255,0.04)' },
               }}
             >
               Share link
@@ -1237,7 +1237,7 @@ export function MethodologiesPresentation() {
             key={m.title}
             sx={{
               borderLeft: '3px solid',
-              borderLeftColor: 'primary.main',
+              borderLeftColor: 'secondary.main',
               borderRadius: '8px',
               p: 2,
               pl: 2.5,
